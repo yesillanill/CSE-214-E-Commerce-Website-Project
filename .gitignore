@@ -70,3 +70,12 @@ __screenshots__/
 .DS_Store
 Thumbs.db
 
+# AI Files
+.claude/
+.cursor/
+.gemini/
+.junie/
+.windsurf/
+.github/
+.vscode/
+AGENTS.md

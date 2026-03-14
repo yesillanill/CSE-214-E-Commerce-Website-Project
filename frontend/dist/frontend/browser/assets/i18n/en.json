@@ -1,0 +1,101 @@
+{
+
+  "SIDEBAR":{
+    "TITLE": "E-Commerce Analytics",
+    "MENU": "MAIN MENU",
+    "HOME": "Home Page",
+    "DASHBOARD": "Dashboard",
+    "AI": "AI Assistant",
+    "ANALYTICS": "Analytics",
+    "ORDERS": "Orders",
+    "PRODUCTS": "Products",
+    "MANAGEMENT": "MANAGEMENT",
+    "CUSTOMERS": "Customers",
+    "SHIPMENTS": "Shipments",
+    "REVİEWS": "Reviews",
+    "USERS": "Users",
+    "CATEGORIES": "Categories",
+    "INVENTORY": "Inventory",
+    "STORES": "Stores",
+    "REPORTS": "Reports",
+    "CONFIGURATION": "System Configuration",
+    "SETTINGS": "Settings",
+    "LOGIN/REGISTER": "Login / Register",
+    "LOGOUT":"Logout"
+  },
+
+  "AUTH":{
+    "LOGIN": "Login",
+    "REGISTER": "Register",
+    "EMAIL": "E-mail",
+    "PASSWORD": "Password",
+    "ACCOUNT_TYPE": "Account Type",
+    "REMEMBER": "Remember Me",
+    "INDIVIDUAL": "Individual User",
+    "CORPORATE": "Corporate User",
+    "NAME": "Name",
+    "SURNAME": "Surname",
+    "BIRTHDATE": "Birth Date",
+    "PHONE": "Phone Number",
+    "ADDRESS": "Address",
+    "WARNING_TEXT": "Fields marked with * are required!!!",
+    "WITH_EMAIL": "With email",
+    "WITH_PHONE": "With phone number"
+  },
+
+  "SETTINGS":{
+    "TITLE": "SETTINGS",
+    "USER_SETTINGS": "User Settings",
+    "APP_SETTINGS": "App Settings",
+    "LOGIN_REQUIRED": "You must be logged in as a member to view this section.",
+    "THEME": "Theme",
+    "DARK": "Dark",
+    "LIGHT": "Light",
+    "LANGUAGE": "Language",
+    "FONT_SIZE": "Font Size",
+    "LARGE": "Large",
+    "MEDIUM": "Medium",
+    "SMALL": "Small",
+    "SAVE_CHANGES": "Save Changes",
+    "UNSAVED":{
+      "TITLE":"You have unsaved changes.",
+      "SAVE":"Save And Exit",
+      "DISCARD":"Exit Without Save",
+      "STAY":"Stay On Page"
+    }
+  },
+
+  "PAGE-NOT-FOUND":{
+    "TITLE": "ERROR",
+    "DESCRIPTION": "The page you're looking for was not found....",
+    "LINK": "Click to return to the Homepage"
+  },
+
+  "ACCESS-DENIED":{
+    "TITLE":"ERROR",
+    "DESCRIPTION": "You do not have permission to access this page....",
+    "LINK":"Click to return to the Homepage"
+  },
+
+  "PRODUCTS":{
+    "DETAIL": "Details"
+  },
+
+  "HOME":{
+    "WELCOME":"WELCOME"
+  },
+
+  "PRODUCT-DETAIL":{
+    "PRICE": "Price",
+    "BRAND": "Brand",
+    "STORE": "Store",
+    "ADD-CART": "Add to Cart",
+    "RATING": "Rating",
+    "ADD-WISHLIST": "Add to Wishlist",
+    "DESCRIPTION":"Description",
+    "CATEGORY": "Category",
+    "STOCK": "Stock",
+    "SOLD": "This product has sold {{count}} units."
+  }
+
+}
