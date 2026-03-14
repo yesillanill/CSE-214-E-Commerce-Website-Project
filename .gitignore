@@ -1,5 +1,5 @@
 # Angular specific
-/dist/
+dist/
 /out-tsc/
 /tmp/
 /coverage/
@@ -8,9 +8,6 @@
 .angular/
 
 # Node modules and dependency files
-/node_modules/
-/package-lock.json
-/yarn.lock
 
 # Environment files
 /.env
@@ -34,9 +31,12 @@ yarn-error.log*
 /bazel-out
 
 # Node
-/node_modules
+node_modules/
 npm-debug.log
 yarn-error.log
+.editorconfig
+.prettierrc
+
 
 # IDEs and editors
 .idea/
