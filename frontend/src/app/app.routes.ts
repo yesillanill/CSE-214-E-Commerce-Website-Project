@@ -17,7 +17,7 @@ import { roleGuard } from './core/guards/role-guard';
 import { AccessDenied } from './components/pages/access-denied/access-denied';
 import { pendingChangesGuard } from './core/guards/pending-changes-guard';
 import { Home } from './components/pages/home/home';
-import { ProductDetail } from './components/pages/product-detail/product-detail';
+import { ProductDetailPage } from './components/pages/product-detail/product-detail';
 import { Cart } from './components/pages/cart/cart'
 import { Wishlist } from './components/pages/wishlist/wishlist';
 import { Products } from './components/pages/products/products';
@@ -38,6 +38,7 @@ export const routes: Routes = [
   {path:"products/brand/:name", component: Products, data: {type: 'brand'}},
   {path:"products/store/:name", component: Products, data: {type: 'store'}},
   {path:"products/category/:name", component: Products, data: {type: 'category'}},
+  {path:"products/:id", component: ProductDetailPage},
   {path: 'products', component: Products, data: { type: 'all' } },
   {path:"auth", component: Auth},
   {path:"settings", component: Settings, canDeactivate: [pendingChangesGuard]},

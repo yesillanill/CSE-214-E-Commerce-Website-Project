@@ -1,1 +1,7 @@
-<p>wishlist works!</p>
+<h1>Wishlist</h1>
+@for(item of wishlist.getWishlist(); track item.id){
+  <app-product-card [product]="item"></app-product-card>
+}
+
+
+

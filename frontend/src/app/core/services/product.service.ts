@@ -21,11 +21,11 @@ export class ProductService {
   }
 
   getProductsByBrand(name: string): Observable<ProductList[]>{
-    return this.http.get<ProductList[]>(`${this.api}/${name}`)
+    return this.http.get<ProductList[]>(`${this.api}/brand/${name}`)
   }
 
   getProductsByCategory(name: string): Observable<ProductList[]>{
-    return this.http.get<ProductList[]>(`${this.api}/${name}`)
+    return this.http.get<ProductList[]>(`${this.api}/category/${name}`)
   }
 
   getProductsByStore(name: string): Observable<ProductList[]>{
@@ -42,6 +42,10 @@ export class ProductService {
 
   deleteProduct(id: number){
     this.http.delete(`${this.api}/${id}`);
+  }
+
+  getCategories(): Observable<string[]>{
+    return this.http.get<string[]>(`${this.api}/categories`);
   }
 }
 

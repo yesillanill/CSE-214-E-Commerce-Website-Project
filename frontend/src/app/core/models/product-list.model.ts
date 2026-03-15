@@ -4,4 +4,6 @@ export interface ProductList{
   price: number;
   rating: number;
   img: string;
+  categoryName: string;
+  brandName: string;
 }

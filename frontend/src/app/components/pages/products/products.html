@@ -1,24 +1,128 @@
 <div class="home-container">
-  <div class="home-title">
+  <!-- Header with Search -->
+  <div class="products-header">
     <h1>{{ title }}</h1>
+    <div class="search-bar-container">
+      <div class="search-wrapper">
+        <span class="search-icon">🔍</span>
+        <input 
+          type="text" 
+          (input)="updateSearch($event)"
+          class="search-input"
+        />
+      </div>
+    </div>
   </div>
 
+  <!-- Toolbar: Filter and Sort side-by-side -->
+  <div class="products-toolbar">
+    <div class="toolbar-left">
+      <!-- Filter Dropdown -->
+      <div class="dropdown-wrapper">
+        <button (click)="toggleFilters()" class="toolbar-btn" [class.active]="isFilterOpen">
+          {{ (isFilterOpen ? 'PRODUCTS.CLOSE_FILTERS'  : 'PRODUCTS.OPEN_FILTERS') | translate }}
+        </button>
+        
+        <div class="filters-dropdown custom-dropdown" [class.open]="isFilterOpen">
+          <div class="filter-section">
+            <h3>Kategoriler</h3>
+            <div class="category-list">
+              <button 
+                *ngIf="!isCategoryPage"
+                (click)="updateCategory('all')" 
+                [class.selected]="(selectedCategory$ | async) === 'all'">
+                Tümü
+              </button>
+              <button 
+                *ngFor="let cat of (categories$ | async)" 
+                (click)="updateCategory(cat)"
+                [class.selected]="(selectedCategory$ | async) === cat"
+                [disabled]="isCategoryPage && cat !== currentCategory"
+                [class.faded]="isCategoryPage && cat !== currentCategory">
+                {{ cat }}
+              </button>
+            </div>
+          </div>
+
+          <div class="filter-section">
+            <h3>Fiyat Aralığı</h3>
+            <div class="dual-range-slider refined-slider">
+              <input type="range" min="0" max="10000" step="100" [value]="minPrice$ | async" (input)="updateMinPrice($event)" class="min-range">
+              <input type="range" min="0" max="10000" step="100" [value]="maxPrice$ | async" (input)="updateMaxPrice($event)" class="max-range">
+              <div class="range-labels">
+                <span>{{ minPrice$ | async }} TL</span> - <span>{{ maxPrice$ | async }} TL</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="filter-section">
+            <h3>Minimum Rating</h3>
+            <div class="slider-wrapper refined-slider">
+              <input type="range" min="0" max="5" step="0.5" [value]="minRating$ | async" (input)="updateRating($event)">
+              <div class="range-labels">
+                <span>{{ minRating$ | async }} ★</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Custom Sort Dropdown -->
+      <div class="dropdown-wrapper">
+        <button (click)="toggleSort()" class="toolbar-btn" [class.active]="isSortOpen">
+          {{'PRODUCTS.SORT' | translate}}
+        </button>
+
+        <div class="sort-dropdown custom-dropdown" [class.open]="isSortOpen">
+          <div 
+            class="sort-option" 
+            *ngFor="let opt of [
+              {v:'default', l:'PRODUCTS.SORT_DEFAULT'},
+              {v:'name-asc', l:'PRODUCTS.SORT_NAME_ASC'},
+              {v:'name-desc', l:'PRODUCTS.SORT_NAME_DESC'},
+              {v:'price-asc', l:'PRODUCTS.SORT_PRICE_ASC'},
+              {v:'price-desc', l:'PRODUCTS.SORT_PRICE_DESC'},
+              {v:'rating-desc', l:'PRODUCTS.SORT_RATING_DESC'},
+              {v:'rating-asc', l:'PRODUCTS.SORT_RATING_ASC'}
+            ]"
+            (click)="selectSort(opt.v)"
+            [class.selected]="(sortOption$ | async) === opt.v">
+            {{ opt.l | translate }}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Product Grid -->
   <div class="products-layout">
-    <div class="products-grid" *ngIf="products$ | async as products; else loading">
+    <div class="products-grid" *ngIf="filteredProducts$ | async as products; else loading">
       <app-product-card
         *ngFor="let product of products"
         [product]="product">
       </app-product-card>
 
-      <p *ngIf="products.length === 0">Aradığınız kriterde ürün bulunamadı.</p>
+      <div class="empty-state" *ngIf="products.length === 0">
+        <p>Aradığınız kriterde ürün bulunamadı.</p>
+      </div>
     </div>
 
     <ng-template #loading>
-      <div class="spinner">Yükleniyor...</div>
+      <app-loading-spinner></app-loading-spinner>
     </ng-template>
   </div>
+
+  <!-- Floating Action Buttons -->
+  <div class="floating-actions-container">
+    <div class="floating-actions-row">
+      <a routerLink="/wishlist" class="floating-btn wishlist-btn" title="Wishlist">
+        <span class="icon">❤</span>
+        <span class="count" *ngIf="wishlistService.getWishlist().length > 0">{{ wishlistService.getWishlist().length }}</span>
+      </a>
+      <a routerLink="/cart" class="floating-btn cart-btn" title="Sepet">
+        <span class="price">{{ cartService.getTotal() | number:'1.2-2' }} TL</span>
+        <span class="icon">🛒</span>
+      </a>
+    </div>
+  </div>
 </div>
-
-
-
-
