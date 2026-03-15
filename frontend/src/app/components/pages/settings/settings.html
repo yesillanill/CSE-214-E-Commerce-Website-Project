@@ -1,1 +1,85 @@
-<p>settings works!</p>
+<div class="settings-container">
+
+  <h1>{{'SETTINGS.TITLE' | translate}}</h1>
+
+  <div class="settings-card">
+    <h2 class="card-title">{{'SETTINGS.USER_SETTINGS' | translate}}</h2>
+    @if(auth.currentUser$ | async; as user){
+      <form [formGroup]="userForm" (ngSubmit)="onUserSubmitAsync()">
+        <div class="row mb-4">
+          <div class="form-group col-md-6 mb-3">
+            <label>{{'AUTH.NAME' | translate}}</label>
+            <input type="text" formControlName="name" class="form-control">
+          </div>
+          <div class="form-group col-md-6 mb-3">
+            <label>{{'AUTH.SURNAME' | translate}}</label>
+            <input type="text" formControlName="surname" class="form-control">
+          </div>
+          <div class="form-group col-md-4 mb-3">
+            <label>{{'AUTH.ACCOUNT_TYPE' | translate}}</label>
+            <input type="text" formControlName="role" class="form-control">
+          </div>
+          <div class="form-group col-md-4 mb-3">
+            <label>{{'AUTH.BIRTHDATE' | translate}}</label>
+            <input type="date" formControlName="birthdate" class="form-control">
+          </div>
+          <div class="form-group col-md-4 mb-3">
+            <label>{{'AUTH.PASSWORD' | translate}}</label>
+            <input type="password" formControlName="password" class="form-control">
+          </div>
+
+          <div class="form-group col-md-6 mb-3">
+            <label>{{'AUTH.EMAIL' | translate}}</label>
+            <input type="email" formControlName="email" class="form-control">
+          </div>
+          <div class="form-group col-md-6 mb-3">
+            <label>{{'AUTH.PHONE' | translate}}</label>
+            <input type="tel" formControlName="phone" class="form-control">
+          </div>
+          <div class="form-group col-12 mb-3">
+            <label>{{'AUTH.ADDRESS' | translate}}</label>
+            <textarea formControlName="address" class="form-control address-textarea"></textarea>
+          </div>
+          <div class="custom-submit-btn"
+              [class.disabled-btn]="!userForm || userForm.invalid"
+              (click)="userForm && !userForm.invalid && onUserSubmitAsync()">
+              {{ 'SETTINGS.SAVE_CHANGES' | translate }}
+          </div>
+        </div>
+      </form>
+    } @else {
+      <div class="unauthorized-state">
+        <p class="warning-text">{{'SETTINGS.LOGIN_REQUIRED' | translate}}</p>
+      </div>
+    }
+  </div>
+
+  <div class="settings-card">
+    <h2 class="card-title">{{ 'SETTINGS.APP_SETTINGS' | translate }}</h2>
+    <div class="row">
+      <div class="col-md-4 mb-4">
+        <label class="d-block mb-2">{{ 'SETTINGS.THEME' | translate }}</label>
+        <select [value]="(themeService.theme$ | async) || 'light'" (change)="updateTheme($any($event.target).value)" class="form-control">
+          <option value="light">{{ 'SETTINGS.LIGHT' | translate }}</option>
+          <option value="dark">{{ 'SETTINGS.DARK' | translate }}</option>
+        </select>
+      </div>
+      <div class="col-md-4 mb-4">
+        <label class="d-block mb-2">{{ 'SETTINGS.LANGUAGE' | translate }}</label>
+        <select [value]="(appService.lang$ | async) || 'tr'" (change)="updateLang($any($event.target).value)" class="form-control">
+          <option value="tr">Türkçe</option>
+          <option value="en">English</option>
+        </select>
+      </div>
+      <div class="col-md-4 mb-4">
+        <label class="d-block mb-2">{{ 'SETTINGS.FONT_SIZE' | translate }}</label>
+        <select [value]="(appService.font$ | async) || 'medium'" (change)="updateFont($any($event.target).value)" class="form-control">
+          <option value="small">{{ 'SETTINGS.SMALL' | translate }}</option>
+          <option value="medium">{{ 'SETTINGS.MEDIUM' | translate }}</option>
+          <option value="large">{{ 'SETTINGS.LARGE' | translate }}</option>
+        </select>
+      </div>
+    </div>
+  </div>
+</div>
+
