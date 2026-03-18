@@ -4,8 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
-@Getter
-@Setter
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name="stores")
@@ -13,15 +12,28 @@ public class Store {
 
     @Id
     @Column(name="store_id")
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name="owner_id")
-    private int ownerId;
-
     @Column(name="store_name")
-    private String name;
+    private String storeName;
 
     @Column(name="description")
     private String description;
+
+    @Column(name="company_name")
+    private String companyName;
+
+    @Column(name="tax_number")
+    private String taxNumber;
+
+    @Column(name="tax_office")
+    private String taxOffice;
+
+    @Column(name="company_address")
+    private String componyAddress;
+
+    @OneToOne
+    @JoinColumn(name="owner_id")
+    private User owner;
 }

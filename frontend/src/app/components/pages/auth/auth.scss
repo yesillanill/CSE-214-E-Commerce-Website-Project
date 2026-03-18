@@ -161,6 +161,24 @@
     }
   }
 
+  .customer-types {
+    display: flex;
+    align-items: center;
+    justify-content: space-evenly;
+    cursor: pointer;
+    margin-bottom: 5%;
+
+    .button {
+      background: none;
+      border: none;
+      color: var(--text-color);
+      font-weight: 250;
+      &.active {
+        font-weight: 500;
+      }
+    }
+  }
+
   .form-check {
     padding: 0;
     display: flex;

@@ -3,7 +3,7 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TranslateModule } from '@ngx-translate/core';
 import { ChangeDetectorRef } from '@angular/core';
 
 @Component({
@@ -18,6 +18,7 @@ export class Auth {
   isLoginMode = true;
   errorMessage = '';
   loginMethod: 'email' | 'phone' = 'email';
+  customerType: 'individual' | 'corporate' = 'individual';
 
   constructor(
     private fb: FormBuilder,

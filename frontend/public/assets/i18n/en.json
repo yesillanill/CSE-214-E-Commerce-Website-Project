@@ -40,7 +40,9 @@
     "ADDRESS": "Address",
     "WARNING_TEXT": "Fields marked with * are required!!!",
     "WITH_EMAIL": "With email",
-    "WITH_PHONE": "With phone number"
+    "WITH_PHONE": "With phone number",
+    "INDIVIDUAL-REGISTER": "As an Individual User",
+    "CORPORATE-REGISTER": "As an Corporate User"
   },
 
   "SETTINGS":{

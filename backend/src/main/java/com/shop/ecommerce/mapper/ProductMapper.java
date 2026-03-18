@@ -22,7 +22,7 @@ public class ProductMapper {
         dto.setPrice(product.getPrice());
         dto.setRating(product.getRating());
         dto.setBrandName(product.getBrand().getName());
-        dto.setStoreName(product.getStore().getName());
+        dto.setStoreName(product.getStore().getStoreName());
         dto.setCategoryName(product.getCategory().getName());
         dto.setStock(product.getInventory().getStock());
         dto.setImg(product.getImg());
@@ -36,7 +36,7 @@ public class ProductMapper {
         dto.setDescription(product.getDescription());
         dto.setPrice(product.getPrice());
         dto.setBrandName(product.getBrand().getName());
-        dto.setStoreName(product.getStore().getName());
+        dto.setStoreName(product.getStore().getStoreName());
         dto.setCategoryName(product.getCategory().getName());
         dto.setStock(product.getInventory().getStock());
         dto.setImg(product.getImg());

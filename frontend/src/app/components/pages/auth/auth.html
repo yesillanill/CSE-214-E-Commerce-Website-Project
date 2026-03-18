@@ -25,7 +25,16 @@
     <form [formGroup]="authForm" (ngSubmit)="onSubmit()">
 
       @if(!isLoginMode){
-        <div class="row">
+        <div class="customer-types">
+          <div class="button" (click)="customerType = 'individual'" [class.active]="customerType === 'individual'">
+            {{'AUTH.INDIVIDUAL-REGISTER' | translate}}
+          </div>
+          <div class="button" (click)="customerType = 'corporate'" [class.active]="customerType === 'corporate'">
+            {{'AUTH.CORPORATE-REGISTER' | translate}}
+          </div>
+        </div>
+        @if(!isLoginMode && customerType==='individual'){
+          <div class="row">
           <div class="form-group col-md-6">
             <label>*{{'AUTH.NAME' | translate}}</label>
             <input type="text" formControlName="name" class="form-control" placeholder="">
@@ -35,6 +44,9 @@
             <input type="text" formControlName="surname" class="form-control" placeholder="">
           </div>
         </div>
+        } @else {
+
+        }
       }
 
       <div class="row">

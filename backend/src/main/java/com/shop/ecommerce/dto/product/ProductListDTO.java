@@ -2,8 +2,7 @@ package com.shop.ecommerce.dto.product;
 
 import lombok.*;
 
-@Getter
-@Setter
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class ProductListDTO {
