@@ -17,6 +17,7 @@ public class ProductMapper {
 
     public static ProductDetailDTO toDetailDTO(Product product){
         ProductDetailDTO dto = new ProductDetailDTO();
+        dto.setId(product.getId());
         dto.setName(product.getName());
         dto.setDescription(product.getDescription());
         dto.setPrice(product.getPrice());
@@ -54,14 +55,11 @@ public class ProductMapper {
     }
 
     public static Product toEntity(ProductCreateDTO dto){
-
         Product product = new Product();
-
         product.setName(dto.getName());
         product.setDescription(dto.getDescription());
         product.setPrice(dto.getPrice());
         product.setImg(dto.getImg());
-
         return product;
     }
 }

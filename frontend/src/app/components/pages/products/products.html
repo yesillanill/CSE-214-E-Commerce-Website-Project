@@ -113,7 +113,8 @@
   </div>
 
   <!-- Floating Action Buttons -->
-  <div class="floating-actions-container">
+  @if(!auth.isAdmin() && !auth.isCorporateUser()) {
+    <div class="floating-actions-container">
     <div class="floating-actions-row">
       <a routerLink="/wishlist" class="floating-btn wishlist-btn" title="Wishlist">
         <span class="icon">❤</span>
@@ -124,5 +125,6 @@
         <span class="icon">🛒</span>
       </a>
     </div>
-  </div>
+    </div>
+  }
 </div>

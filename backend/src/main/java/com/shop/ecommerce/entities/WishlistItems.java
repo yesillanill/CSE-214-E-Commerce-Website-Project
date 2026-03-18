@@ -9,25 +9,25 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name="wishlist_items")
+@Table(name = "wishlist_items")
 public class WishlistItems {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name="id")
+    @Column(name = "id")
     private Long id;
 
-    @Column(name="wishlist_id")
+    @Column(name = "wishlist_id", insertable = false, updatable = false)
     private Long wishlistId;
 
-    @Column(name="product_id")
+    @Column(name = "product_id", insertable = false, updatable = false)
     private Long productId;
 
-    @OneToOne
-    @JoinColumn(name="wishlist_id")
+    @ManyToOne
+    @JoinColumn(name = "wishlist_id")
     private Wishlist wishlist;
 
-    @OneToOne
-    @JoinColumn(name="product_id")
+    @ManyToOne
+    @JoinColumn(name = "product_id")
     private Product product;
 }

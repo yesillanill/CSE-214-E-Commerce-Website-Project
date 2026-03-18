@@ -3,6 +3,8 @@ package com.shop.ecommerce.entities;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.math.BigDecimal;
+
 @Entity
 @Data
 @NoArgsConstructor
@@ -32,6 +34,9 @@ public class Store {
 
     @Column(name="company_address")
     private String componyAddress;
+
+    @Column(name="total_revenue", precision = 15, scale = 2)
+    private BigDecimal totalRevenue = BigDecimal.ZERO;
 
     @OneToOne
     @JoinColumn(name="owner_id")

@@ -5,6 +5,7 @@ import { ActivatedRoute, RouterLink } from '@angular/router';
 import { CartService } from '../../../core/services/cart.service';
 import { WishlistService } from '../../../core/services/wishlist.service';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { AuthService } from '../../../core/services/auth.service';
 
 import { CommonModule, DecimalPipe } from '@angular/common';
 import { LoadingSpinner } from '../../layout/loading-spinner/loading-spinner';
@@ -24,7 +25,8 @@ export class ProductDetailPage implements OnInit{
     private route: ActivatedRoute,
     private productService: ProductService,
     public cart: CartService,
-    public wishlist: WishlistService
+    public wishlist: WishlistService,
+    public auth: AuthService
   ){}
 
   ngOnInit(): void {

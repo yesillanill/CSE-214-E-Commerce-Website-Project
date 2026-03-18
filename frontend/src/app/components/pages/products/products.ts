@@ -9,6 +9,7 @@ import { LoadingSpinner } from '../../layout/loading-spinner/loading-spinner';
 import { TranslateModule } from '@ngx-translate/core';
 import { CartService } from '../../../core/services/cart.service';
 import { WishlistService } from '../../../core/services/wishlist.service';
+import { AuthService } from '../../../core/services/auth.service';
 
 @Component({
   selector: 'app-products',
@@ -41,7 +42,8 @@ export class Products implements OnInit {
     private productService: ProductService,
     public cartService: CartService,
     public wishlistService: WishlistService,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    public auth: AuthService
   ) {}
 
   ngOnInit() {

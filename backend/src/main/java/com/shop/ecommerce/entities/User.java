@@ -34,7 +34,7 @@ public class User {
     private String phone;
 
     @Column(name="role")
-    @Enumerated(EnumType.STRING)
+    @Convert(converter = com.shop.ecommerce.enums.RoleConverter.class)
     private Role role;
 
     @Column(name="created_at")

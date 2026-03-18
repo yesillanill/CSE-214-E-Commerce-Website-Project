@@ -4,6 +4,7 @@ import { CartService } from '../../../core/services/cart.service';
 import { WishlistService } from '../../../core/services/wishlist.service';
 import { Router, RouterLink } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { AuthService } from '../../../core/services/auth.service';
 
 @Component({
   selector: 'app-product-card',
@@ -13,7 +14,7 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 })
 export class ProductCard {
   @Input() product!: ProductList;
-  constructor(public cart: CartService, public wishlist: WishlistService){}
+  constructor(public cart: CartService, public wishlist: WishlistService, public auth: AuthService){}
 
   addToCart(){
     this.cart.add(this.product);

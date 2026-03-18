@@ -1,20 +1,18 @@
-import { USERS } from './../mock-data/user.mock';
 import { UserRole } from '../models/role.model';
 import { Injectable } from '@angular/core';
 import { User } from '../models/user.model';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, Observable, tap } from 'rxjs';
+import { HttpClient } from '@angular/common/http';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AuthService {
+  private apiUrl = 'http://localhost:8080/api/auth';
   private currentUserSubject = new BehaviorSubject<User | null>(null);
   public currentUser$ = this.currentUserSubject.asObservable();
 
-  // Mock kullanıcılar
-  private users: User[] = USERS;
-
-  constructor() {
+  constructor(private http: HttpClient) {
     this.loadUserFromStorage();
   }
 
@@ -31,29 +29,47 @@ export class AuthService {
   }
 
   isAdmin(): boolean {
-    return this.currentUserSubject.value?.role === "Admin";
+    const role = this.currentUserSubject.value?.role as string | undefined;
+    return role === "Admin" || role === "ADMIN";
   }
 
   isCorporateUser(): boolean {
-    return this.currentUserSubject.value?.role === "CorporateUser";
+    const role = this.currentUserSubject.value?.role as string | undefined;
+    return role === "CorporateUser" || role === "CORPORATE" || role === "STORE";
   }
 
   isIndividualUser(): boolean {
-    return this.currentUserSubject.value?.role === "IndividualUser";
+    const role = this.currentUserSubject.value?.role as string | undefined;
+    return role === "IndividualUser" || role === "INDIVIDUAL";
   }
 
-  login(user: User, remember: boolean) {
-    this.currentUserSubject.next(user);
+  loginWithEmail(loginDto: any, remember: boolean): Observable<User> {
+    return this.http.post<User>(`${this.apiUrl}/login/email`, loginDto).pipe(
+      tap(user => this.handleAuthentication(user, remember))
+    );
+  }
 
+  loginWithPhone(loginDto: any, remember: boolean): Observable<User> {
+    return this.http.post<User>(`${this.apiUrl}/login/phone`, loginDto).pipe(
+      tap(user => this.handleAuthentication(user, remember))
+    );
+  }
+
+  registerIndividual(registerDto: any): Observable<User> {
+    return this.http.post<User>(`${this.apiUrl}/register/individual`, registerDto);
+  }
+
+  registerStore(registerDto: any): Observable<User> {
+    return this.http.post<User>(`${this.apiUrl}/register/store`, registerDto);
+  }
+
+  private handleAuthentication(user: User, remember: boolean) {
+    this.currentUserSubject.next(user);
     if (remember) {
       localStorage.setItem('user', JSON.stringify(user));
     } else {
       sessionStorage.setItem('user', JSON.stringify(user));
     }
-  }
-
-  register(user: User) {
-    this.users.push(user);
   }
 
   logout() {
@@ -75,9 +91,13 @@ export class AuthService {
   }
 
   updateUser(payload: Partial<User>) {
-    const current = this.currentUserSubject.value!;
-    const updated = { ...current, ...payload };
-    this.currentUserSubject.next(updated);
+    const current = this.currentUserSubject.value;
+    if (current) {
+      const updated = { ...current, ...payload } as User;
+      this.currentUserSubject.next(updated);
+      if (localStorage.getItem('user')) localStorage.setItem('user', JSON.stringify(updated));
+      if (sessionStorage.getItem('user')) sessionStorage.setItem('user', JSON.stringify(updated));
+    }
   }
 
   loadUserFromStorage() {
@@ -87,4 +107,3 @@ export class AuthService {
     }
   }
 }
-

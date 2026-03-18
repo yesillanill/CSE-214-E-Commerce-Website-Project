@@ -17,20 +17,20 @@ public class CartItem {
     @Column(name="id")
     private Long id;
 
-    @Column(name="cart_id")
+    @Column(name="cart_id", insertable=false, updatable=false)
     private Long cartId;
 
-    @Column(name="product_id")
+    @Column(name="product_id", insertable=false, updatable=false)
     private Long productId;
 
     @Column(name="quantity")
     private Integer quantity;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name="cart_id")
     private Cart cart;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name="product_id")
     private Product product;
 }

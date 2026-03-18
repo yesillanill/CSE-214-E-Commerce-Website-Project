@@ -13,10 +13,10 @@
 
     @if(isLoginMode){
         <div class="login-methods">
-          <div class="button" (click)="setLoginMehod('email')" [class.active]="loginMethod==='email'">
+          <div class="button" (click)="setLoginMethod('email')" [class.active]="loginMethod==='email'">
             {{'AUTH.WITH_EMAIL' | translate}}
           </div>
-          <div class="button" (click)="setLoginMehod('phone')" [class.active]="loginMethod==='phone'">
+          <div class="button" (click)="setLoginMethod('phone')" [class.active]="loginMethod==='phone'">
             {{'AUTH.WITH_PHONE' | translate}}
           </div>
         </div>
@@ -26,26 +26,56 @@
 
       @if(!isLoginMode){
         <div class="customer-types">
-          <div class="button" (click)="customerType = 'individual'" [class.active]="customerType === 'individual'">
+          <div class="button" (click)="setCustomerType('individual')" [class.active]="customerType === 'individual'">
             {{'AUTH.INDIVIDUAL-REGISTER' | translate}}
           </div>
-          <div class="button" (click)="customerType = 'corporate'" [class.active]="customerType === 'corporate'">
+          <div class="button" (click)="setCustomerType('corporate')" [class.active]="customerType === 'corporate'">
             {{'AUTH.CORPORATE-REGISTER' | translate}}
           </div>
         </div>
-        @if(!isLoginMode && customerType==='individual'){
-          <div class="row">
-          <div class="form-group col-md-6">
-            <label>*{{'AUTH.NAME' | translate}}</label>
-            <input type="text" formControlName="name" class="form-control" placeholder="">
-          </div>
-          <div class="form-group col-md-6">
-            <label>*{{'AUTH.SURNAME' | translate}}</label>
-            <input type="text" formControlName="surname" class="form-control" placeholder="">
-          </div>
-        </div>
-        } @else {
 
+        @if(customerType==='individual'){
+          <div class="row">
+            <div class="form-group col-md-6">
+              <label>*{{'AUTH.NAME' | translate}}</label>
+              <input type="text" formControlName="name" class="form-control" placeholder="">
+            </div>
+            <div class="form-group col-md-6">
+              <label>*{{'AUTH.SURNAME' | translate}}</label>
+              <input type="text" formControlName="surname" class="form-control" placeholder="">
+            </div>
+          </div>
+        } @else {
+          <div class="row">
+            <div class="form-group col-md-6">
+              <label>*{{'AUTH.NAME' | translate}}</label>
+              <input type="text" formControlName="name" class="form-control" placeholder="">
+            </div>
+            <div class="form-group col-md-6">
+              <label>*{{'AUTH.SURNAME' | translate}}</label>
+              <input type="text" formControlName="surname" class="form-control" placeholder="">
+            </div>
+          </div>
+          <div class="row">
+            <div class="form-group col-md-6">
+              <label>*Store Name</label>
+              <input type="text" formControlName="storeName" class="form-control" placeholder="">
+            </div>
+            <div class="form-group col-md-6">
+              <label>*Company Name</label>
+              <input type="text" formControlName="companyName" class="form-control" placeholder="">
+            </div>
+          </div>
+          <div class="row">
+            <div class="form-group col-md-6">
+              <label>*Tax Number</label>
+              <input type="text" formControlName="taxNumber" class="form-control" placeholder="">
+            </div>
+            <div class="form-group col-md-6">
+              <label>*Tax Office</label>
+              <input type="text" formControlName="taxOffice" class="form-control" placeholder="">
+            </div>
+          </div>
         }
       }
 
@@ -64,34 +94,43 @@
         }
       </div>
 
-
       <div class="row">
-        <div class="form-group" [class.col-md-4]="!isLoginMode" [class.col-12]="isLoginMode">
+        <div class="form-group" [class.col-md-6]="!isLoginMode" [class.col-12]="isLoginMode">
           <label>@if(!isLoginMode){*}{{'AUTH.PASSWORD' | translate}}</label>
           <input type="password" formControlName="password" class="form-control" placeholder="******">
         </div>
-        @if(!isLoginMode){
-          <div class="form-group col-md-4">
-            <label>*{{'AUTH.BIRTHDATE' | translate}}</label>
-            <input type="date" formControlName="birthDate" class="form-control" placeholder="14.01.2005">
-          </div>
-          <div class="form-group col-md-4 ">
-            <label>*{{'AUTH.ACCOUNT_TYPE' | translate}}</label>
-            <select formControlName="role" class="form-control">
-              <option  value="IndividualUser">{{'AUTH.INDIVIDUAL' | translate}}</option>
-              <option value="CorporateUser">{{'AUTH.CORPORATE' | translate}}</option>
-            </select>
-          </div>
-        }
       </div>
 
       @if(!isLoginMode){
-        <div class="row">
-          <div class="form-group col-12">
-            <label>{{'AUTH.ADDRESS' | translate}}</label>
-            <textarea formControlName="address" class="form-control" ></textarea>
+        @if(customerType==='individual'){
+          <div class="row">
+            <div class="form-group col-md-6">
+              <label>*Street</label>
+              <input type="text" formControlName="street" class="form-control" placeholder="">
+            </div>
+            <div class="form-group col-md-6">
+              <label>*City</label>
+              <input type="text" formControlName="city" class="form-control" placeholder="">
+            </div>
           </div>
-        </div>
+          <div class="row">
+            <div class="form-group col-md-6">
+              <label>*Postal Code</label>
+              <input type="text" formControlName="postalCode" class="form-control" placeholder="">
+            </div>
+            <div class="form-group col-md-6">
+              <label>*Country</label>
+              <input type="text" formControlName="country" class="form-control" placeholder="">
+            </div>
+          </div>
+        } @else {
+          <div class="row">
+            <div class="form-group col-12">
+              <label>*Company Address</label>
+              <textarea formControlName="companyAddress" class="form-control" ></textarea>
+            </div>
+          </div>
+        }
       }
 
       @if(!isLoginMode){
@@ -117,4 +156,3 @@
 
   </div>
 </div>
-

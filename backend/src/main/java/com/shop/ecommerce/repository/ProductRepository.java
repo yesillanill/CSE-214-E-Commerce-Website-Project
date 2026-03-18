@@ -1,15 +1,18 @@
 package com.shop.ecommerce.repository;
 
-import com.shop.ecommerce.entities.Brand;
-import com.shop.ecommerce.entities.Category;
 import com.shop.ecommerce.entities.Product;
-import com.shop.ecommerce.entities.Store;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
 
-public interface ProductRepository  extends JpaRepository<Product, Long> {
-    List<Product> findByStoreName(String  storeName);
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+
+public interface ProductRepository extends JpaRepository<Product, Long> {
+    @Query("SELECT p FROM Product p WHERE p.store.storeName = :storeName")
+    List<Product> findByStoreName(@Param("storeName") String storeName);
+
     List<Product> findByBrandName(String brandName);
+
     List<Product> findByCategoryName(String categoryName);
 }

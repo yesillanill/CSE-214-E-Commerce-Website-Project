@@ -17,7 +17,7 @@ public class Cart {
     @Column(name="cart_id")
     private Long cartId;
 
-    @Column(name="user_id")
+    @Column(name="user_id", insertable=false, updatable=false)
     private Long userId;
 
     @OneToOne
