@@ -3,13 +3,15 @@ package com.shop.ecommerce.mapper;
 import com.shop.ecommerce.dto.product.*;
 import com.shop.ecommerce.entities.Product;
 
+import java.math.BigDecimal;
+
 public class ProductMapper {
 
     public static ProductListDTO toListDTO(Product product){
         ProductListDTO dto = new ProductListDTO();
         dto.setId(product.getId());
         dto.setName(product.getName());
-        dto.setPrice(product.getPrice());
+        dto.setPrice(product.getPrice() != null ? product.getPrice().doubleValue() : null);
         dto.setRating(product.getRating());
         dto.setImg(product.getImg());
         dto.setStock(product.getInventory() != null ? product.getInventory().getStock() : 0);
@@ -21,7 +23,7 @@ public class ProductMapper {
         dto.setId(product.getId());
         dto.setName(product.getName());
         dto.setDescription(product.getDescription());
-        dto.setPrice(product.getPrice());
+        dto.setPrice(product.getPrice() != null ? product.getPrice().doubleValue() : null);
         dto.setRating(product.getRating());
         dto.setBrandName(product.getBrand().getName());
         dto.setStoreName(product.getStore().getStoreName());
@@ -36,7 +38,7 @@ public class ProductMapper {
         ProductCreateDTO dto = new ProductCreateDTO();
         dto.setName(product.getName());
         dto.setDescription(product.getDescription());
-        dto.setPrice(product.getPrice());
+        dto.setPrice(product.getPrice() != null ? product.getPrice().doubleValue() : null);
         dto.setBrandName(product.getBrand().getName());
         dto.setStoreName(product.getStore().getStoreName());
         dto.setCategoryName(product.getCategory().getName());
@@ -49,7 +51,7 @@ public class ProductMapper {
         ProductUpdateDTO dto = new ProductUpdateDTO();
         dto.setName(product.getName());
         dto.setDescription(product.getDescription());
-        dto.setPrice(product.getPrice());
+        dto.setPrice(product.getPrice() != null ? product.getPrice().doubleValue() : null);
         dto.setStock(product.getInventory().getStock());
         dto.setImg(product.getImg());
         return dto;
@@ -59,7 +61,7 @@ public class ProductMapper {
         Product product = new Product();
         product.setName(dto.getName());
         product.setDescription(dto.getDescription());
-        product.setPrice(dto.getPrice());
+        product.setPrice(dto.getPrice() != null ? BigDecimal.valueOf(dto.getPrice()) : null);
         product.setImg(dto.getImg());
         return product;
     }

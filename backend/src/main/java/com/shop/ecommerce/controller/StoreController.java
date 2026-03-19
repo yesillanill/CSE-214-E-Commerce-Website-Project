@@ -28,6 +28,6 @@ public class StoreController {
         if (store.isPresent()) {
             return ResponseEntity.ok(store.get());
         }
-        return ResponseEntity.ok(Map.of("error", "No store found"));
+        return ResponseEntity.status(404).body(Map.of("error", "No store found"));
     }
 }

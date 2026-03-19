@@ -27,14 +27,14 @@ public class Shipment {
     private Order order;
 
     @Column(name = "shipping_method")
-    @Enumerated(EnumType.STRING)
+    @Convert(converter = com.shop.ecommerce.enums.ShippingMethodConverter.class)
     private ShippingMethod shippingMethod;
 
     @Column(name = "shipping_cost", precision = 10, scale = 2)
     private BigDecimal shippingCost;
 
     @Column(name = "status")
-    @Enumerated(EnumType.STRING)
+    @Convert(converter = com.shop.ecommerce.enums.ShipmentStatusConverter.class)
     private ShipmentStatus status;
 
     @Column(name = "tracking_number")

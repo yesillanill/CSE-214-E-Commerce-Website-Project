@@ -30,7 +30,7 @@
   } @else {
     <div class="cart-summary">
       <h2>Total: {{cart.getTotal() | number:'1.2-2'}}$</h2>
-      <button class="checkout-btn">Checkout</button>
+      <button class="checkout-btn" (click)="checkout()">Checkout</button>
     </div>
   }
 </div>

@@ -27,11 +27,11 @@ public class Payment {
     private Order order;
 
     @Column(name = "payment_method")
-    @Enumerated(EnumType.STRING)
+    @Convert(converter = com.shop.ecommerce.enums.PaymentMethodConverter.class)
     private PaymentMethod paymentMethod;
 
     @Column(name = "payment_status")
-    @Enumerated(EnumType.STRING)
+    @Convert(converter = com.shop.ecommerce.enums.PaymentStatusConverter.class)
     private PaymentStatus paymentStatus;
 
     @Column(name = "amount", precision = 15, scale = 2)

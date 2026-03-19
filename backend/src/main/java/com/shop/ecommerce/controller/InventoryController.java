@@ -41,7 +41,7 @@ public class InventoryController {
         Product product = new Product();
         product.setName((String) body.get("name"));
         product.setDescription((String) body.get("description"));
-        product.setPrice(Double.parseDouble(body.get("price").toString()));
+        product.setPrice(new java.math.BigDecimal(body.get("price").toString()));
         product.setImg((String) body.get("img"));
 
         Store store = new Store();
@@ -76,7 +76,7 @@ public class InventoryController {
 
         if (body.containsKey("name")) product.setName((String) body.get("name"));
         if (body.containsKey("description")) product.setDescription((String) body.get("description"));
-        if (body.containsKey("price")) product.setPrice(Double.parseDouble(body.get("price").toString()));
+        if (body.containsKey("price")) product.setPrice(new java.math.BigDecimal(body.get("price").toString()));
         if (body.containsKey("img")) product.setImg((String) body.get("img"));
 
         if (body.containsKey("stock") && product.getInventory() != null) {

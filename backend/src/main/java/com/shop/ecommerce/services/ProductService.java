@@ -57,7 +57,7 @@ public class ProductService {
         Product product =  productRepository.findById(id).orElseThrow();
         product.setName(dto.getName());
         product.setDescription(dto.getDescription());
-        product.setPrice(dto.getPrice());
+        product.setPrice(dto.getPrice() != null ? java.math.BigDecimal.valueOf(dto.getPrice()) : null);
         product.setImg(dto.getImg());
         Product updatedProduct = productRepository.save(product);
         return ProductMapper.toDetailDTO(updatedProduct);

@@ -25,6 +25,15 @@ export class CartService {
     return this.cartSignal();
   }
 
+  refreshCart() {
+    const user = this.authService.getUser();
+    if (user) {
+      this.loadCart(user.id!);
+    } else {
+      this.cartSignal.set([]);
+    }
+  }
+
   private loadCart(userId: number) {
     this.http.get<CartItem[]>(`${this.apiUrl}/${userId}`).subscribe(items => {
       this.cartSignal.set(items);
@@ -74,7 +83,7 @@ export class CartService {
       this.remove(item);
       return;
     }
-    
+
     this.http.patch<CartItem>(`${this.apiUrl}/update/${item.id}?quantity=${item.quantity - 1}`, {})
       .subscribe(res => {
         this.cartSignal.update(cart => {

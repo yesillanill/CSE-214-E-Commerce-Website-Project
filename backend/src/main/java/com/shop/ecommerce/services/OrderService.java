@@ -1,23 +1,34 @@
 package com.shop.ecommerce.services;
 
+import com.shop.ecommerce.dto.order.CheckoutRequest;
 import com.shop.ecommerce.dto.order.OrderDTO;
 import com.shop.ecommerce.dto.order.OrderItemDTO;
 import com.shop.ecommerce.entities.*;
-import com.shop.ecommerce.repository.OrderRepository;
-import com.shop.ecommerce.repository.UserRepository;
+import com.shop.ecommerce.enums.PaymentMethod;
+import com.shop.ecommerce.enums.PaymentStatus;
+import com.shop.ecommerce.enums.ShipmentStatus;
+import com.shop.ecommerce.enums.ShippingMethod;
+import com.shop.ecommerce.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class OrderService {
 
     private final OrderRepository orderRepository;
     private final UserRepository userRepository;
+    private final CartRepository cartRepository;
+    private final CartItemRepository cartItemRepository;
+    private final ProductRepository productRepository;
 
     public Page<OrderDTO> getOrdersByUser(Long userId, Pageable pageable) {
         User user = userRepository.findById(userId)
@@ -27,6 +38,68 @@ public class OrderService {
 
     public Page<OrderDTO> getOrdersByStore(Long storeId, Pageable pageable) {
         return orderRepository.findByStoreId(storeId, pageable).map(this::toDTO);
+    }
+
+    @Transactional
+    public OrderDTO checkout(CheckoutRequest request) {
+        User user = userRepository.findById(request.getUserId())
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        Cart cart = cartRepository.findByUserId(user.getId())
+                .orElseThrow(() -> new RuntimeException("Cart not found"));
+
+        List<CartItem> cartItems = cartItemRepository.findByCartId(cart.getCartId());
+        if (cartItems.isEmpty()) {
+            throw new RuntimeException("Cart is empty");
+        }
+
+        // Create the order
+        Order order = new Order();
+        order.setUser(user);
+        order.setShippingAddress(request.getShippingAddress());
+        order = orderRepository.save(order);
+
+        // Create order items from cart items
+        BigDecimal grandTotal = BigDecimal.ZERO;
+        for (CartItem cartItem : cartItems) {
+            Product product = cartItem.getProduct();
+            BigDecimal price = product.getPrice();
+
+            OrderItem orderItem = new OrderItem();
+            orderItem.setOrder(order);
+            orderItem.setProduct(product);
+            orderItem.setPrice(price);
+            orderItem.setQuantity(cartItem.getQuantity());
+            order.getOrderItems().add(orderItem);
+
+            grandTotal = grandTotal.add(price.multiply(BigDecimal.valueOf(cartItem.getQuantity())));
+        }
+
+        order.setGrandTotal(grandTotal);
+
+        // Create payment record
+        Payment payment = new Payment();
+        payment.setOrder(order);
+        payment.setAmount(grandTotal);
+        payment.setPaymentMethod(PaymentMethod.CREDIT_CARD);
+        payment.setPaymentStatus(PaymentStatus.PENDING);
+        order.setPayment(payment);
+
+        // Create shipment record
+        Shipment shipment = new Shipment();
+        shipment.setOrder(order);
+        shipment.setShippingMethod(ShippingMethod.STANDARD);
+        shipment.setShippingCost(BigDecimal.ZERO);
+        shipment.setStatus(ShipmentStatus.PROCESSING);
+        shipment.setEstimatedDelivery(LocalDate.now().plusDays(7));
+        order.setShipment(shipment);
+
+        order = orderRepository.save(order);
+
+        // Clear the cart
+        cartItemRepository.deleteByCartId(cart.getCartId());
+
+        return toDTO(order);
     }
 
     private OrderDTO toDTO(Order order) {
@@ -63,9 +136,15 @@ public class OrderService {
     private OrderItemDTO toItemDTO(OrderItem item) {
         OrderItemDTO dto = new OrderItemDTO();
         dto.setId(item.getId());
-        dto.setUnitPrice(item.getPrice());
+        BigDecimal unitPrice = item.getPrice();
+        if (unitPrice == null && item.getProduct() != null && item.getProduct().getPrice() != null) {
+            unitPrice = item.getProduct().getPrice();
+        }
+        dto.setUnitPrice(unitPrice);
         dto.setQuantity(item.getQuantity());
-        dto.setLineTotal(item.getPrice().multiply(BigDecimal.valueOf(item.getQuantity())));
+        dto.setLineTotal(unitPrice != null && item.getQuantity() != null
+                ? unitPrice.multiply(BigDecimal.valueOf(item.getQuantity()))
+                : BigDecimal.ZERO);
 
         if (item.getProduct() != null) {
             Product product = item.getProduct();

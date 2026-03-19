@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 
+import java.math.BigDecimal;
 import java.time.*;
 
 @Entity
@@ -24,8 +25,8 @@ public class Product {
     @Column(name="description", nullable = true)
     private String description;
 
-    @Column(name="price", nullable = false)
-    private Double price;
+    @Column(name="price", nullable = false, precision = 15, scale = 2)
+    private BigDecimal price;
 
     @ManyToOne
     @JoinColumn(name="brand_id")

@@ -16,7 +16,7 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
     Page<Order> findByUser(User user, Pageable pageable);
     List<Order> findByUser(User user);
 
-    @Query("SELECT o FROM Order o JOIN o.orderItems oi WHERE oi.product.store.id = :storeId")
+    @Query("SELECT DISTINCT o FROM Order o JOIN o.orderItems oi WHERE oi.product.store.id = :storeId")
     Page<Order> findByStoreId(@Param("storeId") Long storeId, Pageable pageable);
 
     @Query("SELECT COUNT(o) FROM Order o WHERE o.user.id = :userId")

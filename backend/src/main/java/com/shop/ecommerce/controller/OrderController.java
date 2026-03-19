@@ -1,5 +1,6 @@
 package com.shop.ecommerce.controller;
 
+import com.shop.ecommerce.dto.order.CheckoutRequest;
 import com.shop.ecommerce.dto.order.OrderDTO;
 import com.shop.ecommerce.services.OrderService;
 import lombok.RequiredArgsConstructor;
@@ -29,5 +30,10 @@ public class OrderController {
         Sort sort = sortDir.equalsIgnoreCase("asc") ? Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
         Pageable pageable = PageRequest.of(page, size, sort);
         return ResponseEntity.ok(orderService.getOrdersByUser(userId, pageable));
+    }
+
+    @PostMapping("/checkout")
+    public ResponseEntity<OrderDTO> checkout(@RequestBody CheckoutRequest request) {
+        return ResponseEntity.ok(orderService.checkout(request));
     }
 }
