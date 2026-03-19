@@ -37,20 +37,7 @@
     </div>
 
     <!-- Floating Action Buttons -->
-    @if(!auth.isAdmin() && !auth.isCorporateUser()) {
-      <div class="floating-actions-container">
-      <div class="floating-actions-row">
-        <a routerLink="/wishlist" class="floating-btn wishlist-btn" title="Wishlist">
-          <span class="icon">❤</span>
-          <span class="count" *ngIf="wishlist.getWishlist().length > 0">{{ wishlist.getWishlist().length }}</span>
-        </a>
-        <a routerLink="/cart" class="floating-btn cart-btn" title="Sepet">
-          <span class="price">{{ cart.getTotal() | number:'1.2-2' }} TL</span>
-          <span class="icon">🛒</span>
-        </a>
-      </div>
-      </div>
-    }
+
 
     <div class="empty-state" *ngIf="!product">
       <p>Ürün bulunamadı veya bir hata oluştu.</p>

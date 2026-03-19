@@ -112,19 +112,4 @@
     </ng-template>
   </div>
 
-  <!-- Floating Action Buttons -->
-  @if(!auth.isAdmin() && !auth.isCorporateUser()) {
-    <div class="floating-actions-container">
-    <div class="floating-actions-row">
-      <a routerLink="/wishlist" class="floating-btn wishlist-btn" title="Wishlist">
-        <span class="icon">❤</span>
-        <span class="count" *ngIf="wishlistService.getWishlist().length > 0">{{ wishlistService.getWishlist().length }}</span>
-      </a>
-      <a routerLink="/cart" class="floating-btn cart-btn" title="Sepet">
-        <span class="price">{{ cartService.getTotal() | number:'1.2-2' }} TL</span>
-        <span class="icon">🛒</span>
-      </a>
-    </div>
-    </div>
-  }
 </div>
