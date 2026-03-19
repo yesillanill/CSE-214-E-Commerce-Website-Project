@@ -40,6 +40,8 @@ export class Auth implements OnInit {
       city: [''],
       postalCode: [''],
       country: [''],
+      gender: [''],
+      birthDate: [''],
       // Corporate fields
       storeName: [''],
       companyName: [''],
@@ -78,7 +80,9 @@ export class Auth implements OnInit {
           street: this.authForm.value.street,
           city: this.authForm.value.city,
           postalCode: this.authForm.value.postalCode,
-          country: this.authForm.value.country
+          country: this.authForm.value.country,
+          gender: this.authForm.value.gender,
+          birthDate: this.authForm.value.birthDate
         };
         this.auth.registerIndividual(dto).subscribe({
           next: () => this.handleRegisterSuccess(),
@@ -150,7 +154,7 @@ export class Auth implements OnInit {
       this.authForm.get('phone')?.addValidators([Validators.pattern('^[0-9]+$')]);
 
       if (this.customerType === 'individual') {
-        const indReq = ['street', 'city', 'postalCode', 'country'];
+        const indReq = ['street', 'city', 'postalCode', 'country', 'gender', 'birthDate'];
         indReq.forEach(f => this.authForm.get(f)?.setValidators([Validators.required]));
       } else {
         const corpReq = ['storeName', 'companyName', 'taxNumber', 'taxOffice', 'companyAddress'];

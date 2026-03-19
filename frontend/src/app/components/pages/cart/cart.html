@@ -1,12 +1,36 @@
-@for(item of cart.getCart(); track item.product.id){
-  <div>
-    <h3>{{item.product.name}}</h3>
-    <button (click)="cart.decrease(item)">-</button>
-    {{item.quantity}}
-    <button (click)="cart.increase(item)">+</button>
-    <span>{{item.product.price * item.quantity}}</span>
+<div class="cart-container">
+  <h2>{{"PRODUCTS.CART" | translate}}</h2>
+  
+  <div class="products-grid">
+    @for(item of cart.getCart(); track item.product.id){
+      <div class="product-card">
+        <img [src]="item.product.img">
+        <h3>{{item.product.name}}</h3>
+        <div class="product-details">
+          <p>{{item.product.price}}$</p>
+          <p>Total: {{item.product.price * item.quantity}}$</p>
+        </div>
+        <div class="product-actions">
+           <a [routerLink]="['/products',item.product.id]">{{"PRODUCTS.DETAIL" | translate}}</a>
+           
+           <div class="qty-controls">
+              <button class="qty-btn" (click)="cart.decrease(item)">-</button>
+              <span class="qty">{{item.quantity}}</span>
+              <button class="qty-btn" (click)="cart.increase(item)" [disabled]="item.quantity >= item.product.stock">+</button>
+           </div>
+        </div>
+      </div>
+    }
   </div>
-}
 
-<h2>Total: {{cart.getTotal()}}</h2>
-<button>Checkout</button>
+  @if (cart.getCart().length === 0) {
+    <div class="empty-state">
+      <p>Your cart is empty.</p>
+    </div>
+  } @else {
+    <div class="cart-summary">
+      <h2>Total: {{cart.getTotal() | number:'1.2-2'}}$</h2>
+      <button class="checkout-btn">Checkout</button>
+    </div>
+  }
+</div>

@@ -25,6 +25,7 @@ public class AuthMapper {
     public static IndividualCustomer toIndividualCustomerEntity(IndividualRegisterDTO dto, User user) {
         IndividualCustomer customer = new IndividualCustomer();
         customer.setGender(dto.getGender());
+        customer.setBirthDate(dto.getBirthDate());
         customer.setStreet(dto.getStreet());
         customer.setPostalCode(dto.getPostalCode());
         customer.setCountry(dto.getCountry());

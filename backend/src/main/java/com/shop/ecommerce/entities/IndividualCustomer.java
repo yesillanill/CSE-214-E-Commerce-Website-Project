@@ -9,6 +9,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 
 @Entity
 @Data
@@ -18,13 +19,15 @@ import java.math.BigDecimal;
 public class IndividualCustomer {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_id")
     private Long id;
 
     @Column(name = "gender")
     @Enumerated(EnumType.STRING)
     private Gender gender;
+
+    @Column(name = "birth_date")
+    private LocalDate birthDate;
 
     @Column(name = "street")
     private String street;
@@ -56,6 +59,7 @@ public class IndividualCustomer {
     private SatisfactionLevel satisfactionLevel;
 
     @OneToOne
+    @MapsId
     @JoinColumn(name = "user_id")
     private User user;
 }

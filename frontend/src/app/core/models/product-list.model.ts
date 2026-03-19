@@ -6,4 +6,5 @@ export interface ProductList{
   img: string;
   categoryName: string;
   brandName: string;
+  stock: number;
 }

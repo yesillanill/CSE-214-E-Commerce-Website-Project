@@ -70,7 +70,11 @@ export class CartService {
 
   decrease(item: CartItem){
     if (!item.id) return;
-    if (item.quantity <= 1) return;
+    if (item.quantity <= 1) {
+      this.remove(item);
+      return;
+    }
+    
     this.http.patch<CartItem>(`${this.apiUrl}/update/${item.id}?quantity=${item.quantity - 1}`, {})
       .subscribe(res => {
         this.cartSignal.update(cart => {

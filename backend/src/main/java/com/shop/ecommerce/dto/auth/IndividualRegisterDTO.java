@@ -4,6 +4,7 @@ import com.shop.ecommerce.enums.Gender;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import java.time.LocalDate;
 
 @Data
 @NoArgsConstructor
@@ -19,4 +20,5 @@ public class IndividualRegisterDTO {
     private String city;
     private String postalCode;
     private String country;
+    private LocalDate birthDate;
 }

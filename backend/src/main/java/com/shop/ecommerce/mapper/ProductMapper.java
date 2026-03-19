@@ -12,6 +12,7 @@ public class ProductMapper {
         dto.setPrice(product.getPrice());
         dto.setRating(product.getRating());
         dto.setImg(product.getImg());
+        dto.setStock(product.getInventory() != null ? product.getInventory().getStock() : 0);
         return dto;
     }
 

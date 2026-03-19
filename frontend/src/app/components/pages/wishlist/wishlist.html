@@ -1,7 +1,15 @@
-<h1>Wishlist</h1>
-@for(item of wishlist.getWishlist(); track item.id){
-  <app-product-card [product]="item"></app-product-card>
-}
+<div class="wishlist-container">
+  <h2>{{"PRODUCTS.WISHLIST" | translate}}</h2>
+  
+  <div class="products-grid">
+    @for(item of wishlist.getWishlist(); track item.id){
+      <app-product-card [product]="item"></app-product-card>
+    }
+  </div>
 
-
-
+  @if (wishlist.getWishlist().length === 0) {
+    <div class="empty-state">
+      <p>Your wishlist is empty.</p>
+    </div>
+  }
+</div>
