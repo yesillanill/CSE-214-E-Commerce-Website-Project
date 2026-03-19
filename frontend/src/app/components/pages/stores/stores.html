@@ -1,1 +1,70 @@
-<p>stores works!</p>
+<div class="stores-page">
+  <div class="page-header">
+    <h1 class="page-title">Stores</h1>
+    <button class="export-btn" (click)="exportCsv()">📥 Export CSV</button>
+  </div>
+
+  <div class="search-bar">
+    <input type="text" placeholder="Search stores..." (input)="onSearch($event)" class="search-input">
+  </div>
+
+  @if(isLoading) {
+    <div class="skeleton-container">
+      @for(i of [1,2,3,4,5]; track i) {
+        <div class="skeleton-row"><div class="skeleton-cell wide"></div><div class="skeleton-cell"></div><div class="skeleton-cell narrow"></div></div>
+      }
+    </div>
+  } @else if(stores.length === 0) {
+    <div class="empty-state">
+      <div class="empty-icon">🏪</div>
+      <h3>No stores found</h3>
+      <p>Registered stores will appear here.</p>
+    </div>
+  } @else {
+    <div class="table-controls">
+      <div class="page-size-control">
+        <label>Show</label>
+        <select [value]="pageSize" (change)="onPageSizeChange($event)">
+          @for(opt of pageSizeOptions; track opt) { <option [value]="opt">{{ opt }}</option> }
+        </select>
+        <label>entries</label>
+      </div>
+      <div class="results-info">{{ totalElements }} stores</div>
+    </div>
+
+    <div class="table-wrapper">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th (click)="sort('id')">ID <span class="sort-icon">{{ getSortIcon('id') }}</span></th>
+            <th (click)="sort('storeName')">Store Name <span class="sort-icon">{{ getSortIcon('storeName') }}</span></th>
+            <th (click)="sort('companyName')">Company <span class="sort-icon">{{ getSortIcon('companyName') }}</span></th>
+            <th>Owner</th>
+            <th>Tax Number</th>
+            <th (click)="sort('totalRevenue')">Revenue <span class="sort-icon">{{ getSortIcon('totalRevenue') }}</span></th>
+          </tr>
+        </thead>
+        <tbody>
+          @for(s of stores; track s.id) {
+            <tr>
+              <td>{{ s.id }}</td>
+              <td><strong>{{ s.storeName }}</strong></td>
+              <td>{{ s.companyName || '-' }}</td>
+              <td>{{ s.owner?.email || '-' }}</td>
+              <td>{{ s.taxNumber || '-' }}</td>
+              <td class="amount">{{ s.totalRevenue | number:'1.2-2' }} TL</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+
+    <div class="pagination">
+      <button class="page-btn" [disabled]="currentPage === 0" (click)="goToPage(0)">«</button>
+      <button class="page-btn" [disabled]="currentPage === 0" (click)="goToPage(currentPage - 1)">‹</button>
+      <span class="page-info">Page {{ currentPage + 1 }} of {{ totalPages }}</span>
+      <button class="page-btn" [disabled]="currentPage >= totalPages - 1" (click)="goToPage(currentPage + 1)">›</button>
+      <button class="page-btn" [disabled]="currentPage >= totalPages - 1" (click)="goToPage(totalPages - 1)">»</button>
+    </div>
+  }
+</div>

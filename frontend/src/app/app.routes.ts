@@ -9,6 +9,8 @@ import { Orders } from './components/pages/orders/orders';
 import { Inventory } from './components/pages/inventory/inventory';
 import { Reports } from './components/pages/reports/reports';
 import { Stores } from './components/pages/stores/stores';
+import { StoreOrders } from './components/pages/store-orders/store-orders';
+import { AuditLogs } from './components/pages/audit-logs/audit-logs';
 
 import { Auth } from './components/pages/auth/auth'
 import { Settings } from './components/pages/settings/settings';
@@ -27,14 +29,16 @@ export const routes: Routes = [
   {path:'cart', component:Cart},
   {path: 'wishlist', component: Wishlist},
   {path:"analytics", component: Analytics},
-  {path:"ai-asistant", component: AiAssistant},
-  {path:"customers", component: Customers, canActivate: [roleGuard], data: {role:'CorporateUser'}},
+  {path:"ai-assistant", component: AiAssistant},
+  {path:"customers", component: Customers, canActivate: [roleGuard], data: {role:'Admin'}},
   {path:"shipments", component: Shipments, canActivate: [roleGuard], data: {role:'CorporateUser'}},
   {path:"users", component: Users, canActivate: [roleGuard], data: {role:'Admin'}},
   {path:"reports", component: Reports, canActivate: [roleGuard], data: {role:'Admin'}},
-  {path:"orders", component: Orders},
-  {path:"inventory", component: Inventory, canActivate: [roleGuard], data: {role:'CorparateUser'}},
+  {path:"orders", component: Orders, canActivate: [roleGuard], data: {role:'IndividualUser'}},
+  {path:"inventory", component: Inventory, canActivate: [roleGuard], data: {role:'CorporateUser'}},
+  {path:"store-orders", component: StoreOrders, canActivate: [roleGuard], data: {role:'CorporateUser'}},
   {path:"stores", component: Stores, canActivate: [roleGuard], data: {role:'Admin'}},
+  {path:"audit-logs", component: AuditLogs, canActivate: [roleGuard], data: {role:'Admin'}},
   {path:"products/brand/:name", component: Products, data: {type: 'brand'}},
   {path:"products/store/:name", component: Products, data: {type: 'store'}},
   {path:"products/category/:name", component: Products, data: {type: 'category'}},
@@ -45,5 +49,3 @@ export const routes: Routes = [
   {path:"access-denied", component: AccessDenied},
   {path:"**", component: PageNotFound}
 ];
-
-

@@ -1,1 +1,83 @@
-<p>customers works!</p>
+<div class="customers-page">
+  <div class="page-header">
+    <h1 class="page-title">Customers</h1>
+    <button class="export-btn" (click)="exportCsv()">📥 Export CSV</button>
+  </div>
+
+  <div class="search-bar">
+    <input type="text" placeholder="Search by name or email..." (input)="onSearch($event)" class="search-input">
+  </div>
+
+  @if(isLoading) {
+    <div class="skeleton-container">
+      @for(i of [1,2,3,4,5]; track i) {
+        <div class="skeleton-row"><div class="skeleton-cell wide"></div><div class="skeleton-cell"></div><div class="skeleton-cell"></div><div class="skeleton-cell narrow"></div></div>
+      }
+    </div>
+  } @else if(customers.length === 0) {
+    <div class="empty-state">
+      <div class="empty-icon">👥</div>
+      <h3>No customers found</h3>
+      <p>Individual customers will appear here.</p>
+    </div>
+  } @else {
+    <div class="table-controls">
+      <div class="page-size-control">
+        <label>Show</label>
+        <select [value]="pageSize" (change)="onPageSizeChange($event)">
+          @for(opt of pageSizeOptions; track opt) { <option [value]="opt">{{ opt }}</option> }
+        </select>
+        <label>entries</label>
+      </div>
+      <div class="results-info">{{ totalElements }} customers</div>
+    </div>
+
+    <div class="table-wrapper">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th (click)="sort('id')">ID <span class="sort-icon">{{ getSortIcon('id') }}</span></th>
+            <th (click)="sort('name')">Name <span class="sort-icon">{{ getSortIcon('name') }}</span></th>
+            <th (click)="sort('email')">Email <span class="sort-icon">{{ getSortIcon('email') }}</span></th>
+            <th>Registered</th>
+            <th (click)="sort('totalOrders')">Orders <span class="sort-icon">{{ getSortIcon('totalOrders') }}</span></th>
+            <th (click)="sort('totalSpend')">Total Spend <span class="sort-icon">{{ getSortIcon('totalSpend') }}</span></th>
+            <th>Membership</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for(c of customers; track c.id) {
+            <tr>
+              <td>{{ c.id }}</td>
+              <td><strong>{{ c.name }} {{ c.surname }}</strong></td>
+              <td>{{ c.email }}</td>
+              <td>{{ c.createdAt | date:'dd/MM/yyyy' }}</td>
+              <td>{{ c.totalOrders }}</td>
+              <td class="amount">{{ c.totalSpend | number:'1.2-2' }} TL</td>
+              <td>
+                <span class="membership-badge"
+                  [class.gold]="c.membershipType === 'GOLD'"
+                  [class.silver]="c.membershipType === 'SILVER'"
+                  [class.bronze]="c.membershipType === 'BRONZE'">
+                  {{ c.membershipType || '-' }}
+                </span>
+              </td>
+              <td class="actions-cell">
+                <button class="action-btn delete-btn" (click)="deleteUser(c.id, c.name)" title="Delete">🗑️</button>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+
+    <div class="pagination">
+      <button class="page-btn" [disabled]="currentPage === 0" (click)="goToPage(0)">«</button>
+      <button class="page-btn" [disabled]="currentPage === 0" (click)="goToPage(currentPage - 1)">‹</button>
+      <span class="page-info">Page {{ currentPage + 1 }} of {{ totalPages }}</span>
+      <button class="page-btn" [disabled]="currentPage >= totalPages - 1" (click)="goToPage(currentPage + 1)">›</button>
+      <button class="page-btn" [disabled]="currentPage >= totalPages - 1" (click)="goToPage(totalPages - 1)">»</button>
+    </div>
+  }
+</div>

@@ -1,9 +1,99 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+import { CommonModule, DecimalPipe, DatePipe } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { HttpClient } from '@angular/common/http';
+import { TranslateModule } from '@ngx-translate/core';
+import Swal from 'sweetalert2';
+import { Subject, debounceTime, distinctUntilChanged } from 'rxjs';
 
 @Component({
   selector: 'app-customers',
-  imports: [],
+  standalone: true,
+  imports: [CommonModule, FormsModule, TranslateModule, DecimalPipe, DatePipe],
   templateUrl: './customers.html',
   styleUrl: './customers.scss',
 })
-export class Customers {}
+export class Customers implements OnInit {
+  customers: any[] = [];
+  isLoading = true;
+  searchTerm = '';
+  searchSubject = new Subject<string>();
+  currentPage = 0;
+  pageSize = 10;
+  totalPages = 0;
+  totalElements = 0;
+  pageSizeOptions = [10, 25, 50];
+  sortBy = 'name';
+  sortDir = 'asc';
+
+  constructor(private http: HttpClient) {
+    this.searchSubject.pipe(debounceTime(300), distinctUntilChanged()).subscribe(term => {
+      this.searchTerm = term;
+      this.currentPage = 0;
+      this.loadCustomers();
+    });
+  }
+
+  ngOnInit() { this.loadCustomers(); }
+
+  loadCustomers() {
+    this.isLoading = true;
+    this.http.get<any>(`http://localhost:8080/api/admin/users?search=${this.searchTerm}&page=${this.currentPage}&size=${this.pageSize}`).subscribe({
+      next: (res) => {
+        this.customers = res.content || [];
+        this.totalPages = res.totalPages || 0;
+        this.totalElements = res.totalElements || 0;
+        this.isLoading = false;
+      },
+      error: () => { this.customers = []; this.isLoading = false; }
+    });
+  }
+
+  onSearch(event: Event) { this.searchSubject.next((event.target as HTMLInputElement).value); }
+
+  sort(column: string) {
+    if (this.sortBy === column) { this.sortDir = this.sortDir === 'asc' ? 'desc' : 'asc'; }
+    else { this.sortBy = column; this.sortDir = 'asc'; }
+    // Client-side sorting since backend returns all in-memory anyway
+    this.customers.sort((a: any, b: any) => {
+      let va = a[column], vb = b[column];
+      if (va == null) va = ''; if (vb == null) vb = '';
+      if (typeof va === 'string') { va = va.toLowerCase(); vb = (vb || '').toLowerCase(); }
+      if (va < vb) return this.sortDir === 'asc' ? -1 : 1;
+      if (va > vb) return this.sortDir === 'asc' ? 1 : -1;
+      return 0;
+    });
+  }
+
+  getSortIcon(col: string): string {
+    if (this.sortBy !== col) return '↕';
+    return this.sortDir === 'asc' ? '↑' : '↓';
+  }
+
+  exportCsv() {
+    const header = 'ID,Name,Email,Registered,Orders,Total Spend,Membership\n';
+    const rows = this.customers.map(c =>
+      `${c.id},"${c.name} ${c.surname}",${c.email},${c.createdAt || ''},${c.totalOrders},${c.totalSpend},${c.membershipType || ''}`
+    ).join('\n');
+    const blob = new Blob([header + rows], { type: 'text/csv' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'customers.csv';
+    a.click();
+  }
+
+  deleteUser(userId: number, name: string) {
+    Swal.fire({ title: 'Delete Customer', text: `Delete "${name}"?`, icon: 'warning', showCancelButton: true, confirmButtonText: 'Delete', confirmButtonColor: '#ff4d4d' })
+      .then((r) => {
+        if (r.isConfirmed) {
+          this.http.delete<any>(`http://localhost:8080/api/admin/users/${userId}`).subscribe({
+            next: () => { this.customers = this.customers.filter(c => c.id !== userId); Swal.fire('Deleted!', 'Customer deleted.', 'success'); },
+            error: () => Swal.fire('Error', 'Could not delete.', 'error')
+          });
+        }
+      });
+  }
+
+  goToPage(p: number) { if (p >= 0 && p < this.totalPages) { this.currentPage = p; this.loadCustomers(); } }
+  onPageSizeChange(e: Event) { this.pageSize = +(e.target as HTMLSelectElement).value; this.currentPage = 0; this.loadCustomers(); }
+}

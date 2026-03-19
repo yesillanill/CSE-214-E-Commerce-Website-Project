@@ -1,5 +1,6 @@
 package com.shop.ecommerce.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -20,6 +21,7 @@ public class Inventory {
 
     @OneToOne
     @JoinColumn(name="product_id")
+    @JsonIgnore
     private Product product;
 
     @Column(name="stock")

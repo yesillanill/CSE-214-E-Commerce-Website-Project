@@ -1,1 +1,115 @@
-<p>orders works!</p>
+<div class="orders-page">
+  <h1 class="page-title">My Orders</h1>
+
+  @if(isLoading) {
+    <div class="skeleton-container">
+      @for(i of [1,2,3,4,5]; track i) {
+        <div class="skeleton-row">
+          <div class="skeleton-cell wide"></div>
+          <div class="skeleton-cell"></div>
+          <div class="skeleton-cell"></div>
+          <div class="skeleton-cell"></div>
+          <div class="skeleton-cell narrow"></div>
+        </div>
+      }
+    </div>
+  } @else if(orders.length === 0) {
+    <div class="empty-state">
+      <div class="empty-icon">📦</div>
+      <h3>No orders yet</h3>
+      <p>Your order history will appear here once you make a purchase.</p>
+    </div>
+  } @else {
+    <div class="table-controls">
+      <div class="page-size-control">
+        <label>Show</label>
+        <select [value]="pageSize" (change)="onPageSizeChange($event)">
+          @for(opt of pageSizeOptions; track opt) {
+            <option [value]="opt">{{ opt }}</option>
+          }
+        </select>
+        <label>entries</label>
+      </div>
+      <div class="results-info">{{ totalElements }} orders found</div>
+    </div>
+
+    <div class="table-wrapper">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th class="expand-col"></th>
+            <th (click)="sort('id')">Order ID <span class="sort-icon">{{ getSortIcon('id') }}</span></th>
+            <th (click)="sort('createdAt')">Date <span class="sort-icon">{{ getSortIcon('createdAt') }}</span></th>
+            <th (click)="sort('grandTotal')">Total <span class="sort-icon">{{ getSortIcon('grandTotal') }}</span></th>
+            <th>Payment</th>
+            <th>Method</th>
+            <th>Shipping</th>
+            <th>Status</th>
+            <th>Delivery</th>
+            <th>Tracking</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for(order of orders; track order.id) {
+            <tr class="order-row" [class.expanded]="expandedOrderId === order.id" (click)="toggleExpand(order.id)">
+              <td class="expand-col">
+                <span class="chevron" [class.rotated]="expandedOrderId === order.id">▶</span>
+              </td>
+              <td><strong>#{{ order.id }}</strong></td>
+              <td>{{ order.createdAt | date:'dd/MM/yyyy' }}</td>
+              <td class="amount">{{ order.grandTotal | number:'1.2-2' }} TL</td>
+              <td><span class="status-badge" [ngClass]="getStatusClass(order.paymentStatus)">{{ order.paymentStatus || '-' }}</span></td>
+              <td>{{ order.paymentMethod || '-' }}</td>
+              <td>{{ order.shippingMethod || '-' }}</td>
+              <td><span class="status-badge" [ngClass]="getStatusClass(order.shipmentStatus)">{{ order.shipmentStatus || '-' }}</span></td>
+              <td>{{ getDeliveryDisplay(order) }}</td>
+              <td class="tracking">{{ order.trackingNumber || '-' }}</td>
+            </tr>
+
+            @if(expandedOrderId === order.id && order.orderItems) {
+              <tr class="detail-row">
+                <td [attr.colspan]="10">
+                  <div class="detail-content">
+                    <h4>Order Items</h4>
+                    <table class="sub-table">
+                      <thead>
+                        <tr>
+                          <th>Product</th>
+                          <th>Brand</th>
+                          <th>Seller</th>
+                          <th>Unit Price</th>
+                          <th>Qty</th>
+                          <th>Line Total</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        @for(item of order.orderItems; track item.id) {
+                          <tr>
+                            <td>{{ item.productName }}</td>
+                            <td><a [routerLink]="['/products/brand', item.brandName]" class="link">{{ item.brandName }}</a></td>
+                            <td><a [routerLink]="['/products/store', item.storeName]" class="link">{{ item.storeName }}</a></td>
+                            <td>{{ item.unitPrice | number:'1.2-2' }} TL</td>
+                            <td>{{ item.quantity }}</td>
+                            <td class="amount">{{ item.lineTotal | number:'1.2-2' }} TL</td>
+                          </tr>
+                        }
+                      </tbody>
+                    </table>
+                  </div>
+                </td>
+              </tr>
+            }
+          }
+        </tbody>
+      </table>
+    </div>
+
+    <div class="pagination">
+      <button class="page-btn" [disabled]="currentPage === 0" (click)="goToPage(0)">«</button>
+      <button class="page-btn" [disabled]="currentPage === 0" (click)="goToPage(currentPage - 1)">‹</button>
+      <span class="page-info">Page {{ currentPage + 1 }} of {{ totalPages }}</span>
+      <button class="page-btn" [disabled]="currentPage >= totalPages - 1" (click)="goToPage(currentPage + 1)">›</button>
+      <button class="page-btn" [disabled]="currentPage >= totalPages - 1" (click)="goToPage(totalPages - 1)">»</button>
+    </div>
+  }
+</div>

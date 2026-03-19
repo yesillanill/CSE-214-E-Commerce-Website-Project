@@ -20,18 +20,20 @@
   <nav class="nav flex-column p-3">
     <p>{{'SIDEBAR.MENU' | translate}}</p>
     <a routerLink="/" class="nav-link" (click)="toggleMobileMenu()">{{'SIDEBAR.HOME' | translate}}</a>
-    <a routerLink="/ai-asistant" class="nav-link" (click)="toggleMobileMenu()">{{'SIDEBAR.AI' | translate}}</a>
+    <a routerLink="/ai-assistant" class="nav-link" (click)="toggleMobileMenu()">{{'SIDEBAR.AI' | translate}}</a>
     <a routerLink="/products" class="nav-link" (click)="toggleMobileMenu()">{{'SIDEBAR.PRODUCTS' | translate}}</a>
     <a routerLink="/analytics" class="nav-link" (click)="toggleMobileMenu()">{{'SIDEBAR.ANALYTICS' | translate}}</a>
-    <a routerLink="/orders" class="nav-link" (click)="toggleMobileMenu()">{{'SIDEBAR.ORDERS' | translate}}</a>
+    <a *ngIf="auth.isIndividualUser()" routerLink="/orders" class="nav-link" (click)="toggleMobileMenu()">{{'SIDEBAR.ORDERS' | translate}}</a>
     <br>
-    <p *ngIf="auth.isAdmin() || auth.isCorporateUser()" (click)="toggleMobileMenu()">{{'SIDEBAR.MANAGEMENT' | translate}}</p>
-    <a *ngIf="auth.isAdmin() || auth.isCorporateUser()" routerLink="/customers" class="nav-link" (click)="toggleMobileMenu()">{{'SIDEBAR.CUSTOMERS' | translate}}</a>
-    <a *ngIf="auth.isCorporateUser()" routerLink="/shipments" class="nav-link" (click)="toggleMobileMenu()">{{'SIDEBAR.SHIPMENTS' | translate}}</a>
-    <a *ngIf="auth.isAdmin()" routerLink="/users" class="nav-link" (click)="toggleMobileMenu()">{{'SIDEBAR.USERS' | translate}}</a>
+    <p *ngIf="auth.isCorporateUser()">{{'SIDEBAR.MANAGEMENT' | translate}}</p>
     <a *ngIf="auth.isCorporateUser()" routerLink="/inventory" class="nav-link" (click)="toggleMobileMenu()">{{'SIDEBAR.INVENTORY' | translate}}</a>
-    <a *ngIf="auth.isAdmin()" routerLink="/reports" class="nav-link" (click)="toggleMobileMenu()">{{'SIDEBAR.REPORTS' | translate}}</a>
-    <a *ngIf="auth.isAdmin()" routerLink="/system-config" class="nav-link" (click)="toggleMobileMenu()">{{'SIDEBAR.CONFIGURATION' | translate}}</a>
+    <a *ngIf="auth.isCorporateUser()" routerLink="/store-orders" class="nav-link" (click)="toggleMobileMenu()">Incoming Orders</a>
+    <a *ngIf="auth.isCorporateUser()" routerLink="/shipments" class="nav-link" (click)="toggleMobileMenu()">{{'SIDEBAR.SHIPMENTS' | translate}}</a>
+    <br>
+    <p *ngIf="auth.isAdmin()">{{'SIDEBAR.MANAGEMENT' | translate}}</p>
+    <a *ngIf="auth.isAdmin()" routerLink="/customers" class="nav-link" (click)="toggleMobileMenu()">{{'SIDEBAR.CUSTOMERS' | translate}}</a>
+    <a *ngIf="auth.isAdmin()" routerLink="/stores" class="nav-link" (click)="toggleMobileMenu()">Stores</a>
+    <a *ngIf="auth.isAdmin()" routerLink="/audit-logs" class="nav-link" (click)="toggleMobileMenu()">Audit Logs</a>
   </nav>
 
 <div class="footer-controls">
