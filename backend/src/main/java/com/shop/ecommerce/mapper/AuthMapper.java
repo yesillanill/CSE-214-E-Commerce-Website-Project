@@ -27,6 +27,7 @@ public class AuthMapper {
         customer.setGender(dto.getGender());
         customer.setBirthDate(dto.getBirthDate());
         customer.setStreet(dto.getStreet());
+        customer.setCity(dto.getCity());
         customer.setPostalCode(dto.getPostalCode());
         customer.setCountry(dto.getCountry());
         customer.setUser(user);

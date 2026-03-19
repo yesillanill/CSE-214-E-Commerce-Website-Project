@@ -32,6 +32,9 @@ public class IndividualCustomer {
     @Column(name = "street")
     private String street;
 
+    @Column(name = "city")
+    private String city;
+
     @Column(name = "postal_code")
     private String postalCode;
 

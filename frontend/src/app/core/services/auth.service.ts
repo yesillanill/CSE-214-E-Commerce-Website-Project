@@ -63,6 +63,18 @@ export class AuthService {
     return this.http.post<User>(`${this.apiUrl}/register/store`, registerDto);
   }
 
+  getProfile(userId: number): Observable<User> {
+    return this.http.get<User>(`http://localhost:8080/api/users/profile/${userId}`);
+  }
+
+  updateProfile(userId: number, payload: Partial<User>): Observable<User> {
+    return this.http.put<User>(`http://localhost:8080/api/users/profile/${userId}`, payload).pipe(
+      tap(updatedUser => {
+        this.updateUser(updatedUser);
+      })
+    );
+  }
+
   private handleAuthentication(user: User, remember: boolean) {
     this.currentUserSubject.next(user);
     if (remember) {

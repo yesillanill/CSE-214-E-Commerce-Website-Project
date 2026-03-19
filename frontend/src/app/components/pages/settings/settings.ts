@@ -33,22 +33,24 @@ export class Settings implements OnInit, OnDestroy, CanComponentDeactivate {
     this.initForm();
     this.authSub = this.auth.currentUser$.subscribe(user => {
       if(user && this.userForm){
-        let formattedDate = '';
-        if(user.birthdate){
-          formattedDate = user.birthdate instanceof Date ? user.birthdate.toISOString().split('T')[0]: user.birthdate;
-        }
-        this.userForm.patchValue({
-          name: user.name,
-          surname: user.surname,
-          role: user.role,
-          birthdate: formattedDate,
-          email: user.email,
-          phone: user.phone,
-          password: user.password,
-          address: user.address || ' '
+        this.auth.getProfile(user.id).subscribe({
+          next: (fullProfile) => {
+            let formattedDate = '';
+            if(fullProfile.birthdate){
+              formattedDate = new Date(fullProfile.birthdate).toISOString().split('T')[0];
+            }
+            this.userForm.patchValue({
+              ...fullProfile,
+              birthdate: formattedDate,
+              email: fullProfile.email,
+              phone: fullProfile.phone,
+              password: fullProfile.password,
+              membershipType: fullProfile.membershipType || ''
+            });
+            this.userForm.updateValueAndValidity();
+          }
         });
-        this.userForm.updateValueAndValidity();
-      } else{
+      } else {
         if(this.userForm){
           this.userForm.reset();
         }
@@ -62,10 +64,20 @@ export class Settings implements OnInit, OnDestroy, CanComponentDeactivate {
       surname: [{value: '',  disabled: true}],
       role: [{value: '',  disabled: true}],
       birthdate: [{value: '',  disabled: true}],
+      membershipType: [{value: '', disabled: true}],
       email: ['', Validators.email],
       phone: ['', Validators.pattern('^[0-9]{10,15}$')],
       password: ['', Validators.minLength(8)],
-      address: ['']
+      street: [''],
+      city: [''],
+      postalCode: [''],
+      country: [''],
+      gender: [''],
+      storeName: [''],
+      companyName: [''],
+      taxNumber: [''],
+      taxOffice: [''],
+      companyAddress: ['']
     })
   }
 
@@ -80,8 +92,22 @@ export class Settings implements OnInit, OnDestroy, CanComponentDeactivate {
         updatePayload[key as keyof User] = value;
       }
     });
-    this.auth.updateUser(updatePayload);
-    this.userForm.markAsPristine();
+    
+    const user = this.auth.getUser();
+    if(user) {
+      this.auth.updateProfile(user.id, updatePayload).subscribe({
+        next: () => {
+          Swal.fire({
+            icon: 'success',
+            title: 'Success',
+            background: getComputedStyle(document.body).getPropertyValue('--card-bg').trim(),
+            color: getComputedStyle(document.body).getPropertyValue('--text-color').trim(),
+            timer: 1500
+          });
+          this.userForm.markAsPristine();
+        }
+      });
+    }
   }
 
   updateTheme(value: string){

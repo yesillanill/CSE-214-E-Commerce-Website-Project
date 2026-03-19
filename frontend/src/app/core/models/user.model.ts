@@ -9,5 +9,16 @@ export interface User{
   role: UserRole;
   phone: string;
   address?: string;
-  birthdate: Date
+  birthdate?: Date;
+  street?: string;
+  city?: string;
+  postalCode?: string;
+  country?: string;
+  gender?: string;
+  membershipType?: string;
+  storeName?: string;
+  companyName?: string;
+  taxNumber?: string;
+  taxOffice?: string;
+  companyAddress?: string;
 }
