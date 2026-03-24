@@ -1,8 +1,11 @@
 package com.shop.ecommerce.controller;
 
 import com.shop.ecommerce.dto.order.OrderDTO;
+import com.shop.ecommerce.entities.Payment;
 import com.shop.ecommerce.entities.Shipment;
+import com.shop.ecommerce.enums.PaymentStatus;
 import com.shop.ecommerce.enums.ShipmentStatus;
+import com.shop.ecommerce.repository.PaymentRepository;
 import com.shop.ecommerce.repository.ShipmentRepository;
 import com.shop.ecommerce.services.OrderService;
 import lombok.RequiredArgsConstructor;
@@ -24,6 +27,7 @@ public class StoreOrderController {
 
     private final OrderService orderService;
     private final ShipmentRepository shipmentRepository;
+    private final PaymentRepository paymentRepository;
 
     @GetMapping
     public ResponseEntity<Page<OrderDTO>> getStoreOrders(
@@ -54,6 +58,13 @@ public class StoreOrderController {
             shipment.setShipmentDate(java.time.LocalDate.now());
         }
         shipmentRepository.save(shipment);
+
+        if ("REJECTED".equals(newStatus)) {
+            paymentRepository.findByOrderId(orderId).ifPresent(payment -> {
+                payment.setPaymentStatus(PaymentStatus.REFUNDED);
+                paymentRepository.save(payment);
+            });
+        }
 
         return ResponseEntity.ok(Map.of("status", "updated"));
     }

@@ -95,7 +95,11 @@ export class StoreOrders implements OnInit {
       next: () => {
         const idx = this.orders.findIndex(x => x.id === orderId);
         if (idx !== -1) {
-          this.orders[idx] = { ...this.orders[idx], shipmentStatus: status };
+          const updates: any = { shipmentStatus: status };
+          if (status === 'REJECTED') {
+            updates.paymentStatus = 'REFUNDED';
+          }
+          this.orders[idx] = { ...this.orders[idx], ...updates };
           this.orders = [...this.orders];
         }
         this.cdr.detectChanges();
