@@ -34,4 +34,10 @@ public class AuthController {
     public ResponseEntity<User> loginPhone(@RequestBody PhoneLoginDTO dto) {
         return ResponseEntity.ok(authService.loginWithPhone(dto));
     }
+
+    @PostMapping("/logout/{userId}")
+    public ResponseEntity<Void> logout(@PathVariable Long userId) {
+        authService.logout(userId);
+        return ResponseEntity.ok().build();
+    }
 }

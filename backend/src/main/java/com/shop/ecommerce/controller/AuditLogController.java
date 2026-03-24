@@ -45,7 +45,7 @@ public class AuditLogController {
         LocalDateTime start = startDate != null && !startDate.isEmpty() ? LocalDateTime.parse(startDate + "T00:00:00") : null;
         LocalDateTime end = endDate != null && !endDate.isEmpty() ? LocalDateTime.parse(endDate + "T23:59:59") : null;
         String roleFilter = (userRole != null && !userRole.isEmpty()) ? userRole : null;
-        String emailFilter = (email != null && !email.isEmpty()) ? email : null;
+        String emailFilter = (email != null && !email.isEmpty()) ? "%" + email.toLowerCase() + "%" : null;
 
         return ResponseEntity.ok(auditLogRepository.findFiltered(auditAction, roleFilter, emailFilter, start, end, pageable));
     }
@@ -65,7 +65,7 @@ public class AuditLogController {
         LocalDateTime start = startDate != null && !startDate.isEmpty() ? LocalDateTime.parse(startDate + "T00:00:00") : null;
         LocalDateTime end = endDate != null && !endDate.isEmpty() ? LocalDateTime.parse(endDate + "T23:59:59") : null;
         String roleFilter = (userRole != null && !userRole.isEmpty()) ? userRole : null;
-        String emailFilter = (email != null && !email.isEmpty()) ? email : null;
+        String emailFilter = (email != null && !email.isEmpty()) ? "%" + email.toLowerCase() + "%" : null;
 
         Pageable pageable = PageRequest.of(0, 10000, Sort.by("createdAt").descending());
         List<AuditLog> logs = auditLogRepository.findFiltered(auditAction, roleFilter, emailFilter, start, end, pageable).getContent();

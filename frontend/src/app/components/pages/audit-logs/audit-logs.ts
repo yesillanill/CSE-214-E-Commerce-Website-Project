@@ -23,12 +23,11 @@ export class AuditLogs implements OnInit {
   // Filters
   actionFilter = '';
   roleFilter = '';
-  emailFilter = '';
   startDate = '';
   endDate = '';
 
   actions = [
-    'USER_LOGIN','USER_REGISTER','USER_SUSPENDED','USER_ACTIVATED','USER_DELETED',
+    'USER_LOGIN','USER_LOGOUT','USER_REGISTER','USER_SUSPENDED','USER_ACTIVATED','USER_DELETED',
     'PRODUCT_CREATED','PRODUCT_UPDATED','PRODUCT_DELETED',
     'ORDER_CREATED','ORDER_STATUS_UPDATED',
     'STORE_OPENED','STORE_CLOSED',
@@ -44,7 +43,6 @@ export class AuditLogs implements OnInit {
     let url = `http://localhost:8080/api/admin/audit-logs?page=${this.currentPage}&size=${this.pageSize}`;
     if (this.actionFilter) url += `&action=${this.actionFilter}`;
     if (this.roleFilter) url += `&userRole=${this.roleFilter}`;
-    if (this.emailFilter) url += `&email=${this.emailFilter}`;
     if (this.startDate) url += `&startDate=${this.startDate}`;
     if (this.endDate) url += `&endDate=${this.endDate}`;
 
@@ -67,7 +65,6 @@ export class AuditLogs implements OnInit {
   clearFilters() {
     this.actionFilter = '';
     this.roleFilter = '';
-    this.emailFilter = '';
     this.startDate = '';
     this.endDate = '';
     this.currentPage = 0;
@@ -78,7 +75,6 @@ export class AuditLogs implements OnInit {
     let url = `http://localhost:8080/api/admin/audit-logs/export?`;
     if (this.actionFilter) url += `action=${this.actionFilter}&`;
     if (this.roleFilter) url += `userRole=${this.roleFilter}&`;
-    if (this.emailFilter) url += `email=${this.emailFilter}&`;
     if (this.startDate) url += `startDate=${this.startDate}&`;
     if (this.endDate) url += `endDate=${this.endDate}&`;
 

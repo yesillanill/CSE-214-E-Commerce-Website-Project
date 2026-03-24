@@ -85,6 +85,12 @@ export class AuthService {
   }
 
   logout() {
+    const user = this.currentUserSubject.value;
+    if (user && user.id) {
+      this.http.post(`${this.apiUrl}/logout/${user.id}`, {}).subscribe({
+        error: (e) => console.error('Logout error', e)
+      });
+    }
     this.currentUserSubject.next(null);
     localStorage.removeItem('user');
     sessionStorage.removeItem('user');

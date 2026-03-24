@@ -2,6 +2,7 @@ package com.shop.ecommerce.enums;
 
 public enum AuditAction {
     USER_LOGIN,
+    USER_LOGOUT,
     USER_REGISTER,
     USER_SUSPENDED,
     USER_ACTIVATED,

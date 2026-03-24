@@ -17,9 +17,9 @@ public interface AuditLogRepository extends JpaRepository<AuditLog, Long> {
     @Query("SELECT a FROM AuditLog a WHERE " +
            "(:action IS NULL OR a.action = :action) AND " +
            "(:userRole IS NULL OR a.userRole = :userRole) AND " +
-           "(:email IS NULL OR LOWER(a.userEmail) LIKE LOWER(CONCAT('%', :email, '%'))) AND " +
-           "(:startDate IS NULL OR a.createdAt >= :startDate) AND " +
-           "(:endDate IS NULL OR a.createdAt <= :endDate)")
+           "(:email IS NULL OR LOWER(a.userEmail) LIKE :email) AND " +
+           "(CAST(:startDate AS timestamp) IS NULL OR a.createdAt >= :startDate) AND " +
+           "(CAST(:endDate AS timestamp) IS NULL OR a.createdAt <= :endDate)")
     Page<AuditLog> findFiltered(
             @Param("action") AuditAction action,
             @Param("userRole") String userRole,
