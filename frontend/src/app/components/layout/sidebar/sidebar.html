@@ -27,8 +27,7 @@
     <br>
     <p *ngIf="auth.isCorporateUser()">{{'SIDEBAR.MANAGEMENT' | translate}}</p>
     <a *ngIf="auth.isCorporateUser()" routerLink="/inventory" class="nav-link" (click)="toggleMobileMenu()">{{'SIDEBAR.INVENTORY' | translate}}</a>
-    <a *ngIf="auth.isCorporateUser()" routerLink="/store-orders" class="nav-link" (click)="toggleMobileMenu()">Incoming Orders</a>
-    <a *ngIf="auth.isCorporateUser()" routerLink="/shipments" class="nav-link" (click)="toggleMobileMenu()">{{'SIDEBAR.SHIPMENTS' | translate}}</a>
+    <a *ngIf="auth.isCorporateUser()" routerLink="/store-orders" class="nav-link" (click)="toggleMobileMenu()">{{'SIDEBAR.ORDERS' | translate}}</a>
     <br>
     <p *ngIf="auth.isAdmin()">{{'SIDEBAR.MANAGEMENT' | translate}}</p>
     <a *ngIf="auth.isAdmin()" routerLink="/customers" class="nav-link" (click)="toggleMobileMenu()">{{'SIDEBAR.CUSTOMERS' | translate}}</a>

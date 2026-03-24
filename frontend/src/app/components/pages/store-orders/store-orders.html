@@ -1,10 +1,17 @@
 <div class="store-orders-page">
   <div class="page-header">
-    <h1 class="page-title">Incoming Orders</h1>
+    <h1 class="page-title">{{'SIDEBAR.ORDERS' | translate}}</h1>
     <button class="export-btn" (click)="exportCsv()">
       <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
       Export CSV
     </button>
+  </div>
+
+  <div class="filters-bar">
+    <input type="date" [(ngModel)]="startDate" class="filter-input" placeholder="Start Date">
+    <input type="date" [(ngModel)]="endDate" class="filter-input" placeholder="End Date">
+    <button class="apply-btn" (click)="applyFilters()">Apply</button>
+    <button class="clear-btn" (click)="clearFilters()">Clear</button>
   </div>
 
   @if(isLoading) {
@@ -40,8 +47,10 @@
             <th (click)="sort('createdAt')">Date <span class="sort-icon">{{ getSortIcon('createdAt') }}</span></th>
             <th (click)="sort('grandTotal')">Total <span class="sort-icon">{{ getSortIcon('grandTotal') }}</span></th>
             <th>Payment</th>
-            <th>Address</th>
             <th>Status</th>
+            <th>Tracking</th>
+            <th>Shipping</th>
+            <th>Est. Delivery</th>
             <th>Actions</th>
           </tr>
         </thead>
@@ -50,11 +59,13 @@
             <tr class="order-row" [class.expanded]="expandedOrderId === order.id" (click)="toggleExpand(order.id)">
               <td class="expand-col"><span class="chevron" [class.rotated]="expandedOrderId === order.id">▶</span></td>
               <td><strong>#{{ order.id }}</strong></td>
-              <td>{{ order.createdAt | date:'dd/MM/yyyy' }}</td>
+              <td>{{ (order.createdAt || order.shipmentDate) | date:'dd/MM/yyyy' }}</td>
               <td class="amount">{{ order.grandTotal | number:'1.2-2' }} TL</td>
               <td><span class="status-badge" [ngClass]="getStatusClass(order.paymentStatus)">{{ order.paymentStatus || '-' }}</span></td>
-              <td class="address-cell">{{ order.shippingAddress || '-' }}</td>
               <td><span class="status-badge" [ngClass]="getStatusClass(order.shipmentStatus)">{{ order.shipmentStatus || '-' }}</span></td>
+              <td class="mono">{{ order.trackingNumber || '-' }}</td>
+              <td>{{ order.shippingMethod || '-' }}</td>
+              <td>{{ order.estimatedDelivery ? (order.estimatedDelivery | date:'dd/MM/yyyy') : '-' }}</td>
               <td class="actions-cell" (click)="$event.stopPropagation()">
                 @if(canShip(order.shipmentStatus)) {
                   <button class="action-btn ship-btn" (click)="updateStatus(order.id, 'SHIPPED')">📦 Ship</button>
@@ -65,26 +76,47 @@
               </td>
             </tr>
 
-            @if(expandedOrderId === order.id && order.orderItems) {
+            @if(expandedOrderId === order.id) {
               <tr class="detail-row">
-                <td [attr.colspan]="8">
+                <td [attr.colspan]="10">
                   <div class="detail-content">
-                    <h4>Order Items</h4>
-                    <table class="sub-table">
-                      <thead><tr><th>Product</th><th>Brand</th><th>Seller</th><th>Unit Price</th><th>Qty</th><th>Line Total</th></tr></thead>
-                      <tbody>
-                        @for(item of order.orderItems; track item.id) {
-                          <tr>
-                            <td>{{ item.productName }}</td>
-                            <td>{{ item.brandName }}</td>
-                            <td>{{ item.storeName }}</td>
-                            <td>{{ item.unitPrice | number:'1.2-2' }} TL</td>
-                            <td>{{ item.quantity }}</td>
-                            <td class="amount">{{ item.lineTotal | number:'1.2-2' }} TL</td>
-                          </tr>
-                        }
-                      </tbody>
-                    </table>
+                    <div class="detail-section">
+                      <h4>📍 Shipping Address</h4>
+                      <p class="address-text">{{ order.shippingAddress || '-' }}</p>
+                    </div>
+                    @if(order.shipmentStatus) {
+                      <div class="detail-section shipment-info">
+                        <h4>🚚 Shipment Details</h4>
+                        <div class="shipment-grid">
+                          <div class="info-item"><span class="info-label">Ship Date</span><span>{{ order.shipmentDate ? (order.shipmentDate | date:'dd/MM/yyyy') : '-' }}</span></div>
+                          <div class="info-item"><span class="info-label">Est. Delivery</span><span>{{ order.estimatedDelivery ? (order.estimatedDelivery | date:'dd/MM/yyyy') : '-' }}</span></div>
+                          <div class="info-item"><span class="info-label">Delivery Date</span><span>{{ order.deliveryDate ? (order.deliveryDate | date:'dd/MM/yyyy') : '-' }}</span></div>
+                          <div class="info-item"><span class="info-label">Shipping Method</span><span>{{ order.shippingMethod || '-' }}</span></div>
+                          <div class="info-item"><span class="info-label">Tracking</span><span class="mono">{{ order.trackingNumber || '-' }}</span></div>
+                          <div class="info-item"><span class="info-label">Shipment Status</span><span class="status-badge" [ngClass]="getStatusClass(order.shipmentStatus)">{{ order.shipmentStatus }}</span></div>
+                        </div>
+                      </div>
+                    }
+                    @if(order.orderItems) {
+                      <div class="detail-section">
+                        <h4>📦 Order Items</h4>
+                        <table class="sub-table">
+                          <thead><tr><th>Product</th><th>Brand</th><th>Seller</th><th>Unit Price</th><th>Qty</th><th>Line Total</th></tr></thead>
+                          <tbody>
+                            @for(item of order.orderItems; track item.id) {
+                              <tr>
+                                <td><a [routerLink]="['/products', item.productId]" class="link">{{ item.productName }}</a></td>
+                                <td><a [routerLink]="['/products/brand', item.brandName]" class="link">{{ item.brandName }}</a></td>
+                                <td>{{ item.storeName }}</td>
+                                <td>{{ item.unitPrice | number:'1.2-2' }} TL</td>
+                                <td>{{ item.quantity }}</td>
+                                <td class="amount">{{ item.lineTotal | number:'1.2-2' }} TL</td>
+                              </tr>
+                            }
+                          </tbody>
+                        </table>
+                      </div>
+                    }
                   </div>
                 </td>
               </tr>

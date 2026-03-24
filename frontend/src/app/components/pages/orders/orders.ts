@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule, DecimalPipe, DatePipe } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { RouterLink } from '@angular/router';
+import { FormsModule } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
 import { AuthService } from '../../../core/services/auth.service';
 
@@ -37,7 +38,7 @@ interface Order {
 @Component({
   selector: 'app-orders',
   standalone: true,
-  imports: [CommonModule, RouterLink, TranslateModule, DecimalPipe, DatePipe],
+  imports: [CommonModule, RouterLink, FormsModule, TranslateModule, DecimalPipe, DatePipe],
   templateUrl: './orders.html',
   styleUrl: './orders.scss',
 })
@@ -57,6 +58,10 @@ export class Orders implements OnInit {
   sortBy = 'createdAt';
   sortDir = 'desc';
 
+  // Date Filters
+  startDate = '';
+  endDate = '';
+
   constructor(
     private http: HttpClient,
     private auth: AuthService
@@ -71,7 +76,9 @@ export class Orders implements OnInit {
     const user = this.auth.getUser();
     if (!user) return;
 
-    const url = `http://localhost:8080/api/orders?userId=${user.id}&page=${this.currentPage}&size=${this.pageSize}&sortBy=${this.sortBy}&sortDir=${this.sortDir}`;
+    const url = `http://localhost:8080/api/orders?userId=${user.id}&page=${this.currentPage}&size=${this.pageSize}&sortBy=${this.sortBy}&sortDir=${this.sortDir}`
+      + (this.startDate ? `&startDate=${this.startDate}` : '')
+      + (this.endDate ? `&endDate=${this.endDate}` : '');
     this.http.get<any>(url).subscribe({
       next: (res) => {
         this.orders = res.content || [];
@@ -143,4 +150,7 @@ export class Orders implements OnInit {
       default: return '';
     }
   }
+
+  applyFilters() { this.currentPage = 0; this.loadOrders(); }
+  clearFilters() { this.startDate = ''; this.endDate = ''; this.currentPage = 0; this.loadOrders(); }
 }

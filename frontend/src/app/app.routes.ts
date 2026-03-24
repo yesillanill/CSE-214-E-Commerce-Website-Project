@@ -3,7 +3,6 @@ import { Analytics } from './components/pages/analytics/analytics';
 import { AiAssistant } from './components/pages/ai-assistant/ai-assistant';
 
 import { Customers } from './components/pages/customers/customers';
-import { Shipments } from './components/pages/shipments/shipments';
 import { Users } from './components/pages/users/users';
 import { Orders } from './components/pages/orders/orders';
 import { Inventory } from './components/pages/inventory/inventory';
@@ -31,7 +30,6 @@ export const routes: Routes = [
   {path:"analytics", component: Analytics},
   {path:"ai-assistant", component: AiAssistant},
   {path:"customers", component: Customers, canActivate: [roleGuard], data: {role:'Admin'}},
-  {path:"shipments", component: Shipments, canActivate: [roleGuard], data: {role:'CorporateUser'}},
   {path:"users", component: Users, canActivate: [roleGuard], data: {role:'Admin'}},
   {path:"reports", component: Reports, canActivate: [roleGuard], data: {role:'Admin'}},
   {path:"orders", component: Orders, canActivate: [roleGuard], data: {role:'IndividualUser'}},

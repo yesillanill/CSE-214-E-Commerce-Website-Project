@@ -1,18 +1,19 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule, DecimalPipe, DatePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
+import { RouterLink } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { AuthService } from '../../../core/services/auth.service';
 import Swal from 'sweetalert2';
 
 interface OrderItem { id: number; productName: string; productId: number; brandName: string; storeName: string; unitPrice: number; quantity: number; lineTotal: number; }
-interface StoreOrder { id: number; createdAt: string; grandTotal: number; paymentStatus: string; shippingAddress: string; shipmentStatus: string; orderItems: OrderItem[]; }
+interface StoreOrder { id: number; createdAt: string; grandTotal: number; paymentStatus: string; paymentMethod: string; shippingAddress: string; shipmentStatus: string; trackingNumber: string; estimatedDelivery: string; deliveryDate: string; shipmentDate: string; shippingMethod: string; orderItems: OrderItem[]; }
 
 @Component({
   selector: 'app-store-orders',
   standalone: true,
-  imports: [CommonModule, FormsModule, TranslateModule, DecimalPipe, DatePipe],
+  imports: [CommonModule, FormsModule, RouterLink, TranslateModule, DecimalPipe, DatePipe],
   templateUrl: './store-orders.html',
   styleUrl: './store-orders.scss',
 })
@@ -30,7 +31,11 @@ export class StoreOrders implements OnInit {
   sortBy = 'createdAt';
   sortDir = 'desc';
 
-  constructor(private http: HttpClient, private auth: AuthService) {}
+  // Date Filters
+  startDate = '';
+  endDate = '';
+
+  constructor(private http: HttpClient, private auth: AuthService, private cdr: ChangeDetectorRef) {}
 
   ngOnInit() {
     const user = this.auth.getUser();
@@ -51,6 +56,8 @@ export class StoreOrders implements OnInit {
     if (!this.storeId) return;
     this.isLoading = true;
     let url = `http://localhost:8080/api/store-orders?storeId=${this.storeId}&page=${this.currentPage}&size=${this.pageSize}&sortBy=${this.sortBy}&sortDir=${this.sortDir}`;
+    if (this.startDate) url += `&startDate=${this.startDate}`;
+    if (this.endDate) url += `&endDate=${this.endDate}`;
     this.http.get<any>(url).subscribe({
       next: (res) => {
         this.orders = res.content || [];
@@ -85,20 +92,28 @@ export class StoreOrders implements OnInit {
 
   private sendStatusUpdate(orderId: number, status: string) {
     this.http.patch<any>(`http://localhost:8080/api/store-orders/${orderId}/status`, { status }).subscribe({
-      next: () => { const o = this.orders.find(x => x.id === orderId); if (o) o.shipmentStatus = status; Swal.fire('Updated!', `Status → ${status}`, 'success'); },
+      next: () => {
+        const idx = this.orders.findIndex(x => x.id === orderId);
+        if (idx !== -1) {
+          this.orders[idx] = { ...this.orders[idx], shipmentStatus: status };
+          this.orders = [...this.orders];
+        }
+        this.cdr.detectChanges();
+        Swal.fire('Updated!', `Status → ${status}`, 'success');
+      },
       error: () => Swal.fire('Error', 'Could not update.', 'error')
     });
   }
 
   exportCsv() {
-    const header = 'Order ID,Date,Total,Payment Status,Shipment Status,Address\n';
+    const header = 'Order ID,Date,Total,Payment Status,Shipment Status,Tracking Number,Shipping Method,Est. Delivery,Address\n';
     const rows = this.orders.map(o =>
-      `${o.id},${o.createdAt},${o.grandTotal},${o.paymentStatus || ''},${o.shipmentStatus || ''},"${o.shippingAddress || ''}"`
+      `${o.id},${o.createdAt},${o.grandTotal},${o.paymentStatus || ''},${o.shipmentStatus || ''},${o.trackingNumber || ''},${o.shippingMethod || ''},${o.estimatedDelivery || ''},"${o.shippingAddress || ''}"`
     ).join('\n');
     const blob = new Blob([header + rows], { type: 'text/csv' });
     const a = document.createElement('a');
     a.href = URL.createObjectURL(blob);
-    a.download = 'store_orders.csv';
+    a.download = 'orders.csv';
     a.click();
   }
 
@@ -107,7 +122,7 @@ export class StoreOrders implements OnInit {
       case 'DELIVERED': case 'COMPLETED': return 'status-success';
       case 'SHIPPED': case 'IN_TRANSIT': return 'status-info';
       case 'PROCESSING': case 'PENDING': return 'status-warning';
-      case 'REJECTED': case 'FAILED': return 'status-danger';
+      case 'REJECTED': case 'FAILED': case 'RETURNED': case 'REFUNDED': return 'status-danger';
       default: return '';
     }
   }
@@ -116,4 +131,6 @@ export class StoreOrders implements OnInit {
   canReject(s: string): boolean { return s !== 'REJECTED' && s !== 'DELIVERED' && s !== 'SHIPPED'; }
   goToPage(p: number) { if (p >= 0 && p < this.totalPages) { this.currentPage = p; this.loadOrders(); } }
   onPageSizeChange(e: Event) { this.pageSize = +(e.target as HTMLSelectElement).value; this.currentPage = 0; this.loadOrders(); }
+  applyFilters() { this.currentPage = 0; this.loadOrders(); }
+  clearFilters() { this.startDate = ''; this.endDate = ''; this.currentPage = 0; this.loadOrders(); }
 }

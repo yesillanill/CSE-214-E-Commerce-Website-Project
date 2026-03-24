@@ -11,6 +11,26 @@
   color: var(--text-color, #e0e0e0);
 }
 
+/* Filters */
+.filters-bar {
+  display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 20px; padding: 16px; border-radius: 12px;
+  background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06);
+}
+.filter-input {
+  padding: 8px 12px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.1);
+  background: var(--card-bg); color: var(--text-color); font-size: 0.85rem; outline: none; min-width: 130px;
+  &:focus { border-color: #667eea; }
+}
+.apply-btn {
+  padding: 8px 16px; border-radius: 8px; border: none; background: #667eea; color: white;
+  font-weight: 600; cursor: pointer; transition: all 0.2s; &:hover { background: #5a6fd6; }
+}
+.clear-btn {
+  padding: 8px 16px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.1);
+  background: transparent; color: var(--text-muted); cursor: pointer; transition: all 0.2s;
+  &:hover { background: rgba(255,255,255,0.05); }
+}
+
 /* Skeleton */
 .skeleton-container { display: flex; flex-direction: column; gap: 12px; }
 .skeleton-row {

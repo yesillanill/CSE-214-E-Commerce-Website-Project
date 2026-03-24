@@ -1,6 +1,13 @@
 <div class="orders-page">
   <h1 class="page-title">My Orders</h1>
 
+  <div class="filters-bar">
+    <input type="date" [(ngModel)]="startDate" class="filter-input" placeholder="Start Date">
+    <input type="date" [(ngModel)]="endDate" class="filter-input" placeholder="End Date">
+    <button class="apply-btn" (click)="applyFilters()">Apply</button>
+    <button class="clear-btn" (click)="clearFilters()">Clear</button>
+  </div>
+
   @if(isLoading) {
     <div class="skeleton-container">
       @for(i of [1,2,3,4,5]; track i) {
@@ -85,7 +92,7 @@
                       <tbody>
                         @for(item of order.orderItems; track item.id) {
                           <tr>
-                            <td>{{ item.productName }}</td>
+                            <td><a [routerLink]="['/products', item.productId]" class="link">{{ item.productName }}</a></td>
                             <td><a [routerLink]="['/products/brand', item.brandName]" class="link">{{ item.brandName }}</a></td>
                             <td><a [routerLink]="['/products/store', item.storeName]" class="link">{{ item.storeName }}</a></td>
                             <td>{{ item.unitPrice | number:'1.2-2' }} TL</td>

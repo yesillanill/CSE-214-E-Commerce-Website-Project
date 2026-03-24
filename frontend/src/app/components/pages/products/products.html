@@ -5,8 +5,8 @@
     <div class="search-bar-container">
       <div class="search-wrapper">
         <span class="search-icon">🔍</span>
-        <input 
-          type="text" 
+        <input
+          type="text"
           (input)="updateSearch($event)"
           class="search-input"
         />
@@ -22,19 +22,19 @@
         <button (click)="toggleFilters()" class="toolbar-btn" [class.active]="isFilterOpen">
           {{ (isFilterOpen ? 'PRODUCTS.CLOSE_FILTERS'  : 'PRODUCTS.OPEN_FILTERS') | translate }}
         </button>
-        
+
         <div class="filters-dropdown custom-dropdown" [class.open]="isFilterOpen">
           <div class="filter-section">
             <h3>Kategoriler</h3>
             <div class="category-list">
-              <button 
+              <button
                 *ngIf="!isCategoryPage"
-                (click)="updateCategory('all')" 
+                (click)="updateCategory('all')"
                 [class.selected]="(selectedCategory$ | async) === 'all'">
                 Tümü
               </button>
-              <button 
-                *ngFor="let cat of (categories$ | async)" 
+              <button
+                *ngFor="let cat of (categories$ | async)"
                 (click)="updateCategory(cat)"
                 [class.selected]="(selectedCategory$ | async) === cat"
                 [disabled]="isCategoryPage && cat !== currentCategory"
@@ -74,8 +74,8 @@
         </button>
 
         <div class="sort-dropdown custom-dropdown" [class.open]="isSortOpen">
-          <div 
-            class="sort-option" 
+          <div
+            class="sort-option"
             *ngFor="let opt of [
               {v:'default', l:'PRODUCTS.SORT_DEFAULT'},
               {v:'name-asc', l:'PRODUCTS.SORT_NAME_ASC'},
@@ -96,7 +96,18 @@
 
   <!-- Product Grid -->
   <div class="products-layout">
-    <div class="products-grid" *ngIf="filteredProducts$ | async as products; else loading">
+    <div class="pagination-toolbar">
+      <div class="page-size-control">
+        <label>Show</label>
+        <select [value]="pageSize" (change)="onPageSizeChange($event)">
+          <option *ngFor="let opt of pageSizeOptions" [value]="opt">{{ opt }}</option>
+        </select>
+        <label>per page</label>
+      </div>
+      <div class="results-info">{{ totalFilteredCount }} products</div>
+    </div>
+
+    <div class="products-grid" *ngIf="paginatedProducts$ | async as products; else loading">
       <app-product-card
         *ngFor="let product of products"
         [product]="product">
@@ -110,6 +121,14 @@
     <ng-template #loading>
       <app-loading-spinner></app-loading-spinner>
     </ng-template>
+
+    <div class="pagination" *ngIf="totalPages > 1">
+      <button class="page-btn" [disabled]="currentPage === 0" (click)="goToPage(0)">«</button>
+      <button class="page-btn" [disabled]="currentPage === 0" (click)="goToPage(currentPage - 1)">‹</button>
+      <span class="page-info">Page {{ currentPage + 1 }} of {{ totalPages }}</span>
+      <button class="page-btn" [disabled]="currentPage >= totalPages - 1" (click)="goToPage(currentPage + 1)">›</button>
+      <button class="page-btn" [disabled]="currentPage >= totalPages - 1" (click)="goToPage(totalPages - 1)">»</button>
+    </div>
   </div>
 
 </div>

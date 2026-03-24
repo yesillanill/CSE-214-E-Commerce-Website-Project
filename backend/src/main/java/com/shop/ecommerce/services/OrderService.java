@@ -30,13 +30,23 @@ public class OrderService {
     private final CartItemRepository cartItemRepository;
     private final ProductRepository productRepository;
 
-    public Page<OrderDTO> getOrdersByUser(Long userId, Pageable pageable) {
+    public Page<OrderDTO> getOrdersByUser(Long userId, Pageable pageable, java.time.LocalDate startDate, java.time.LocalDate endDate) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
+        if (startDate != null || endDate != null) {
+            java.time.LocalDateTime start = startDate != null ? startDate.atStartOfDay() : java.time.LocalDateTime.of(2000, 1, 1, 0, 0);
+            java.time.LocalDateTime end = endDate != null ? endDate.plusDays(1).atStartOfDay() : java.time.LocalDateTime.of(2100, 1, 1, 0, 0);
+            return orderRepository.findByUserAndDateRange(user, start, end, pageable).map(this::toDTO);
+        }
         return orderRepository.findByUser(user, pageable).map(this::toDTO);
     }
 
-    public Page<OrderDTO> getOrdersByStore(Long storeId, Pageable pageable) {
+    public Page<OrderDTO> getOrdersByStore(Long storeId, Pageable pageable, java.time.LocalDate startDate, java.time.LocalDate endDate) {
+        if (startDate != null || endDate != null) {
+            java.time.LocalDateTime start = startDate != null ? startDate.atStartOfDay() : java.time.LocalDateTime.of(2000, 1, 1, 0, 0);
+            java.time.LocalDateTime end = endDate != null ? endDate.plusDays(1).atStartOfDay() : java.time.LocalDateTime.of(2100, 1, 1, 0, 0);
+            return orderRepository.findByStoreIdAndDateRange(storeId, start, end, pageable).map(this::toDTO);
+        }
         return orderRepository.findByStoreId(storeId, pageable).map(this::toDTO);
     }
 

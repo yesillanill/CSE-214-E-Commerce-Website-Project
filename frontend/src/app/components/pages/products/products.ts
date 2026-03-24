@@ -21,6 +21,7 @@ import { AuthService } from '../../../core/services/auth.service';
 export class Products implements OnInit {
   products$!: Observable<ProductList[]>;
   filteredProducts$!: Observable<ProductList[]>;
+  paginatedProducts$!: Observable<ProductList[]>;
   categories$!: Observable<string[]>;
   
   // Filter States
@@ -30,6 +31,13 @@ export class Products implements OnInit {
   minPrice$ = new BehaviorSubject<number>(0);
   maxPrice$ = new BehaviorSubject<number>(10000);
   minRating$ = new BehaviorSubject<number>(0);
+
+  // Pagination States
+  currentPage$ = new BehaviorSubject<number>(0);
+  pageSize = 20;
+  pageSizeOptions = [12, 20, 40, 60];
+  totalFilteredCount = 0;
+  totalPages = 0;
 
   // UI States
   isFilterOpen = false;
@@ -120,6 +128,22 @@ export class Products implements OnInit {
         return filtered;
       })
     );
+
+    this.paginatedProducts$ = combineLatest([
+      this.filteredProducts$,
+      this.currentPage$
+    ]).pipe(
+      map(([products, page]) => {
+        this.totalFilteredCount = products.length;
+        this.totalPages = Math.ceil(products.length / this.pageSize);
+        if (page >= this.totalPages && this.totalPages > 0) {
+          this.currentPage$.next(this.totalPages - 1);
+          return products.slice((this.totalPages - 1) * this.pageSize, this.totalPages * this.pageSize);
+        }
+        const start = page * this.pageSize;
+        return products.slice(start, start + this.pageSize);
+      })
+    );
   }
 
   // Event Handlers
@@ -143,6 +167,13 @@ export class Products implements OnInit {
   toggleFilters() { this.isFilterOpen = !this.isFilterOpen; if (this.isFilterOpen) this.isSortOpen = false; }
   toggleSort() { this.isSortOpen = !this.isSortOpen; if (this.isSortOpen) this.isFilterOpen = false; }
   selectSort(opt: string) { this.sortOption$.next(opt); this.isSortOpen = false; }
+
+  goToPage(p: number) { if (p >= 0 && p < this.totalPages) this.currentPage$.next(p); }
+  onPageSizeChange(event: Event) {
+    this.pageSize = +(event.target as HTMLSelectElement).value;
+    this.currentPage$.next(0);
+  }
+  get currentPage(): number { return this.currentPage$.value; }
 }
 
 
