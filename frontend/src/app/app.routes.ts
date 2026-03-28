@@ -6,6 +6,8 @@ import { Customers } from './components/pages/customers/customers';
 import { Users } from './components/pages/users/users';
 import { Orders } from './components/pages/orders/orders';
 import { Inventory } from './components/pages/inventory/inventory';
+import { AddProduct } from './components/pages/add-product/add-product';
+import { EditProduct } from './components/pages/edit-product/edit-product';
 import { Reports } from './components/pages/reports/reports';
 import { Stores } from './components/pages/stores/stores';
 import { StoreOrders } from './components/pages/store-orders/store-orders';
@@ -33,6 +35,8 @@ export const routes: Routes = [
   {path:"users", component: Users, canActivate: [roleGuard], data: {role:'Admin'}},
   {path:"reports", component: Reports, canActivate: [roleGuard], data: {role:'Admin'}},
   {path:"orders", component: Orders, canActivate: [roleGuard], data: {role:'IndividualUser'}},
+  {path:"inventory/add", component: AddProduct, canActivate: [roleGuard], canDeactivate: [pendingChangesGuard], data: {role:'CorporateUser'}},
+  {path:"inventory/edit/:id", component: EditProduct, canActivate: [roleGuard], canDeactivate: [pendingChangesGuard], data: {role:'CorporateUser'}},
   {path:"inventory", component: Inventory, canActivate: [roleGuard], data: {role:'CorporateUser'}},
   {path:"store-orders", component: StoreOrders, canActivate: [roleGuard], data: {role:'CorporateUser'}},
   {path:"stores", component: Stores, canActivate: [roleGuard], data: {role:'Admin'}},
@@ -47,3 +51,4 @@ export const routes: Routes = [
   {path:"access-denied", component: AccessDenied},
   {path:"**", component: PageNotFound}
 ];
+

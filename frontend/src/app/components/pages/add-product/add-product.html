@@ -1,0 +1,72 @@
+<div class="product-form-page">
+  <div class="form-header">
+    <button class="back-btn" (click)="goBack()">
+      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+      Back to Inventory
+    </button>
+    <h1 class="form-title">Add New Product</h1>
+  </div>
+
+  <form class="product-form" (ngSubmit)="onSubmit()" #productForm="ngForm">
+    <div class="form-grid">
+      <div class="form-group full-width">
+        <label for="name">Product Name *</label>
+        <input id="name" type="text" [(ngModel)]="product.name" name="name" required placeholder="Enter product name">
+      </div>
+
+      <div class="form-group full-width">
+        <label for="description">Description</label>
+        <textarea id="description" [(ngModel)]="product.description" name="description" rows="4" placeholder="Enter product description"></textarea>
+      </div>
+
+      <div class="form-group">
+        <label for="price">Price (TL) *</label>
+        <input id="price" type="number" [(ngModel)]="product.price" name="price" required min="0" step="0.01" placeholder="0.00">
+      </div>
+
+      <div class="form-group">
+        <label for="stock">Stock *</label>
+        <input id="stock" type="number" [(ngModel)]="product.stock" name="stock" required min="0" placeholder="0">
+      </div>
+
+      <div class="form-group">
+        <label for="categoryId">Category</label>
+        <select id="categoryId" [(ngModel)]="product.categoryId" name="categoryId">
+          <option [ngValue]="null">Select category</option>
+          <option *ngFor="let cat of categories" [ngValue]="cat.id">{{ cat.name }}</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="brandId">Brand</label>
+        <select id="brandId" [(ngModel)]="product.brandId" name="brandId">
+          <option [ngValue]="null">Select brand</option>
+          <option *ngFor="let brand of brands" [ngValue]="brand.id">{{ brand.name }}</option>
+        </select>
+      </div>
+
+      <div class="form-group full-width">
+        <label for="img">Image URL</label>
+        <input id="img" type="text" [(ngModel)]="product.img" name="img" placeholder="https://example.com/image.jpg">
+      </div>
+
+      @if(product.img) {
+        <div class="image-preview full-width">
+          <img [src]="product.img" alt="Preview" (error)="product.img = ''">
+        </div>
+      }
+    </div>
+
+    <div class="form-actions">
+      <button type="button" class="cancel-btn" (click)="goBack()">Cancel</button>
+      <button type="submit" class="submit-btn" [disabled]="!productForm.valid || isSaving">
+        @if(isSaving) {
+          <span class="spinner"></span> Saving...
+        } @else {
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+          Save Product
+        }
+      </button>
+    </div>
+  </form>
+</div>

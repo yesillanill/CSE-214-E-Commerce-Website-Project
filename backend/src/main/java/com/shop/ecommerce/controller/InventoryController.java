@@ -10,6 +10,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -21,6 +22,7 @@ public class InventoryController {
     private final ProductRepository productRepository;
     private final InventoryRepository inventoryRepository;
     private final CategoryRepository categoryRepository;
+    private final BrandRepository brandRepository;
 
     @GetMapping
     public ResponseEntity<Page<Product>> getProducts(
@@ -34,6 +36,23 @@ public class InventoryController {
         Sort sort = sortDir.equalsIgnoreCase("asc") ? Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
         Pageable pageable = PageRequest.of(page, size, sort);
         return ResponseEntity.ok(productRepository.findByStoreId(storeId, pageable));
+    }
+
+    @GetMapping("/categories")
+    public ResponseEntity<List<Category>> getCategories() {
+        return ResponseEntity.ok(categoryRepository.findAll());
+    }
+
+    @GetMapping("/brands")
+    public ResponseEntity<List<Brand>> getBrands() {
+        return ResponseEntity.ok(brandRepository.findAll());
+    }
+
+    @GetMapping("/product/{productId}")
+    public ResponseEntity<Product> getProductById(@PathVariable Long productId) {
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() -> new RuntimeException("Product not found"));
+        return ResponseEntity.ok(product);
     }
 
     @PostMapping
@@ -93,3 +112,4 @@ public class InventoryController {
         return ResponseEntity.ok(Map.of("status", "deleted"));
     }
 }
+
