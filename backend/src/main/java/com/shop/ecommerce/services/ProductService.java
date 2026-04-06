@@ -6,6 +6,7 @@ import com.shop.ecommerce.dto.product.ProductListDTO;
 import com.shop.ecommerce.dto.product.ProductUpdateDTO;
 import com.shop.ecommerce.entities.Product;
 import com.shop.ecommerce.mapper.ProductMapper;
+import com.shop.ecommerce.repository.CategoryRepository;
 import com.shop.ecommerce.repository.ProductRepository;
 import org.springframework.stereotype.Service;
 
@@ -15,9 +16,15 @@ import java.util.List;
 public class ProductService {
 
     private final ProductRepository productRepository;
+    private final CategoryRepository categoryRepository;
 
-    public ProductService(ProductRepository productRepository){
+    public ProductService(ProductRepository productRepository, CategoryRepository categoryRepository){
         this.productRepository = productRepository;
+        this.categoryRepository = categoryRepository;
+    }
+
+    public List<String> getCategories(){
+        return categoryRepository.findAll().stream().map(c -> c.getName()).toList();
     }
 
     public List<ProductListDTO> getProducts(){

@@ -152,6 +152,67 @@
   padding: 0 4px;
 }
 
+/* Rendered markdown content inside assistant messages */
+.assistant-message .message-text {
+  white-space: normal;
+
+  a.chat-link {
+    color: #8b9cf7;
+    text-decoration: none;
+    font-weight: 500;
+    border-bottom: 1px solid rgba(139, 156, 247, 0.3);
+    transition: all 0.2s ease;
+    cursor: pointer;
+
+    &:hover {
+      color: #a5b4fc;
+      border-bottom-color: #a5b4fc;
+      text-shadow: 0 0 8px rgba(139, 156, 247, 0.3);
+    }
+
+    &.external::after {
+      content: ' ↗';
+      font-size: 0.7em;
+      vertical-align: super;
+    }
+  }
+
+  strong {
+    color: #e8e8ff;
+    font-weight: 600;
+  }
+
+  em {
+    color: #c0c0e0;
+  }
+
+  ul {
+    margin: 8px 0;
+    padding-left: 18px;
+    list-style: none;
+
+    li {
+      position: relative;
+      padding: 3px 0;
+      padding-left: 14px;
+
+      &::before {
+        content: '▸';
+        position: absolute;
+        left: 0;
+        color: #667eea;
+        font-size: 0.85em;
+      }
+    }
+  }
+
+  br + br {
+    display: block;
+    margin-top: 4px;
+    content: '';
+  }
+}
+
 /* Typing indicator */
 .typing-indicator {
   display: flex;

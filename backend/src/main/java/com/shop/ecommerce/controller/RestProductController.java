@@ -27,6 +27,11 @@ public class RestProductController {
         return productService.getProducts();
     }
 
+    @GetMapping(path="/categories")
+    public List<String> getCategories(){
+        return productService.getCategories();
+    }
+
     @GetMapping(path="/{id}")
     public ProductDetailDTO getProductByID(@PathVariable Long id){
         return productService.getProductByID(id);

@@ -13,9 +13,11 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Table(name = "orders")
 public class Order {
 
+    @EqualsAndHashCode.Include
     @Id
     @Column(name = "order_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)

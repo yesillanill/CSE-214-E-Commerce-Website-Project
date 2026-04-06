@@ -8,9 +8,11 @@ import lombok.*;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Table(name="inventory")
 public class Inventory {
 
+    @EqualsAndHashCode.Include
     @Id
     @Column(name="id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)

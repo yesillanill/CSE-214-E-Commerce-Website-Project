@@ -11,5 +11,7 @@ public class ProductListDTO {
     private Double price;
     private double rating;
     private String img;
+    private String categoryName;
+    private String brandName;
     private Integer stock;
 }

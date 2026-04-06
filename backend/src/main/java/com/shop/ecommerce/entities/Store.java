@@ -9,9 +9,11 @@ import java.math.BigDecimal;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Table(name="stores")
 public class Store {
 
+    @EqualsAndHashCode.Include
     @Id
     @Column(name="store_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)

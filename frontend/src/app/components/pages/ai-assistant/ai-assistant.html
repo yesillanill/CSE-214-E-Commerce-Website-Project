@@ -21,8 +21,12 @@
           }
         </div>
         <div class="message-content">
-          <div class="message-bubble">
-            <p class="message-text">{{ msg.content }}</p>
+          <div class="message-bubble" (click)="onMessageClick($event)">
+            @if(msg.role === 'assistant') {
+              <div class="message-text" [innerHTML]="renderMarkdown(msg.content)"></div>
+            } @else {
+              <p class="message-text">{{ msg.content }}</p>
+            }
           </div>
           <span class="message-time">{{ msg.timestamp | date:'HH:mm' }}</span>
         </div>
@@ -48,7 +52,7 @@
       <textarea
         [(ngModel)]="userInput"
         (keydown)="onKeyDown($event)"
-        placeholder="Type your message..."
+        placeholder="Bir soru sorun... (ör: Samsung ürünleri neler?)"
         rows="1"
         class="chat-input"
         [disabled]="isLoading"

@@ -10,9 +10,11 @@ import java.util.Date;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Table(name="users")
 public class User {
 
+    @EqualsAndHashCode.Include
     @Id
     @Column(name="user_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)

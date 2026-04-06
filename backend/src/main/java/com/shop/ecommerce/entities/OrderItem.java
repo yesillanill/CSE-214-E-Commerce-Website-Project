@@ -10,9 +10,11 @@ import java.math.BigDecimal;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Table(name = "order_items")
 public class OrderItem {
 
+    @EqualsAndHashCode.Include
     @Id
     @Column(name = "order_item_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)

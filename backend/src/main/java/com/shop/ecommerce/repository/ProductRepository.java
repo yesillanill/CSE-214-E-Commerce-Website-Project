@@ -19,4 +19,9 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     List<Product> findByCategoryName(String categoryName);
 
     Page<Product> findByStoreId(Long storeId, Pageable pageable);
+
+    @Query("SELECT p FROM Product p WHERE LOWER(p.name) LIKE LOWER(CONCAT('%', :keyword, '%'))")
+    List<Product> searchByKeyword(@Param("keyword") String keyword);
+
+    long countByStoreId(Long storeId);
 }

@@ -13,9 +13,11 @@ import java.time.LocalDate;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Table(name = "shipments")
 public class Shipment {
 
+    @EqualsAndHashCode.Include
     @Id
     @Column(name = "shipment_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)

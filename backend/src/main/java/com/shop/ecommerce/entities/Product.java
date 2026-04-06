@@ -11,8 +11,11 @@ import java.time.*;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Table(name="products")
 public class Product {
+
+    @EqualsAndHashCode.Include
 
     @Id
     @Column(name="product_id", nullable = false)
