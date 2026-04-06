@@ -81,11 +81,18 @@ export class Inventory implements OnInit {
   }
 
   exportCsv() {
-    const header = 'ID,Name,Category,Stock,Price,Rating\n';
-    const rows = this.products.map(p =>
-      `${p.id},"${p.name}",${p.category?.name || ''},${p.inventory?.stock || 0},${p.price},${p.rating}`
-    ).join('\n');
-    this.downloadCsv(header + rows, 'inventory.csv');
+    let url = `http://localhost:8080/api/inventory?storeId=${this.storeId}&page=0&size=${this.totalElements || 10000}&sortBy=${this.sortBy}&sortDir=${this.sortDir}`;
+    if (this.searchTerm) url += `&search=${this.searchTerm}`;
+    this.http.get<any>(url).subscribe({
+      next: (res) => {
+        const allProducts = res.content || [];
+        const header = 'ID,Name,Category,Stock,Price,Rating\n';
+        const rows = allProducts.map((p: any) =>
+          `${p.id},"${p.name}",${p.category?.name || ''},${p.inventory?.stock || 0},${p.price},${p.rating}`
+        ).join('\n');
+        this.downloadCsv(header + rows, 'inventory.csv');
+      }
+    });
   }
 
   private downloadCsv(content: string, filename: string) {

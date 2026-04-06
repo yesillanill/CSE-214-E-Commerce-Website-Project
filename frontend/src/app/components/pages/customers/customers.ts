@@ -71,15 +71,20 @@ export class Customers implements OnInit {
   }
 
   exportCsv() {
-    const header = 'ID,Name,Email,Registered,Orders,Total Spend,Membership\n';
-    const rows = this.customers.map(c =>
-      `${c.id},"${c.name} ${c.surname}",${c.email},${c.createdAt || ''},${c.totalOrders},${c.totalSpend},${c.membershipType || ''}`
-    ).join('\n');
-    const blob = new Blob([header + rows], { type: 'text/csv' });
-    const a = document.createElement('a');
-    a.href = URL.createObjectURL(blob);
-    a.download = 'customers.csv';
-    a.click();
+    this.http.get<any>(`http://localhost:8080/api/admin/users?search=${this.searchTerm}&page=0&size=${this.totalElements || 10000}`).subscribe({
+      next: (res) => {
+        const allCustomers = res.content || [];
+        const header = 'ID,Name,Email,Registered,Orders,Total Spend,Membership\n';
+        const rows = allCustomers.map((c: any) =>
+          `${c.id},"${c.name} ${c.surname}",${c.email},${c.createdAt || ''},${c.totalOrders},${c.totalSpend},${c.membershipType || ''}`
+        ).join('\n');
+        const blob = new Blob([header + rows], { type: 'text/csv' });
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = 'customers.csv';
+        a.click();
+      }
+    });
   }
 
   deleteUser(userId: number, name: string) {

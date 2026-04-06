@@ -110,15 +110,23 @@ export class StoreOrders implements OnInit {
   }
 
   exportCsv() {
-    const header = 'Order ID,Date,Total,Payment Status,Shipment Status,Tracking Number,Shipping Method,Est. Delivery,Address\n';
-    const rows = this.orders.map(o =>
-      `${o.id},${o.createdAt},${o.grandTotal},${o.paymentStatus || ''},${o.shipmentStatus || ''},${o.trackingNumber || ''},${o.shippingMethod || ''},${o.estimatedDelivery || ''},"${o.shippingAddress || ''}"`
-    ).join('\n');
-    const blob = new Blob([header + rows], { type: 'text/csv' });
-    const a = document.createElement('a');
-    a.href = URL.createObjectURL(blob);
-    a.download = 'orders.csv';
-    a.click();
+    let url = `http://localhost:8080/api/store-orders?storeId=${this.storeId}&page=0&size=${this.totalElements || 10000}&sortBy=${this.sortBy}&sortDir=${this.sortDir}`;
+    if (this.startDate) url += `&startDate=${this.startDate}`;
+    if (this.endDate) url += `&endDate=${this.endDate}`;
+    this.http.get<any>(url).subscribe({
+      next: (res) => {
+        const allOrders = res.content || [];
+        const header = 'Order ID,Date,Total,Payment Status,Shipment Status,Tracking Number,Shipping Method,Est. Delivery,Address\n';
+        const rows = allOrders.map((o: any) =>
+          `${o.id},${o.createdAt},${o.grandTotal},${o.paymentStatus || ''},${o.shipmentStatus || ''},${o.trackingNumber || ''},${o.shippingMethod || ''},${o.estimatedDelivery || ''},"${o.shippingAddress || ''}"`
+        ).join('\n');
+        const blob = new Blob([header + rows], { type: 'text/csv' });
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = 'orders.csv';
+        a.click();
+      }
+    });
   }
 
   getStatusClass(s: string): string {

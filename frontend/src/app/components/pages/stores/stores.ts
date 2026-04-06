@@ -65,15 +65,20 @@ export class Stores implements OnInit {
   }
 
   exportCsv() {
-    const header = 'ID,Store Name,Company,Tax Number,Revenue\n';
-    const rows = this.stores.map(s =>
-      `${s.id},"${s.storeName}","${s.companyName || ''}",${s.taxNumber || ''},${s.totalRevenue || 0}`
-    ).join('\n');
-    const blob = new Blob([header + rows], { type: 'text/csv' });
-    const a = document.createElement('a');
-    a.href = URL.createObjectURL(blob);
-    a.download = 'stores.csv';
-    a.click();
+    this.http.get<any>(`http://localhost:8080/api/admin/stores?page=0&size=${this.totalElements || 10000}`).subscribe({
+      next: (res) => {
+        const allStores = res.content || [];
+        const header = 'ID,Store Name,Company,Tax Number,Revenue\n';
+        const rows = allStores.map((s: any) =>
+          `${s.id},"${s.storeName}","${s.companyName || ''}",${s.taxNumber || ''},${s.totalRevenue || 0}`
+        ).join('\n');
+        const blob = new Blob([header + rows], { type: 'text/csv' });
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = 'stores.csv';
+        a.click();
+      }
+    });
   }
 
   goToPage(p: number) { if (p >= 0 && p < this.totalPages) { this.currentPage = p; this.loadStores(); } }

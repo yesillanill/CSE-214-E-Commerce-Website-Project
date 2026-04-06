@@ -86,15 +86,22 @@ export class Shipments implements OnInit {
   }
 
   exportCsv() {
-    const header = 'Shipment ID,Order ID,Tracking,Status,Ship Date,Est. Delivery,Delivery Date,Carrier\n';
-    const rows = this.shipments.map(s =>
-      `${s.id},${s.orderId},${s.trackingNumber || ''},${s.status || ''},${s.shipmentDate || ''},${s.estimatedDelivery || ''},${s.deliveryDate || ''},${s.carrier || ''}`
-    ).join('\n');
-    const blob = new Blob([header + rows], { type: 'text/csv' });
-    const a = document.createElement('a');
-    a.href = URL.createObjectURL(blob);
-    a.download = 'shipments.csv';
-    a.click();
+    let url = `http://localhost:8080/api/shipments?storeId=${this.storeId}&page=0&size=${this.totalElements || 10000}&sortBy=${this.sortBy}&sortDir=${this.sortDir}`;
+    if (this.searchTerm) url += `&search=${this.searchTerm}`;
+    this.http.get<any>(url).subscribe({
+      next: (res) => {
+        const allShipments = res.content || [];
+        const header = 'Shipment ID,Order ID,Tracking,Status,Ship Date,Est. Delivery,Delivery Date,Carrier\n';
+        const rows = allShipments.map((s: any) =>
+          `${s.id},${s.orderId},${s.trackingNumber || ''},${s.status || ''},${s.shipmentDate || ''},${s.estimatedDelivery || ''},${s.deliveryDate || ''},${s.carrier || ''}`
+        ).join('\n');
+        const blob = new Blob([header + rows], { type: 'text/csv' });
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = 'shipments.csv';
+        a.click();
+      }
+    });
   }
 
   goToPage(p: number) { if (p >= 0 && p < this.totalPages) { this.currentPage = p; this.loadShipments(); } }
