@@ -16,7 +16,6 @@ import java.time.LocalDate;
 @RestController
 @RequestMapping("/api/orders")
 @RequiredArgsConstructor
-@CrossOrigin
 public class OrderController {
 
     private final OrderService orderService;

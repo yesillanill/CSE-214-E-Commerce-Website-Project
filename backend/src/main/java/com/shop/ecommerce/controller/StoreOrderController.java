@@ -22,7 +22,6 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api/store-orders")
 @RequiredArgsConstructor
-@CrossOrigin
 public class StoreOrderController {
 
     private final OrderService orderService;

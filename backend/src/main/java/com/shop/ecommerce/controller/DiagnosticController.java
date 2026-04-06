@@ -14,7 +14,6 @@ import java.util.*;
 @RequestMapping("/api/diagnostic")
 @RequiredArgsConstructor
 @Slf4j
-@CrossOrigin
 public class DiagnosticController {
     private final OrderService orderService;
     private final UserRepository userRepository;

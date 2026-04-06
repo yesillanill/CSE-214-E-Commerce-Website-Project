@@ -12,6 +12,7 @@ import com.shop.ecommerce.repository.StoreRepository;
 import com.shop.ecommerce.repository.UserRepository;
 import com.shop.ecommerce.repository.AuditLogRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,53 +26,65 @@ public class AuthService {
     private final IndividualCustomerRepository individualCustomerRepository;
     private final StoreRepository storeRepository;
     private final AuditLogRepository auditLogRepository;
+    private final PasswordEncoder passwordEncoder;
+    private final JwtService jwtService;
 
     @Transactional
-    public User registerIndividual(IndividualRegisterDTO dto) {
+    public AuthResponse registerIndividual(IndividualRegisterDTO dto) {
         if (userRepository.findByEmail(dto.getEmail()).isPresent() || userRepository.findByPhone(dto.getPhone()).isPresent()) {
             throw new RuntimeException("User with this email or phone already exists");
         }
         User user = AuthMapper.toUserEntityFromIndividual(dto);
+        // Şifreyi BCrypt ile hash'le
+        user.setPassword(passwordEncoder.encode(dto.getPassword()));
         user = userRepository.save(user);
 
         IndividualCustomer customer = AuthMapper.toIndividualCustomerEntity(dto, user);
         individualCustomerRepository.save(customer);
 
-        return user;
+        // JWT token üret ve yanıt döndür
+        String token = jwtService.generateToken(user);
+        return buildAuthResponse(user, token);
     }
 
     @Transactional
-    public User registerStore(StoreRegisterDTO dto) {
+    public AuthResponse registerStore(StoreRegisterDTO dto) {
         if (userRepository.findByEmail(dto.getEmail()).isPresent() || userRepository.findByPhone(dto.getPhone()).isPresent()) {
             throw new RuntimeException("User with this email or phone already exists");
         }
         User user = AuthMapper.toUserEntityFromStore(dto);
+        // Şifreyi BCrypt ile hash'le
+        user.setPassword(passwordEncoder.encode(dto.getPassword()));
         user = userRepository.save(user);
 
         Store store = AuthMapper.toStoreEntity(dto, user);
         storeRepository.save(store);
 
-        return user;
+        // JWT token üret ve yanıt döndür
+        String token = jwtService.generateToken(user);
+        return buildAuthResponse(user, token);
     }
 
-    public User loginWithEmail(EmailLoginDTO dto) {
+    public AuthResponse loginWithEmail(EmailLoginDTO dto) {
         String email = dto.getEmail() != null ? dto.getEmail().trim() : "";
         Optional<User> userOpt = userRepository.findByEmail(email);
-        if (userOpt.isPresent() && userOpt.get().getPassword().equals(dto.getPassword())) {
+        if (userOpt.isPresent() && passwordEncoder.matches(dto.getPassword(), userOpt.get().getPassword())) {
             User user = userOpt.get();
             logAction(user, AuditAction.USER_LOGIN, "User logged in with email");
-            return user;
+            String token = jwtService.generateToken(user);
+            return buildAuthResponse(user, token);
         }
         throw new RuntimeException("Invalid email or password");
     }
 
-    public User loginWithPhone(PhoneLoginDTO dto) {
+    public AuthResponse loginWithPhone(PhoneLoginDTO dto) {
         String phone = dto.getPhone() != null ? dto.getPhone().trim() : "";
         Optional<User> userOpt = userRepository.findByPhone(phone);
-        if (userOpt.isPresent() && userOpt.get().getPassword().equals(dto.getPassword())) {
+        if (userOpt.isPresent() && passwordEncoder.matches(dto.getPassword(), userOpt.get().getPassword())) {
             User user = userOpt.get();
             logAction(user, AuditAction.USER_LOGIN, "User logged in with phone");
-            return user;
+            String token = jwtService.generateToken(user);
+            return buildAuthResponse(user, token);
         }
         throw new RuntimeException("Invalid phone or password");
     }
@@ -80,6 +93,18 @@ public class AuthService {
         userRepository.findById(userId).ifPresent(user -> {
             logAction(user, AuditAction.USER_LOGOUT, "User logged out");
         });
+    }
+
+    private AuthResponse buildAuthResponse(User user, String token) {
+        return AuthResponse.builder()
+                .token(token)
+                .id(user.getId())
+                .name(user.getName())
+                .surname(user.getSurname())
+                .email(user.getEmail())
+                .phone(user.getPhone())
+                .role(user.getRole())
+                .build();
     }
 
     private void logAction(User user, AuditAction action, String details) {

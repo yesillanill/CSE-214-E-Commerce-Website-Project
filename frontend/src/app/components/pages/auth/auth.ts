@@ -110,8 +110,7 @@ export class Auth implements OnInit {
   }
 
   handleRegisterSuccess() {
-    alert('Kayıt başarılı! Şimdi giriş yapabilirsiniz.');
-    this.setMode('login');
+    this.router.navigate(['/']);
   }
 
   setMode(mode: 'login' | 'register') {

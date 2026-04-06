@@ -14,7 +14,6 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/api/stores")
 @RequiredArgsConstructor
-@CrossOrigin(origins = "http://localhost:4200")
 public class StoreController {
 
     private final StoreRepository storeRepository;

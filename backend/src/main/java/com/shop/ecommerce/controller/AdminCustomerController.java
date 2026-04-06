@@ -19,7 +19,6 @@ import java.util.*;
 @RestController
 @RequestMapping("/api/admin/users")
 @RequiredArgsConstructor
-@CrossOrigin(origins = "http://localhost:4200")
 public class AdminCustomerController {
 
     private final UserRepository userRepository;
