@@ -113,3 +113,6 @@ build/
 
 #VS CODE
 .vscode/
+
+#Kiro
+.kiro/
