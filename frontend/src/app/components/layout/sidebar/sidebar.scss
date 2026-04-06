@@ -21,7 +21,11 @@
 
 @media (min-width: 1281px) {
 
-  .mobile-header{
+  .mobile-header {
+    display: none;
+  }
+
+  .brand-name{
     display: none;
   }
 

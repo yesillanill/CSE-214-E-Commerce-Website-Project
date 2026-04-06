@@ -1,14 +1,37 @@
+:host {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex: 1;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+@media (max-width: 1280px) {
+  :host {
+    align-items: flex-start;
+    padding: 10px;
+  }
+}
+
 .chat-page {
   display: flex;
   flex-direction: column;
-  height: calc(100vh - 40px);
+  height: calc(100vh - 80px);
+  width: 100%;
   max-width: 900px;
-  margin: 0 auto;
   border-radius: 16px;
   overflow: hidden;
   background: var(--card-bg, #1a1a2e);
   box-shadow: var(--card-shadow, 0 8px 32px rgba(0, 0, 0, 0.3));
   border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+@media (max-width: 1280px) {
+  .chat-page {
+    height: calc(100vh - 110px);
+    border-radius: 12px;
+  }
 }
 
 .chat-header {
