@@ -39,8 +39,15 @@ public class OrderController {
     public ResponseEntity<?> checkout(@RequestBody CheckoutRequest request) {
         try {
             return ResponseEntity.ok(orderService.checkout(request));
-        } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().body(java.util.Map.of("message", e.getMessage()));
+        } catch (Exception e) {
+            System.err.println("Checkout failed: " + e.getMessage());
+            String message = "Siparişiniz işlenirken bir hata oluştu / An error occurred while processing your order.";
+            if (e.getMessage() != null && e.getMessage().contains("constraint")) {
+                message = "Sistem hatası (Veritabanı uyuşmazlığı) / System error (Database conflict). Lütfen yetkiliyle iletişime geçin / Please contact administrator.";
+            } else if (e.getMessage() != null && !e.getMessage().isEmpty()) {
+                message += " Detay/Detail: " + e.getMessage();
+            }
+            return ResponseEntity.badRequest().body(java.util.Map.of("message", message));
         }
     }
 }
