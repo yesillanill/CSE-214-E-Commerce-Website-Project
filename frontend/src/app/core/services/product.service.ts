@@ -47,5 +47,16 @@ export class ProductService {
   getCategories(): Observable<string[]>{
     return this.http.get<string[]>(`${this.api}/categories`);
   }
-}
 
+  getTopRatedProducts(): Observable<ProductList[]>{
+    return this.http.get<ProductList[]>(`${this.api}/top-rated`);
+  }
+
+  getBestSellingProducts(): Observable<ProductList[]>{
+    return this.http.get<ProductList[]>(`${this.api}/best-selling`);
+  }
+
+  getHomeStats(): Observable<{categoryCount: number, brandCount: number, storeCount: number, productCount: number}>{
+    return this.http.get<{categoryCount: number, brandCount: number, storeCount: number, productCount: number}>(`${this.api}/home-stats`);
+  }
+}

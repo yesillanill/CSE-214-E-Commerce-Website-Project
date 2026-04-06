@@ -1,1 +1,66 @@
-<p>home works!</p>
+<div class="home-page">
+  <!-- Hero Section -->
+  <section class="hero-section">
+    <div class="hero-content">
+      <h1 class="hero-title" *ngIf="isLoggedIn">
+        Hoşgeldin, <span class="highlight">{{ userName }}</span> 👋
+      </h1>
+      <h1 class="hero-title" *ngIf="!isLoggedIn">
+        Hoşgeldiniz 👋
+      </h1>
+
+      <p class="stats-line" *ngIf="stats">
+        <span class="stat-num">{{ stats.categoryCount }}</span> kategori,
+        <span class="stat-num">{{ stats.brandCount }}</span> marka ve
+        <span class="stat-num">{{ stats.storeCount }}</span> mağazadan toplam
+        <span class="stat-num">{{ stats.productCount }}</span> ürünümüzü keşfedin.
+      </p>
+
+      <p class="cta-line" *ngIf="!isLoggedIn">
+        <a routerLink="/auth" class="cta-link">Giriş yapın veya Kayıt olun</a>
+        bu dünyaya katılın ve tüm avantajlardan faydalanın!
+      </p>
+    </div>
+  </section>
+
+  <!-- Top Rated Products -->
+  <section class="product-section">
+    <div class="section-header">
+      <h2 class="section-title">⭐ En Yüksek Puanlı Ürünler</h2>
+      <a routerLink="/products" class="see-all-link">Tümünü Gör →</a>
+    </div>
+
+    <div class="carousel-wrapper">
+      <button class="carousel-btn carousel-btn-left" (click)="scrollLeft(topRatedRow)">‹</button>
+      <div class="product-row" #topRatedRow>
+        <div class="product-slide" *ngFor="let product of topRatedProducts">
+          <app-product-card [product]="product"></app-product-card>
+        </div>
+      </div>
+      <button class="carousel-btn carousel-btn-right" (click)="scrollRight(topRatedRow)">›</button>
+    </div>
+  </section>
+
+  <!-- Best Selling Products -->
+  <section class="product-section">
+    <div class="section-header">
+      <h2 class="section-title">🔥 En Çok Satan Ürünler</h2>
+      <a routerLink="/products" class="see-all-link">Tümünü Gör →</a>
+    </div>
+
+    <div class="carousel-wrapper">
+      <button class="carousel-btn carousel-btn-left" (click)="scrollLeft(bestSellingRow)">‹</button>
+      <div class="product-row" #bestSellingRow>
+        <div class="product-slide" *ngFor="let product of bestSellingProducts">
+          <app-product-card [product]="product"></app-product-card>
+        </div>
+      </div>
+      <button class="carousel-btn carousel-btn-right" (click)="scrollRight(bestSellingRow)">›</button>
+    </div>
+  </section>
+
+  <!-- Loading State -->
+  <div class="loading-container" *ngIf="isLoading">
+    <app-loading-spinner></app-loading-spinner>
+  </div>
+</div>

@@ -6,21 +6,31 @@ import com.shop.ecommerce.dto.product.ProductListDTO;
 import com.shop.ecommerce.dto.product.ProductUpdateDTO;
 import com.shop.ecommerce.entities.Product;
 import com.shop.ecommerce.mapper.ProductMapper;
+import com.shop.ecommerce.repository.BrandRepository;
 import com.shop.ecommerce.repository.CategoryRepository;
 import com.shop.ecommerce.repository.ProductRepository;
+import com.shop.ecommerce.repository.StoreRepository;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class ProductService {
 
     private final ProductRepository productRepository;
     private final CategoryRepository categoryRepository;
+    private final BrandRepository brandRepository;
+    private final StoreRepository storeRepository;
 
-    public ProductService(ProductRepository productRepository, CategoryRepository categoryRepository){
+    public ProductService(ProductRepository productRepository, CategoryRepository categoryRepository,
+                          BrandRepository brandRepository, StoreRepository storeRepository){
         this.productRepository = productRepository;
         this.categoryRepository = categoryRepository;
+        this.brandRepository = brandRepository;
+        this.storeRepository = storeRepository;
     }
 
     public List<String> getCategories(){
@@ -68,5 +78,24 @@ public class ProductService {
         product.setImg(dto.getImg());
         Product updatedProduct = productRepository.save(product);
         return ProductMapper.toDetailDTO(updatedProduct);
+    }
+
+    public List<ProductListDTO> getTopRatedProducts(int limit){
+        return productRepository.findAllByOrderByRatingDesc(PageRequest.of(0, limit))
+                .stream().map(ProductMapper::toListDTO).toList();
+    }
+
+    public List<ProductListDTO> getBestSellingProducts(int limit){
+        return productRepository.findAllByOrderBySoldCountDesc(PageRequest.of(0, limit))
+                .stream().map(ProductMapper::toListDTO).toList();
+    }
+
+    public Map<String, Long> getHomeStats(){
+        Map<String, Long> stats = new LinkedHashMap<>();
+        stats.put("categoryCount", categoryRepository.count());
+        stats.put("brandCount", brandRepository.count());
+        stats.put("storeCount", storeRepository.count());
+        stats.put("productCount", productRepository.count());
+        return stats;
     }
 }

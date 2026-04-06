@@ -24,4 +24,8 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     List<Product> searchByKeyword(@Param("keyword") String keyword);
 
     long countByStoreId(Long storeId);
+
+    List<Product> findAllByOrderByRatingDesc(Pageable pageable);
+
+    List<Product> findAllByOrderBySoldCountDesc(Pageable pageable);
 }

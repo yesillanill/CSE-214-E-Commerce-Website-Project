@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/products")
@@ -29,6 +30,21 @@ public class RestProductController {
     @GetMapping(path="/categories")
     public List<String> getCategories(){
         return productService.getCategories();
+    }
+
+    @GetMapping(path="/top-rated")
+    public List<ProductListDTO> getTopRatedProducts(){
+        return productService.getTopRatedProducts(20);
+    }
+
+    @GetMapping(path="/best-selling")
+    public List<ProductListDTO> getBestSellingProducts(){
+        return productService.getBestSellingProducts(20);
+    }
+
+    @GetMapping(path="/home-stats")
+    public Map<String, Long> getHomeStats(){
+        return productService.getHomeStats();
     }
 
     @GetMapping(path="/{id}")
