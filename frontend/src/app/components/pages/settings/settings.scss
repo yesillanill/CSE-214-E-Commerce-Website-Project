@@ -123,3 +123,101 @@ h1{
   }
 }
 
+/* Payment Cards Section */
+.cards-list {
+  margin-bottom: 16px;
+}
+
+.payment-card-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 18px;
+  margin-bottom: 10px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, rgba(49,130,206,0.08) 0%, rgba(128,90,213,0.06) 100%);
+  border: 1px solid rgba(255,255,255,0.08);
+  transition: all 0.2s;
+
+  &:hover {
+    border-color: rgba(49,130,206,0.3);
+  }
+}
+
+.card-info {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.card-type-badge {
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  color: white;
+  padding: 3px 10px;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+
+.card-number {
+  font-family: 'Courier New', monospace;
+  font-size: 0.95rem;
+  font-weight: 600;
+  letter-spacing: 1px;
+}
+
+.card-holder {
+  font-size: 0.85rem;
+  opacity: 0.7;
+}
+
+.card-expiry {
+  font-size: 0.85rem;
+  opacity: 0.7;
+}
+
+.delete-card-btn {
+  background: transparent;
+  border: none;
+  font-size: 1.1rem;
+  cursor: pointer;
+  padding: 6px 10px;
+  border-radius: 6px;
+  transition: all 0.2s;
+
+  &:hover {
+    background: rgba(255,77,77,0.15);
+  }
+}
+
+.empty-cards {
+  opacity: 0.5;
+  font-size: 0.9rem;
+  padding: 12px 0;
+}
+
+.add-card-toggle-btn {
+  padding: 10px 20px;
+  border-radius: 8px;
+  border: 1px dashed rgba(255,255,255,0.2);
+  background: transparent;
+  color: var(--text-color);
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: all 0.2s;
+  margin-bottom: 16px;
+
+  &:hover {
+    border-color: var(--input-focus);
+    color: var(--input-focus);
+  }
+}
+
+.add-card-form {
+  padding: 20px;
+  border-radius: 10px;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.06);
+}

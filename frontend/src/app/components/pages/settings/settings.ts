@@ -1,6 +1,6 @@
 import { AppService } from './../../../core/services/app.service';
 import { Component, OnInit, OnDestroy, HostListener } from '@angular/core';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
 import { AuthService } from '../../../core/services/auth.service';
@@ -9,24 +9,29 @@ import { CanComponentDeactivate } from '../../../core/guards/pending-changes-gua
 import Swal from 'sweetalert2';
 import { ThemeService } from '../../../core/services/theme.service';
 import { User } from '../../../core/models/user.model';
+import { CardService } from '../../../core/services/card.service';
+import { PaymentCardCreate } from '../../../core/models/payment-card.model';
 
 @Component({
   selector: 'app-settings',
   standalone: true,
-  imports: [ReactiveFormsModule, TranslateModule, CommonModule],
+  imports: [ReactiveFormsModule, FormsModule, TranslateModule, CommonModule],
   templateUrl: './settings.html',
   styleUrls: ['./settings.scss']
 })
 export class Settings implements OnInit, OnDestroy, CanComponentDeactivate {
   userForm!: FormGroup;
   public authSub!: Subscription;
+  showAddCardForm = false;
+  newCard: Partial<PaymentCardCreate> = {};
 
   constructor(
     public fb: FormBuilder,
     public auth: AuthService,
     public appService: AppService,
     public translate: TranslateService,
-    public themeService: ThemeService
+    public themeService: ThemeService,
+    public cardService: CardService
   ){}
 
   ngOnInit(){
@@ -44,10 +49,12 @@ export class Settings implements OnInit, OnDestroy, CanComponentDeactivate {
               birthdate: formattedDate,
               email: fullProfile.email,
               phone: fullProfile.phone,
-              password: fullProfile.password,
+              password: '',
               membershipType: fullProfile.membershipType || ''
             });
-            this.userForm.updateValueAndValidity();
+            // Reset dirty state after loading profile data
+            this.userForm.markAsPristine();
+            this.userForm.markAsUntouched();
           }
         });
       } else {
@@ -66,13 +73,13 @@ export class Settings implements OnInit, OnDestroy, CanComponentDeactivate {
       birthdate: [{value: '',  disabled: true}],
       membershipType: [{value: '', disabled: true}],
       email: ['', Validators.email],
-      phone: ['', Validators.pattern('^[0-9]{10,15}$')],
-      password: ['', Validators.minLength(8)],
+      phone: [''],
+      password: [''],
       street: [''],
       city: [''],
       postalCode: [''],
       country: [''],
-      gender: [''],
+      gender: [{value: '', disabled: true}],
       storeName: [''],
       companyName: [''],
       taxNumber: [''],
@@ -82,7 +89,6 @@ export class Settings implements OnInit, OnDestroy, CanComponentDeactivate {
   }
 
   async onUserSubmitAsync(): Promise<void> {
-    if (!this.userForm.valid) return;
     const rawData = this.userForm.getRawValue();
     const updatePayload: Partial<User> = {};
 
@@ -92,20 +98,25 @@ export class Settings implements OnInit, OnDestroy, CanComponentDeactivate {
         updatePayload[key as keyof User] = value;
       }
     });
-    
+
     const user = this.auth.getUser();
     if(user) {
-      this.auth.updateProfile(user.id, updatePayload).subscribe({
-        next: () => {
-          Swal.fire({
-            icon: 'success',
-            title: 'Success',
-            background: getComputedStyle(document.body).getPropertyValue('--card-bg').trim(),
-            color: getComputedStyle(document.body).getPropertyValue('--text-color').trim(),
-            timer: 1500
-          });
-          this.userForm.markAsPristine();
-        }
+      return new Promise<void>((resolve) => {
+        this.auth.updateProfile(user.id, updatePayload).subscribe({
+          next: () => {
+            Swal.fire({
+              icon: 'success',
+              title: 'Success',
+              background: getComputedStyle(document.body).getPropertyValue('--card-bg').trim(),
+              color: getComputedStyle(document.body).getPropertyValue('--text-color').trim(),
+              timer: 1500
+            });
+            this.userForm.markAsPristine();
+            this.userForm.markAsUntouched();
+            resolve();
+          },
+          error: () => resolve()
+        });
       });
     }
   }
@@ -120,6 +131,45 @@ export class Settings implements OnInit, OnDestroy, CanComponentDeactivate {
 
   updateFont(value: string){
     this.appService.setFont(value);
+  }
+
+  toggleAddCardForm() {
+    this.showAddCardForm = !this.showAddCardForm;
+    if (this.showAddCardForm) {
+      this.newCard = {};
+    }
+  }
+
+  addCard() {
+    const user = this.auth.getUser();
+    if (!user) return;
+    const card: PaymentCardCreate = {
+      userId: user.id,
+      cardHolderName: this.newCard.cardHolderName || '',
+      cardNumber: this.newCard.cardNumber || '',
+      expiryMonth: this.newCard.expiryMonth || 1,
+      expiryYear: this.newCard.expiryYear || 2026,
+      cvv: this.newCard.cvv || ''
+    };
+    this.cardService.addCard(card);
+    this.showAddCardForm = false;
+    this.newCard = {};
+  }
+
+  deleteCard(cardId: number) {
+    Swal.fire({
+      title: 'Kartı silmek istediğinize emin misiniz?',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Sil',
+      cancelButtonText: 'İptal',
+      background: getComputedStyle(document.body).getPropertyValue('--card-bg').trim(),
+      color: getComputedStyle(document.body).getPropertyValue('--text-color').trim()
+    }).then(result => {
+      if (result.isConfirmed) {
+        this.cardService.deleteCard(cardId);
+      }
+    });
   }
 
   ngOnDestroy(): void {
@@ -160,4 +210,3 @@ export class Settings implements OnInit, OnDestroy, CanComponentDeactivate {
     }
   }
 }
-

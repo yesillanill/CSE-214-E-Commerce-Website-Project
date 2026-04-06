@@ -83,6 +83,18 @@ public class OrderService {
             order.getOrderItems().add(orderItem);
 
             grandTotal = grandTotal.add(price.multiply(BigDecimal.valueOf(cartItem.getQuantity())));
+
+            // Update product sold count
+            product.setSoldCount(product.getSoldCount() + cartItem.getQuantity());
+            try {
+                if (product.getInventory() != null) {
+                    int newStock = product.getInventory().getStock() - cartItem.getQuantity();
+                    product.getInventory().setStock(Math.max(0, newStock));
+                }
+            } catch (Exception ignored) {
+                // Inventory update is best-effort
+            }
+            productRepository.save(product);
         }
 
         order.setGrandTotal(grandTotal);
@@ -91,7 +103,13 @@ public class OrderService {
         Payment payment = new Payment();
         payment.setOrder(order);
         payment.setAmount(grandTotal);
-        payment.setPaymentMethod(PaymentMethod.CREDIT_CARD);
+
+        // Use payment method from request
+        if ("CASH_ON_DELIVERY".equals(request.getPaymentMethod())) {
+            payment.setPaymentMethod(PaymentMethod.CASH_ON_DELIVERY);
+        } else {
+            payment.setPaymentMethod(PaymentMethod.CREDIT_CARD);
+        }
         payment.setPaymentStatus(PaymentStatus.PENDING);
         order.setPayment(payment);
 

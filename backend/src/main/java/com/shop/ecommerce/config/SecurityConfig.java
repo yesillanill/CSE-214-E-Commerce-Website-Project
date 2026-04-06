@@ -52,10 +52,11 @@ public class SecurityConfig {
                         .requestMatchers("/api/chat/**").authenticated()
                         .requestMatchers("/api/users/profile/**").authenticated()
 
-                        // INDIVIDUAL rolü — Sepet, Wishlist, Sipariş
+                        // INDIVIDUAL rolü — Sepet, Wishlist, Sipariş, Kartlar
                         .requestMatchers("/cart/**").hasRole("INDIVIDUAL")
                         .requestMatchers("/wishlist/**").hasRole("INDIVIDUAL")
                         .requestMatchers("/api/orders/**").hasRole("INDIVIDUAL")
+                        .requestMatchers("/api/cards/**").hasRole("INDIVIDUAL")
 
                         // CORPORATE rolü — Envanter, Mağaza Siparişleri, Mağaza, Kargo
                         .requestMatchers("/api/inventory/**").hasRole("CORPORATE")

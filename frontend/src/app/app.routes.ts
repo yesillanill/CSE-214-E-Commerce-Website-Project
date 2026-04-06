@@ -24,10 +24,12 @@ import { ProductDetailPage } from './components/pages/product-detail/product-det
 import { Cart } from './components/pages/cart/cart'
 import { Wishlist } from './components/pages/wishlist/wishlist';
 import { Products } from './components/pages/products/products';
+import { Checkout } from './components/pages/checkout/checkout';
 
 export const routes: Routes = [
   {path:"", component: Home},
   {path:'cart', component:Cart},
+  {path:'checkout', component:Checkout, canActivate: [roleGuard], data: {role:'IndividualUser'}},
   {path: 'wishlist', component: Wishlist},
   {path:"analytics", component: Analytics},
   {path:"ai-assistant", component: AiAssistant},

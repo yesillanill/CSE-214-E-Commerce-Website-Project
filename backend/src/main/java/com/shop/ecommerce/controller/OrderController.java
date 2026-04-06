@@ -36,7 +36,11 @@ public class OrderController {
     }
 
     @PostMapping("/checkout")
-    public ResponseEntity<OrderDTO> checkout(@RequestBody CheckoutRequest request) {
-        return ResponseEntity.ok(orderService.checkout(request));
+    public ResponseEntity<?> checkout(@RequestBody CheckoutRequest request) {
+        try {
+            return ResponseEntity.ok(orderService.checkout(request));
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(java.util.Map.of("message", e.getMessage()));
+        }
     }
 }

@@ -1,0 +1,187 @@
+<div class="checkout-container">
+  <h1 class="checkout-title">🛒 Sipariş Onayı</h1>
+
+  <!-- Cart Summary -->
+  <div class="checkout-card">
+    <h2 class="section-title">Sepet Detayları</h2>
+    <div class="cart-items-list">
+      @for(item of cart.getCart(); track item.product.id){
+        <div class="checkout-item">
+          <img [src]="item.product.img" [alt]="item.product.name" class="item-img">
+          <div class="item-details">
+            <h3 class="item-name">{{ item.product.name }}</h3>
+            <p class="item-meta">{{ item.product.brandName }} · {{ item.product.categoryName }}</p>
+          </div>
+          <div class="item-qty">x{{ item.quantity }}</div>
+          <div class="item-price">{{ (item.product.price * item.quantity) | number:'1.2-2' }} TL</div>
+        </div>
+      }
+    </div>
+    <div class="cart-total-row">
+      <span>Toplam Tutar</span>
+      <span class="total-amount">{{ cart.getTotal() | number:'1.2-2' }} TL</span>
+    </div>
+  </div>
+
+  <!-- Address Section -->
+  <div class="checkout-card">
+    <h2 class="section-title">📍 Teslimat Adresi</h2>
+    <div class="radio-group">
+      <label class="radio-option" [class.selected]="addressOption === 'registered'">
+        <input type="radio" name="address" value="registered" [(ngModel)]="addressOption">
+        <div class="radio-content">
+          <span class="radio-label">Kayıtlı Adresimi Kullan</span>
+          <span class="radio-desc">{{ registeredAddress || 'Kayıtlı adres yok' }}</span>
+        </div>
+      </label>
+      <label class="radio-option" [class.selected]="addressOption === 'custom'">
+        <input type="radio" name="address" value="custom" [(ngModel)]="addressOption">
+        <div class="radio-content">
+          <span class="radio-label">Farklı Adres Gir</span>
+        </div>
+      </label>
+    </div>
+
+    @if(addressOption === 'custom'){
+    <div class="address-form">
+      <div class="form-row">
+        <div class="form-group">
+          <label>Sokak/Cadde</label>
+          <input type="text" class="form-input" [(ngModel)]="customAddress.street" placeholder="Örn: Atatürk Cad. No:5">
+        </div>
+        <div class="form-group">
+          <label>Şehir</label>
+          <input type="text" class="form-input" [(ngModel)]="customAddress.city" placeholder="Örn: İstanbul">
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Posta Kodu</label>
+          <input type="text" class="form-input" [(ngModel)]="customAddress.postalCode" placeholder="Örn: 34000">
+        </div>
+        <div class="form-group">
+          <label>Ülke</label>
+          <input type="text" class="form-input" [(ngModel)]="customAddress.country" placeholder="Örn: Türkiye">
+        </div>
+      </div>
+    </div>
+    }
+  </div>
+
+  <!-- Payment Method -->
+  <div class="checkout-card">
+    <h2 class="section-title">💳 Ödeme Yöntemi</h2>
+    <div class="radio-group">
+      <label class="radio-option" [class.selected]="paymentMethod === 'CASH_ON_DELIVERY'">
+        <input type="radio" name="payment" value="CASH_ON_DELIVERY" [(ngModel)]="paymentMethod">
+        <div class="radio-content">
+          <span class="radio-label">🚚 Kapıda Ödeme</span>
+          <span class="radio-desc">Teslimat sırasında nakit veya kart ile ödeme yapabilirsiniz</span>
+        </div>
+      </label>
+      <label class="radio-option" [class.selected]="paymentMethod === 'CREDIT_CARD'">
+        <input type="radio" name="payment" value="CREDIT_CARD" [(ngModel)]="paymentMethod">
+        <div class="radio-content">
+          <span class="radio-label">💳 Kredi Kartı ile Öde</span>
+          <span class="radio-desc">Kayıtlı kartınızla veya yeni kart bilgileri girerek ödeme yapın</span>
+        </div>
+      </label>
+    </div>
+
+    @if(paymentMethod === 'CREDIT_CARD'){
+    <div class="card-payment-section">
+      <!-- Card selection -->
+      <div class="card-option-group">
+        <label class="radio-option compact" [class.selected]="cardOption === 'existing'">
+          <input type="radio" name="cardOption" value="existing" [(ngModel)]="cardOption">
+          <span class="radio-label">Kayıtlı Kart Kullan</span>
+        </label>
+        <label class="radio-option compact" [class.selected]="cardOption === 'new'">
+          <input type="radio" name="cardOption" value="new" [(ngModel)]="cardOption">
+          <span class="radio-label">Yeni Kart Gir</span>
+        </label>
+      </div>
+
+      @if(cardOption === 'existing'){
+      <div class="existing-cards">
+        @for(card of cardService.getCards(); track card.id){
+          <label class="card-select-item" [class.selected]="selectedCardId === card.id">
+            <input type="radio" name="selectedCard" [value]="card.id" [(ngModel)]="selectedCardId">
+            <span class="card-type-badge">{{ card.cardType }}</span>
+            <span class="card-masked">{{ card.maskedCardNumber }}</span>
+            <span class="card-exp">{{ card.expiryMonth }}/{{ card.expiryYear }}</span>
+          </label>
+        } @empty {
+          <p class="no-cards-msg">Kayıtlı kartınız yok. <a routerLink="/settings">Ayarlardan kart ekleyebilirsiniz.</a></p>
+        }
+      </div>
+      }
+
+      @if(cardOption === 'new'){
+      <div class="new-card-form">
+        <div class="form-row">
+          <div class="form-group">
+            <label>Kart Üzerindeki İsim</label>
+            <input type="text" class="form-input" [(ngModel)]="newCard.cardHolderName" placeholder="AD SOYAD">
+          </div>
+          <div class="form-group">
+            <label>Kart Numarası</label>
+            <input type="text" class="form-input" [(ngModel)]="newCard.cardNumber" placeholder="1234 5678 9012 3456" maxlength="16">
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group small">
+            <label>Ay</label>
+            <select class="form-input" [(ngModel)]="newCard.expiryMonth">
+              @for(m of [1,2,3,4,5,6,7,8,9,10,11,12]; track m){
+                <option [value]="m">{{ m < 10 ? '0'+m : m }}</option>
+              }
+            </select>
+          </div>
+          <div class="form-group small">
+            <label>Yıl</label>
+            <select class="form-input" [(ngModel)]="newCard.expiryYear">
+              @for(y of [2026,2027,2028,2029,2030,2031]; track y){
+                <option [value]="y">{{ y }}</option>
+              }
+            </select>
+          </div>
+          <div class="form-group small">
+            <label>CVV</label>
+            <input type="password" class="form-input" [(ngModel)]="newCard.cvv" placeholder="***" maxlength="3">
+          </div>
+        </div>
+      </div>
+      }
+
+      <!-- Installments -->
+      <div class="installments-section">
+        <h3>Taksit Seçenekleri</h3>
+        <div class="installment-options">
+          @for(opt of [{v:1,l:'Tek Çekim'},{v:3,l:'3 Taksit'},{v:6,l:'6 Taksit'},{v:9,l:'9 Taksit'}]; track opt.v){
+            <label class="installment-option" [class.selected]="installments === opt.v">
+              <input type="radio" name="installments" [value]="opt.v" [(ngModel)]="installments">
+              <div class="installment-content">
+                <span class="installment-label">{{ opt.l }}</span>
+                <span class="installment-amount">{{ (cart.getTotal() / opt.v) | number:'1.2-2' }} TL/ay</span>
+              </div>
+            </label>
+          }
+        </div>
+      </div>
+    </div>
+    }
+  </div>
+
+  <!-- Place Order -->
+  <div class="checkout-actions">
+    <a routerLink="/cart" class="back-btn">← Sepete Dön</a>
+    <button
+      class="place-order-btn"
+      [class.disabled]="!canPlaceOrder() || isProcessing"
+      [disabled]="!canPlaceOrder() || isProcessing"
+      (click)="placeOrder()">
+      {{ isProcessing ? 'İşleniyor...' : 'Siparişi Tamamla' }}
+    </button>
+  </div>
+</div>

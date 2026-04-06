@@ -9,6 +9,7 @@ import com.shop.ecommerce.repository.IndividualCustomerRepository;
 import com.shop.ecommerce.repository.StoreRepository;
 import com.shop.ecommerce.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,6 +22,7 @@ public class UserService {
     private final UserRepository userRepository;
     private final IndividualCustomerRepository individualCustomerRepository;
     private final StoreRepository storeRepository;
+    private final PasswordEncoder passwordEncoder;
 
     public UserProfileDTO getUserProfile(Long userId) {
         User user = userRepository.findById(userId)
@@ -31,7 +33,7 @@ public class UserService {
         dto.setName(user.getName());
         dto.setSurname(user.getSurname());
         dto.setEmail(user.getEmail());
-        dto.setPassword(user.getPassword());
+        dto.setPassword(null); // Never return hashed password
         dto.setPhone(user.getPhone());
         dto.setRole(user.getRole());
         dto.setCreatedAt(user.getCreatedAt());
@@ -71,7 +73,9 @@ public class UserService {
         if (updateDto.getName() != null) user.setName(updateDto.getName());
         if (updateDto.getSurname() != null) user.setSurname(updateDto.getSurname());
         if (updateDto.getEmail() != null) user.setEmail(updateDto.getEmail());
-        if (updateDto.getPassword() != null && !updateDto.getPassword().isEmpty()) user.setPassword(updateDto.getPassword());
+        if (updateDto.getPassword() != null && !updateDto.getPassword().isEmpty()) {
+            user.setPassword(passwordEncoder.encode(updateDto.getPassword()));
+        }
         if (updateDto.getPhone() != null) user.setPhone(updateDto.getPhone());
 
         user = userRepository.save(user);
