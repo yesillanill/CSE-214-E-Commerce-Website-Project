@@ -1,11 +1,9 @@
 import { Component, OnInit, OnDestroy, AfterViewChecked, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { AuthService } from '../../../core/services/auth.service';
 import { AnalyticsService } from '../../../core/services/analytics.service';
-import { ChatService, ChatMessage } from '../../../core/services/chat.service';
 import { Router } from '@angular/router';
 import {
   PublicStats,
@@ -19,7 +17,7 @@ Chart.register(...registerables);
 
 @Component({
   selector: 'app-analytics',
-  imports: [CommonModule, FormsModule, RouterLink, TranslateModule],
+  imports: [CommonModule, RouterLink, TranslateModule],
   templateUrl: './analytics.html',
   styleUrl: './analytics.scss',
 })
@@ -40,16 +38,9 @@ export class Analytics implements OnInit, OnDestroy, AfterViewChecked {
   private charts: Chart[] = [];
   private chartsRendered = false;
 
-  // Chatbot
-  chatMessages: ChatMessage[] = [];
-  chatInput = '';
-  isChatLoading = false;
-  isChatOpen = false;
-
   constructor(
     public auth: AuthService,
     private analyticsService: AnalyticsService,
-    private chatService: ChatService,
     private router: Router,
     private cdr: ChangeDetectorRef
   ) {}
@@ -61,7 +52,6 @@ export class Analytics implements OnInit, OnDestroy, AfterViewChecked {
     } else {
       this.isLoadingPrivate = false;
     }
-    this.initChat();
   }
 
   ngAfterViewChecked(): void {
@@ -460,54 +450,6 @@ export class Analytics implements OnInit, OnDestroy, AfterViewChecked {
         legend: { position: 'bottom' as const, labels: { color: '#a0a0a0' } }
       }
     };
-  }
-
-  // ─── CHATBOT ────────────────────────────────────
-
-  toggleChat(): void {
-    this.isChatOpen = !this.isChatOpen;
-  }
-
-  private initChat(): void {
-    this.chatMessages.push({
-      role: 'assistant',
-      content: 'Merhaba! 📊 Analytics hakkında sorularınızı sorabilirsiniz. Örneğin: "Aylık satış trendim nasıl?" veya "En çok satan ürünlerim hangileri?"',
-      timestamp: new Date()
-    });
-  }
-
-  sendChatMessage(): void {
-    if (!this.chatInput.trim() || this.isChatLoading) return;
-    const question = this.chatInput.trim();
-    this.chatInput = '';
-
-    this.chatMessages.push({ role: 'user', content: question, timestamp: new Date() });
-    this.isChatLoading = true;
-
-    const role = this.auth.getRole() as string || 'GUEST';
-    const mappedRole = role === 'Admin' ? 'ADMIN'
-                     : role === 'CorporateUser' ? 'CORPORATE'
-                     : role === 'IndividualUser' ? 'INDIVIDUAL'
-                     : 'GUEST';
-    const userId = this.auth.getUser()?.id;
-
-    this.chatService.askQuestion(question, mappedRole, userId).subscribe({
-      next: (res) => {
-        this.chatMessages.push({ role: 'assistant', content: res.answer, timestamp: new Date() });
-        this.isChatLoading = false;
-      },
-      error: () => {
-        this.chatMessages.push({ role: 'assistant', content: 'Üzgünüm, bir hata oluştu. Lütfen tekrar deneyin.', timestamp: new Date() });
-        this.isChatLoading = false;
-      }
-    });
-  }
-
-  onChatKeyDown(event: KeyboardEvent): void {
-    if (event.key === 'Enter' && !event.shiftKey) {
-      event.preventDefault();
-      this.sendChatMessage();
-    }
   }
 
   getStatusClass(status: string): string {
