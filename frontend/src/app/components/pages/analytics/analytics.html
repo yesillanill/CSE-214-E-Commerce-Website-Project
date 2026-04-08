@@ -1,1 +1,303 @@
-<p>analytics works!</p>
+<div class="analytics-page">
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- SECTION 1: PUBLIC STATS (Visible to ALL users)         -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <section class="public-stats-section">
+    <h1 class="section-title">📊 Platform İstatistikleri</h1>
+
+    @if (isLoadingPublic) {
+      <div class="loading-row">
+        <div class="spinner"></div>
+        <span>Yükleniyor...</span>
+      </div>
+    } @else if (publicStats) {
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-icon">👥</div>
+          <div class="stat-info">
+            <span class="stat-value">{{ publicStats.totalUsers | number }}</span>
+            <span class="stat-label">Toplam Kullanıcı</span>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">📦</div>
+          <div class="stat-info">
+            <span class="stat-value">{{ publicStats.totalProducts | number }}</span>
+            <span class="stat-label">Toplam Ürün</span>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">📁</div>
+          <div class="stat-info">
+            <span class="stat-value">{{ publicStats.totalCategories | number }}</span>
+            <span class="stat-label">Toplam Kategori</span>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">🏷️</div>
+          <div class="stat-info">
+            <span class="stat-value">{{ publicStats.totalBrands | number }}</span>
+            <span class="stat-label">Toplam Marka</span>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">🏪</div>
+          <div class="stat-info">
+            <span class="stat-value">{{ publicStats.totalStores | number }}</span>
+            <span class="stat-label">Toplam Mağaza</span>
+          </div>
+        </div>
+      </div>
+    }
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- SECTION 2: PRIVATE ANALYTICS (Role-based)              -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  @if (!auth.isLoggedIn()) {
+    <section class="login-prompt">
+      <div class="prompt-card">
+        <span class="prompt-icon">🔒</span>
+        <h2>Detaylı analitik verileri görmek için giriş yapın</h2>
+        <p>Kişisel harcama trendleriniz, sipariş analizleriniz ve daha fazlası sizi bekliyor.</p>
+        <a routerLink="/auth" class="cta-btn">Giriş Yap</a>
+      </div>
+    </section>
+  }
+
+  @if (auth.isLoggedIn() && isLoadingPrivate) {
+    <section class="loading-section">
+      <div class="loading-row">
+        <div class="spinner"></div>
+        <span>Analitik veriler yükleniyor...</span>
+      </div>
+    </section>
+  }
+
+  <!-- ─── INDIVIDUAL USER ANALYTICS ─── -->
+  @if (auth.isIndividualUser() && individualData) {
+    <section class="private-section">
+      <h2 class="section-title">📈 Kişisel Analizlerim</h2>
+
+      <!-- Cards -->
+      <div class="metric-cards">
+        <div class="metric-card purple">
+          <span class="metric-value">₺{{ individualData.totalSpend | number:'1.2-2' }}</span>
+          <span class="metric-label">Toplam Harcama</span>
+        </div>
+        <div class="metric-card blue">
+          <span class="metric-value">{{ individualData.totalOrders }}</span>
+          <span class="metric-label">Toplam Sipariş</span>
+        </div>
+        <div class="metric-card green">
+          <span class="metric-value">₺{{ individualData.avgOrderValue | number:'1.2-2' }}</span>
+          <span class="metric-label">Ortalama Sipariş</span>
+        </div>
+        <div class="metric-card orange">
+          <span class="metric-value">{{ individualData.reviewCount }}</span>
+          <span class="metric-label">İnceleme Sayısı</span>
+        </div>
+      </div>
+
+      <!-- Charts Row -->
+      <div class="charts-grid two-col">
+        <div class="chart-card">
+          <div class="chart-container">
+            <canvas id="monthlySpendChart"></canvas>
+          </div>
+        </div>
+        <div class="chart-card">
+          <div class="chart-container">
+            <canvas id="orderStatusChart"></canvas>
+          </div>
+        </div>
+      </div>
+      <div class="charts-grid one-col">
+        <div class="chart-card wide">
+          <div class="chart-container">
+            <canvas id="categorySpendChart"></canvas>
+          </div>
+        </div>
+      </div>
+    </section>
+  }
+
+  <!-- ─── CORPORATE USER ANALYTICS ─── -->
+  @if (auth.isCorporateUser() && corporateData) {
+    <section class="private-section">
+      <h2 class="section-title">🏢 Mağaza Analizlerim</h2>
+
+      <!-- Cards -->
+      <div class="metric-cards">
+        <div class="metric-card green">
+          <span class="metric-value">₺{{ corporateData.totalRevenue | number:'1.2-2' }}</span>
+          <span class="metric-label">Toplam Gelir</span>
+        </div>
+        <div class="metric-card blue">
+          <span class="metric-value">{{ corporateData.totalOrders }}</span>
+          <span class="metric-label">Toplam Sipariş</span>
+        </div>
+        <div class="metric-card purple">
+          <span class="metric-value">{{ corporateData.activeCustomers }}</span>
+          <span class="metric-label">Aktif Müşteri</span>
+        </div>
+        <div class="metric-card orange">
+          <span class="metric-value">⭐ {{ corporateData.avgRating }}</span>
+          <span class="metric-label">Ortalama Puan</span>
+        </div>
+      </div>
+
+      <!-- Charts -->
+      <div class="charts-grid two-col">
+        <div class="chart-card">
+          <div class="chart-container">
+            <canvas id="revenueLineChart"></canvas>
+          </div>
+        </div>
+        <div class="chart-card">
+          <div class="chart-container">
+            <canvas id="categoryRevenueChart"></canvas>
+          </div>
+        </div>
+      </div>
+      <div class="charts-grid two-col">
+        <div class="chart-card tall">
+          <div class="chart-container tall">
+            <canvas id="inventoryChart"></canvas>
+          </div>
+        </div>
+        <div class="chart-card">
+          <div class="chart-container">
+            <canvas id="membershipChart"></canvas>
+          </div>
+        </div>
+      </div>
+      <div class="charts-grid two-col">
+        <div class="chart-card">
+          <div class="chart-container">
+            <canvas id="topProductsChart"></canvas>
+          </div>
+        </div>
+        <div class="chart-card">
+          <div class="chart-container">
+            <canvas id="satisfactionChart"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <!-- Fulfillment Metric -->
+      <div class="metric-cards single">
+        <div class="metric-card teal wide-metric">
+          <span class="metric-value">{{ corporateData.avgFulfillmentDays }} gün</span>
+          <span class="metric-label">Ortalama Sipariş → Teslimat Süresi</span>
+        </div>
+      </div>
+    </section>
+  }
+
+  <!-- ─── ADMIN ANALYTICS ─── -->
+  @if (auth.isAdmin() && adminData) {
+    <section class="private-section">
+      <h2 class="section-title">🛡️ Admin Panel Analizleri</h2>
+
+      <!-- Cards -->
+      <div class="metric-cards">
+        <div class="metric-card green">
+          <span class="metric-value">₺{{ adminData.platformRevenue | number:'1.2-2' }}</span>
+          <span class="metric-label">Platform Toplam Geliri</span>
+        </div>
+        <div class="metric-card orange">
+          <span class="metric-value">{{ adminData.avgDailyOrders }}</span>
+          <span class="metric-label">Günlük Ort. Sipariş</span>
+        </div>
+        <div class="metric-card teal">
+          <span class="metric-value">⭐ {{ adminData.platformAvgRating }}</span>
+          <span class="metric-label">Platform Ort. Puanı</span>
+        </div>
+        <div class="metric-card red">
+          <span class="metric-value">{{ adminData.pendingStoreApprovals }}</span>
+          <span class="metric-label">Bekleyen Mağaza Onayı</span>
+        </div>
+      </div>
+
+      <!-- Charts -->
+      <div class="charts-grid two-col">
+        <div class="chart-card">
+          <div class="chart-container">
+            <canvas id="platformRevenueChart"></canvas>
+          </div>
+        </div>
+        <div class="chart-card">
+          <div class="chart-container">
+            <canvas id="storeComparisonChart"></canvas>
+          </div>
+        </div>
+      </div>
+      <div class="charts-grid two-col">
+        <div class="chart-card">
+          <div class="chart-container">
+            <canvas id="registrationChart"></canvas>
+          </div>
+        </div>
+        <div class="chart-card">
+          <div class="chart-container">
+            <canvas id="categoryPerfChart"></canvas>
+          </div>
+        </div>
+      </div>
+    </section>
+  }
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- SECTION 3: AI CHATBOT (Floating)                       -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <div class="chatbot-fab" (click)="toggleChat()">
+    @if (isChatOpen) {
+      <span>✕</span>
+    } @else {
+      <span>🤖</span>
+    }
+  </div>
+
+  @if (isChatOpen) {
+    <div class="chatbot-panel">
+      <div class="chatbot-header">
+        <span>🤖 Analytics AI Assistant</span>
+        <button class="chatbot-close" (click)="toggleChat()">✕</button>
+      </div>
+
+      <div class="chatbot-messages">
+        @for (msg of chatMessages; track msg.timestamp) {
+          <div class="chat-msg" [class.user-msg]="msg.role === 'user'" [class.assistant-msg]="msg.role === 'assistant'">
+            <div class="msg-bubble">
+              <p>{{ msg.content }}</p>
+            </div>
+            <span class="msg-time">{{ msg.timestamp | date:'HH:mm' }}</span>
+          </div>
+        }
+        @if (isChatLoading) {
+          <div class="chat-msg assistant-msg">
+            <div class="msg-bubble typing">
+              <span class="dot"></span><span class="dot"></span><span class="dot"></span>
+            </div>
+          </div>
+        }
+      </div>
+
+      <div class="chatbot-input">
+        <input
+          type="text"
+          [(ngModel)]="chatInput"
+          (keydown)="onChatKeyDown($event)"
+          placeholder="Soru sorun..."
+          [disabled]="isChatLoading"
+        />
+        <button (click)="sendChatMessage()" [disabled]="!chatInput.trim() || isChatLoading">
+          ➤
+        </button>
+      </div>
+    </div>
+  }
+
+</div>

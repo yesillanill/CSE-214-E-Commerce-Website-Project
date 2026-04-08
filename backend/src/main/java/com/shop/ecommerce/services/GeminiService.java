@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.*;
@@ -54,6 +55,9 @@ public class GeminiService {
             "The user is not logged in. You can help with product browsing, site statistics, and general information. For personal data, suggest they log in first. You cannot perform any write or delete operations."
     );
 
+    private static final int MAX_RETRIES = 3;
+    private static final long INITIAL_BACKOFF_MS = 1000;
+
     public String ask(String question, String role, String context) {
         if (apiKey == null || apiKey.isBlank()) {
             return "Gemini API key is not configured. Please set the GEMINI_API_KEY environment variable.";
@@ -64,40 +68,57 @@ public class GeminiService {
                 "\n\n=== DATABASE CONTEXT ===\n" + context +
                 "\n=== END OF CONTEXT ===\n\nUser question: " + question;
 
-        try {
-            RestTemplate restTemplate = new RestTemplate();
+        RestTemplate restTemplate = new RestTemplate();
+        String url = GEMINI_URL + "?key=" + apiKey;
 
-            String url = GEMINI_URL + "?key=" + apiKey;
+        Map<String, Object> body = Map.of(
+                "contents", List.of(
+                        Map.of("role", "user", "parts", List.of(
+                                Map.of("text", fullPrompt)
+                        ))
+                )
+        );
 
-            Map<String, Object> body = Map.of(
-                    "contents", List.of(
-                            Map.of("role", "user", "parts", List.of(
-                                    Map.of("text", fullPrompt)
-                            ))
-                    )
-            );
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        HttpEntity<Map<String, Object>> request = new HttpEntity<>(body, headers);
 
-            HttpHeaders headers = new HttpHeaders();
-            headers.setContentType(MediaType.APPLICATION_JSON);
+        for (int attempt = 0; attempt <= MAX_RETRIES; attempt++) {
+            try {
+                ResponseEntity<Map> response = restTemplate.postForEntity(url, request, Map.class);
 
-            HttpEntity<Map<String, Object>> request = new HttpEntity<>(body, headers);
-            ResponseEntity<Map> response = restTemplate.postForEntity(url, request, Map.class);
-
-            if (response.getStatusCode() == HttpStatus.OK && response.getBody() != null) {
-                List<Map<String, Object>> candidates = (List<Map<String, Object>>) response.getBody().get("candidates");
-                if (candidates != null && !candidates.isEmpty()) {
-                    Map<String, Object> content = (Map<String, Object>) candidates.get(0).get("content");
-                    List<Map<String, Object>> parts = (List<Map<String, Object>>) content.get("parts");
-                    if (parts != null && !parts.isEmpty()) {
-                        return (String) parts.get(0).get("text");
+                if (response.getStatusCode() == HttpStatus.OK && response.getBody() != null) {
+                    List<Map<String, Object>> candidates = (List<Map<String, Object>>) response.getBody().get("candidates");
+                    if (candidates != null && !candidates.isEmpty()) {
+                        Map<String, Object> content = (Map<String, Object>) candidates.get(0).get("content");
+                        List<Map<String, Object>> parts = (List<Map<String, Object>>) content.get("parts");
+                        if (parts != null && !parts.isEmpty()) {
+                            return (String) parts.get(0).get("text");
+                        }
                     }
                 }
-            }
 
-            return "I couldn't generate a response. Please try again.";
-        } catch (Exception e) {
-            log.error("Gemini API call failed", e);
-            return "An error occurred while contacting the AI service: " + e.getMessage();
+                return "I couldn't generate a response. Please try again.";
+            } catch (HttpServerErrorException e) {
+                if (e.getStatusCode() == HttpStatus.SERVICE_UNAVAILABLE && attempt < MAX_RETRIES) {
+                    long backoff = INITIAL_BACKOFF_MS * (long) Math.pow(2, attempt);
+                    log.warn("Gemini API returned 503 (attempt {}/{}). Retrying in {}ms...", attempt + 1, MAX_RETRIES, backoff);
+                    try {
+                        Thread.sleep(backoff);
+                    } catch (InterruptedException ie) {
+                        Thread.currentThread().interrupt();
+                        return "The request was interrupted. Please try again.";
+                    }
+                } else {
+                    log.error("Gemini API server error (status: {})", e.getStatusCode(), e);
+                    return "The AI service is currently experiencing high demand. Please try again in a few moments.";
+                }
+            } catch (Exception e) {
+                log.error("Gemini API call failed", e);
+                return "An error occurred while contacting the AI service: " + e.getMessage();
+            }
         }
+
+        return "The AI service is currently unavailable. Please try again later.";
     }
 }

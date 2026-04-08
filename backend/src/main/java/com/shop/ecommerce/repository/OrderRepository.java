@@ -31,4 +31,16 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
 
     @Query("SELECT COALESCE(SUM(o.grandTotal), 0) FROM Order o WHERE o.user.id = :userId")
     java.math.BigDecimal sumGrandTotalByUserId(@Param("userId") Long userId);
+
+    @Query("SELECT DISTINCT o FROM Order o LEFT JOIN FETCH o.orderItems oi LEFT JOIN FETCH oi.product p LEFT JOIN FETCH p.category LEFT JOIN FETCH o.shipment LEFT JOIN FETCH o.payment WHERE o.user.id = :userId")
+    List<Order> findByUserId(@Param("userId") Long userId);
+
+    @Query("SELECT DISTINCT o FROM Order o LEFT JOIN FETCH o.orderItems oi LEFT JOIN FETCH oi.product p LEFT JOIN FETCH p.category LEFT JOIN FETCH p.store LEFT JOIN FETCH o.shipment LEFT JOIN FETCH o.payment WHERE p.store.id = :storeId")
+    List<Order> findAllByStoreId(@Param("storeId") Long storeId);
+
+    @Query("SELECT COALESCE(SUM(o.grandTotal), 0) FROM Order o")
+    java.math.BigDecimal sumAllGrandTotal();
+
+    @Query("SELECT COUNT(o) FROM Order o WHERE o.createdAt >= :since")
+    long countOrdersSince(@Param("since") LocalDateTime since);
 }

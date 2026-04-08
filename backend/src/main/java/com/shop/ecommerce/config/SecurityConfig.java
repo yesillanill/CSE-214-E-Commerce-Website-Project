@@ -44,13 +44,21 @@ public class SecurityConfig {
                         // Public — Auth endpoint'leri
                         .requestMatchers("/api/auth/**").permitAll()
 
+                        // Public — Genel istatistikler (auth gerektirmez)
+                        .requestMatchers("/api/public/**").permitAll()
+
                         // Public — Ürünler (sadece GET)
                         .requestMatchers(HttpMethod.GET, "/products/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/products/categories").permitAll()
 
-                        // Authenticated — Chat ve Profil
-                        .requestMatchers("/api/chat/**").authenticated()
+                        // Public — Chat (JWT token varsa kullanıcı tanınır, yoksa guest)
+                        .requestMatchers("/api/chat/**").permitAll()
+
+                        // Authenticated — Profil ve Analytics
                         .requestMatchers("/api/users/profile/**").authenticated()
+                        .requestMatchers("/api/analytics/individual").hasRole("INDIVIDUAL")
+                        .requestMatchers("/api/analytics/corporate").hasRole("CORPORATE")
+                        .requestMatchers("/api/analytics/admin").hasRole("ADMIN")
 
                         // INDIVIDUAL rolü — Sepet, Wishlist, Sipariş, Kartlar
                         .requestMatchers("/cart/**").hasRole("INDIVIDUAL")
