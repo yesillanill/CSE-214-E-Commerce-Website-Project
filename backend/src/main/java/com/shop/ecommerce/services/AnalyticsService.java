@@ -36,6 +36,7 @@ public class AnalyticsService {
     private final InventoryRepository inventoryRepository;
     private final ShipmentRepository shipmentRepository;
     private final AuditLogRepository auditLogRepository;
+    private final ReviewRepository reviewRepository;
 
     // ─── PUBLIC STATS ─────────────────────────────────────
 
@@ -112,11 +113,11 @@ public class AnalyticsService {
                 .count();
         dto.setActiveCustomers(activeCustomers);
 
-        // Average rating from products of this store
+        // Average rating from reviews of this store's products
         List<Product> storeProducts = productRepository.findByStoreId(storeId);
         double avgRating = storeProducts.stream()
-                .filter(p -> p.getRating() > 0)
-                .mapToDouble(Product::getRating)
+                .mapToDouble(p -> reviewRepository.averageRatingByProductId(p.getId()))
+                .filter(r -> r > 0)
                 .average()
                 .orElse(0.0);
         dto.setAvgRating(Math.round(avgRating * 100.0) / 100.0);
@@ -216,7 +217,7 @@ public class AnalyticsService {
         long recentOrders = orderRepository.countOrdersSince(thirtyDaysAgo);
         dto.setAvgDailyOrders(Math.round(recentOrders / 30.0 * 100.0) / 100.0);
 
-        Double avgRating = productRepository.averageRating();
+        Double avgRating = reviewRepository.platformAverageRating();
         dto.setPlatformAvgRating(avgRating != null ? Math.round(avgRating * 100.0) / 100.0 : 0.0);
 
         // Pending store approvals — stores with zero revenue as proxy

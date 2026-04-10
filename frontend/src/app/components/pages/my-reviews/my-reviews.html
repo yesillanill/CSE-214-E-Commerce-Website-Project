@@ -1,0 +1,44 @@
+<div class="my-reviews-page">
+  <div class="page-header">
+    <h1>{{ 'MY_REVIEWS.TITLE' | translate }}</h1>
+    <p class="review-count">{{ reviews.length }} {{ 'MY_REVIEWS.TOTAL' | translate }}</p>
+  </div>
+
+  @if (isLoading) {
+    <div class="loading-container">
+      <app-loading-spinner></app-loading-spinner>
+    </div>
+  } @else if (reviews.length === 0) {
+    <div class="empty-state">
+      <p>{{ 'MY_REVIEWS.NO_REVIEWS' | translate }}</p>
+    </div>
+  } @else {
+    <div class="reviews-list">
+      @for (review of reviews; track review.id) {
+        <div class="review-card">
+          <div class="review-product">
+            <img [src]="review.productImg" [alt]="review.productName" class="product-img" />
+            <div class="product-info">
+              <a [routerLink]="['/products', review.productId]" class="product-name">{{ review.productName }}</a>
+              <span class="review-date">{{ review.createdAt | date:'dd.MM.yyyy' }}</span>
+            </div>
+          </div>
+          <div class="review-content">
+            <div class="review-rating">
+              <span class="stars">{{ getStars(review.rating) }}</span>
+              <span class="rating-num">{{ review.rating }}/5</span>
+            </div>
+            @if (review.comment) {
+              <p class="review-text">{{ review.comment }}</p>
+            }
+          </div>
+          <div class="review-actions">
+            <button class="delete-btn" (click)="deleteReview(review.id)">
+              {{ 'MY_REVIEWS.DELETE' | translate }}
+            </button>
+          </div>
+        </div>
+      }
+    </div>
+  }
+</div>

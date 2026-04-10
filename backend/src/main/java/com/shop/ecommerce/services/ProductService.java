@@ -9,6 +9,7 @@ import com.shop.ecommerce.mapper.ProductMapper;
 import com.shop.ecommerce.repository.BrandRepository;
 import com.shop.ecommerce.repository.CategoryRepository;
 import com.shop.ecommerce.repository.ProductRepository;
+import com.shop.ecommerce.repository.ReviewRepository;
 import com.shop.ecommerce.repository.StoreRepository;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -24,13 +25,16 @@ public class ProductService {
     private final CategoryRepository categoryRepository;
     private final BrandRepository brandRepository;
     private final StoreRepository storeRepository;
+    private final ReviewRepository reviewRepository;
 
     public ProductService(ProductRepository productRepository, CategoryRepository categoryRepository,
-                          BrandRepository brandRepository, StoreRepository storeRepository){
+                          BrandRepository brandRepository, StoreRepository storeRepository,
+                          ReviewRepository reviewRepository){
         this.productRepository = productRepository;
         this.categoryRepository = categoryRepository;
         this.brandRepository = brandRepository;
         this.storeRepository = storeRepository;
+        this.reviewRepository = reviewRepository;
     }
 
     public List<String> getCategories(){
@@ -38,32 +42,30 @@ public class ProductService {
     }
 
     public List<ProductListDTO> getProducts(){
-        return productRepository.findAll().stream().map(ProductMapper::toListDTO).toList();
+        return productRepository.findAll().stream().map(this::toListDTOWithRating).toList();
     }
 
     public ProductDetailDTO getProductByID(Long id){
         Product product = productRepository.findById(id).orElseThrow();
-        return ProductMapper.toDetailDTO(product);
+        return toDetailDTOWithRating(product);
     }
 
     public List<ProductListDTO> getProductsByStore(String store){
-        return productRepository.findByStoreName(store).stream().map(ProductMapper::toListDTO).toList();
+        return productRepository.findByStoreName(store).stream().map(this::toListDTOWithRating).toList();
     }
 
     public List<ProductListDTO> getProductsByBrand(String brand){
-        return productRepository.findByBrandName(brand).stream().map(ProductMapper::toListDTO).toList();
+        return productRepository.findByBrandName(brand).stream().map(this::toListDTOWithRating).toList();
     }
 
     public List<ProductListDTO> getProductsByCategory(String category){
-        return productRepository.findByCategoryName(category).stream().map(ProductMapper::toListDTO).toList();
+        return productRepository.findByCategoryName(category).stream().map(this::toListDTOWithRating).toList();
     }
 
     public ProductDetailDTO createProduct(ProductCreateDTO dto){
         Product product = ProductMapper.toEntity(dto);
-
         Product savedProduct = productRepository.save(product);
-
-        return ProductMapper.toDetailDTO(savedProduct);
+        return toDetailDTOWithRating(savedProduct);
     }
 
     public void deleteProduct(Long id){
@@ -77,17 +79,21 @@ public class ProductService {
         product.setPrice(dto.getPrice() != null ? java.math.BigDecimal.valueOf(dto.getPrice()) : null);
         product.setImg(dto.getImg());
         Product updatedProduct = productRepository.save(product);
-        return ProductMapper.toDetailDTO(updatedProduct);
+        return toDetailDTOWithRating(updatedProduct);
     }
 
     public List<ProductListDTO> getTopRatedProducts(int limit){
-        return productRepository.findAllByOrderByRatingDesc(PageRequest.of(0, limit))
-                .stream().map(ProductMapper::toListDTO).toList();
+        List<Product> all = productRepository.findAll();
+        return all.stream()
+                .map(this::toListDTOWithRating)
+                .sorted((a, b) -> Double.compare(b.getRating(), a.getRating()))
+                .limit(limit)
+                .toList();
     }
 
     public List<ProductListDTO> getBestSellingProducts(int limit){
         return productRepository.findAllByOrderBySoldCountDesc(PageRequest.of(0, limit))
-                .stream().map(ProductMapper::toListDTO).toList();
+                .stream().map(this::toListDTOWithRating).toList();
     }
 
     public Map<String, Long> getHomeStats(){
@@ -97,5 +103,17 @@ public class ProductService {
         stats.put("storeCount", storeRepository.count());
         stats.put("productCount", productRepository.count());
         return stats;
+    }
+
+    private ProductListDTO toListDTOWithRating(Product product) {
+        double avgRating = reviewRepository.averageRatingByProductId(product.getId());
+        long reviewCount = reviewRepository.countByProductId(product.getId());
+        return ProductMapper.toListDTO(product, avgRating, reviewCount);
+    }
+
+    private ProductDetailDTO toDetailDTOWithRating(Product product) {
+        double avgRating = reviewRepository.averageRatingByProductId(product.getId());
+        long reviewCount = reviewRepository.countByProductId(product.getId());
+        return ProductMapper.toDetailDTO(product, avgRating, reviewCount);
     }
 }

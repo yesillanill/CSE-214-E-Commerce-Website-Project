@@ -51,6 +51,14 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/products/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/products/categories").permitAll()
 
+                        // Public — Yorumları görüntüleme (GET product reviews)
+                        .requestMatchers(HttpMethod.GET, "/api/reviews/product/**").permitAll()
+
+                        // INDIVIDUAL rolü — Kendi yorumlarını görüntüleme, ekleme, silme
+                        .requestMatchers(HttpMethod.GET, "/api/reviews/user").hasRole("INDIVIDUAL")
+                        .requestMatchers(HttpMethod.POST, "/api/reviews").hasRole("INDIVIDUAL")
+                        .requestMatchers(HttpMethod.DELETE, "/api/reviews/**").hasRole("INDIVIDUAL")
+
                         // Public — Chat (JWT token varsa kullanıcı tanınır, yoksa guest)
                         .requestMatchers("/api/chat/**").permitAll()
 

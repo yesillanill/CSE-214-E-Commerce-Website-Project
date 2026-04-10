@@ -25,6 +25,7 @@ import { Cart } from './components/pages/cart/cart'
 import { Wishlist } from './components/pages/wishlist/wishlist';
 import { Products } from './components/pages/products/products';
 import { Checkout } from './components/pages/checkout/checkout';
+import { MyReviews } from './components/pages/my-reviews/my-reviews';
 
 export const routes: Routes = [
   {path:"", component: Home},
@@ -37,6 +38,7 @@ export const routes: Routes = [
   {path:"users", component: Users, canActivate: [roleGuard], data: {role:'Admin'}},
   {path:"reports", component: Reports, canActivate: [roleGuard], data: {role:'Admin'}},
   {path:"orders", component: Orders, canActivate: [roleGuard], data: {role:'IndividualUser'}},
+  {path:"my-reviews", component: MyReviews, canActivate: [roleGuard], data: {role:'IndividualUser'}},
   {path:"inventory/add", component: AddProduct, canActivate: [roleGuard], canDeactivate: [pendingChangesGuard], data: {role:'CorporateUser'}},
   {path:"inventory/edit/:id", component: EditProduct, canActivate: [roleGuard], canDeactivate: [pendingChangesGuard], data: {role:'CorporateUser'}},
   {path:"inventory", component: Inventory, canActivate: [roleGuard], data: {role:'CorporateUser'}},

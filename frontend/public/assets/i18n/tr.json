@@ -12,7 +12,7 @@
     "MANAGEMENT": "YÖNETİM",
     "CUSTOMERS": "Müşteriler",
     "SHIPMENTS": "Kargolar",
-    "REVİEWS": "İncelemeler",
+    "REVIEWS": "Yorumlar",
     "USERS": "Kullanıcılar",
     "CATEGORIES": "Kategoriler",
     "INVENTORY": "Stok",
@@ -95,7 +95,22 @@
     "DESCRIPTION": "Açıklama",
     "CATEGORY": "Kategori",
     "STOCK": "Stok",
-    "SOLD": "Bu ürün {{count}} adet satıldı."
+    "SOLD": "Bu ürün {{count}} adet satıldı.",
+    "REVIEWS": "Yorumlar",
+    "ADD_REVIEW": "Yorum Ekle",
+    "YOUR_RATING": "Puanınız",
+    "REVIEW_PLACEHOLDER": "Yorumunuzu buraya yazın...",
+    "SUBMIT_REVIEW": "Yorumu Gönder",
+    "SUBMITTING": "Gönderiliyor...",
+    "LOGIN_TO_REVIEW": "Yorum yapabilmek için giriş yapın.",
+    "NO_REVIEWS": "Henüz yorum yok. İlk yorumu siz yapın!"
+  },
+
+  "MY_REVIEWS":{
+    "TITLE": "Yorumlarım",
+    "TOTAL": "yorum",
+    "NO_REVIEWS": "Henüz hiç yorum yazmadınız.",
+    "DELETE": "Sil"
   }
 
 }

@@ -25,15 +25,10 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 
     long countByStoreId(Long storeId);
 
-    List<Product> findAllByOrderByRatingDesc(Pageable pageable);
-
     List<Product> findAllByOrderBySoldCountDesc(Pageable pageable);
 
     @Query("SELECT COUNT(DISTINCT p.brand) FROM Product p")
     long countDistinctBrands();
-
-    @Query("SELECT AVG(p.rating) FROM Product p WHERE p.rating > 0")
-    Double averageRating();
 
     List<Product> findByStoreId(Long storeId);
 }

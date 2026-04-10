@@ -6,6 +6,7 @@ export interface ProductDetail{
   brandName: string;
   categoryName: string;
   rating: number;
+  reviewCount: number;
   storeName: string;
   img: string;
   soldCount: number;

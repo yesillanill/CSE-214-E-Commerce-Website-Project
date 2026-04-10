@@ -12,6 +12,7 @@ import com.shop.ecommerce.repository.CartItemRepository;
 import com.shop.ecommerce.repository.CartRepository;
 import com.shop.ecommerce.repository.IndividualCustomerRepository;
 import com.shop.ecommerce.repository.ProductRepository;
+import com.shop.ecommerce.repository.ReviewRepository;
 import com.shop.ecommerce.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -28,6 +29,7 @@ public class CartService {
 
     private final CartRepository cartRepository;
     private final CartItemRepository cartItemRepository;
+    private final ReviewRepository reviewRepository;
     private final UserRepository userRepository;
     private final ProductRepository productRepository;
     private final IndividualCustomerRepository individualCustomerRepository;
@@ -101,7 +103,10 @@ public class CartService {
         CartItemResponse response = new CartItemResponse();
         response.setId(cartItem.getId());
         response.setQuantity(cartItem.getQuantity());
-        response.setProduct(ProductMapper.toListDTO(cartItem.getProduct()));
+        long productId = cartItem.getProduct().getId();
+        double avgRating = reviewRepository.averageRatingByProductId(productId);
+        long reviewCount = reviewRepository.countByProductId(productId);
+        response.setProduct(ProductMapper.toListDTO(cartItem.getProduct(), avgRating, reviewCount));
         return response;
     }
 }

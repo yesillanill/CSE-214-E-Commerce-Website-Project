@@ -39,9 +39,6 @@ public class Product {
     @JoinColumn(name="category_id")
     private Category category;
 
-    @Column(name="rating")
-    private double rating;
-
     @ManyToOne
     @JoinColumn(name="store_id")
     private Store store;

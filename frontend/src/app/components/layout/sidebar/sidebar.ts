@@ -43,6 +43,12 @@ export class Sidebar {
     return this.auth.getRole();
   }
 
+  get logoSrc(): string {
+    return this.themeService.getCurrentTheme() === 'dark'
+      ? 'images/sepetix_white.png'
+      : 'images/sepetix_black.png';
+  }
+
   logout(){
     this.auth.logout();
     this.toggleMobileMenu();

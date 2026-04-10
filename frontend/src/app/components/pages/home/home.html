@@ -2,24 +2,31 @@
   <!-- Hero Section -->
   <section class="hero-section">
     <div class="hero-content">
-      <h1 class="hero-title" *ngIf="isLoggedIn">
-        Hoşgeldin, <span class="highlight">{{ userName }}</span> 👋
-      </h1>
-      <h1 class="hero-title" *ngIf="!isLoggedIn">
-        Hoşgeldiniz 👋
-      </h1>
+      @if (isLoggedIn) {
+        <h1 class="hero-title">
+          Hoşgeldin, <span class="highlight">{{ userName }}</span> 👋
+        </h1>
+      } @else {
+        <h1 class="hero-title">
+          Hoşgeldiniz 👋
+        </h1>
+      }
 
-      <p class="stats-line" *ngIf="stats">
-        <span class="stat-num">{{ stats.categoryCount }}</span> kategori,
-        <span class="stat-num">{{ stats.brandCount }}</span> marka ve
-        <span class="stat-num">{{ stats.storeCount }}</span> mağazadan toplam
-        <span class="stat-num">{{ stats.productCount }}</span> ürünümüzü keşfedin.
-      </p>
+      @if (stats) {
+        <p class="stats-line">
+          <span class="stat-num">{{ stats.categoryCount }}</span> kategori,
+          <span class="stat-num">{{ stats.brandCount }}</span> marka ve
+          <span class="stat-num">{{ stats.storeCount }}</span> mağazadan toplam
+          <span class="stat-num">{{ stats.productCount }}</span> ürünümüzü keşfedin.
+        </p>
+      }
 
-      <p class="cta-line" *ngIf="!isLoggedIn">
-        <a routerLink="/auth" class="cta-link">Giriş yapın veya Kayıt olun</a>
-        bu dünyaya katılın ve tüm avantajlardan faydalanın!
-      </p>
+      @if (!isLoggedIn) {
+        <p class="cta-line">
+          <a routerLink="/auth" class="cta-link">Giriş yapın veya Kayıt olun</a>
+          bu dünyaya katılın ve tüm avantajlardan faydalanın!
+        </p>
+      }
     </div>
   </section>
 
@@ -33,9 +40,11 @@
     <div class="carousel-wrapper">
       <button class="carousel-btn carousel-btn-left" (click)="scrollLeft(topRatedRow)">‹</button>
       <div class="product-row" #topRatedRow>
-        <div class="product-slide" *ngFor="let product of topRatedProducts">
-          <app-product-card [product]="product"></app-product-card>
-        </div>
+        @for (product of topRatedProducts; track product.id) {
+          <div class="product-slide">
+            <app-product-card [product]="product"></app-product-card>
+          </div>
+        }
       </div>
       <button class="carousel-btn carousel-btn-right" (click)="scrollRight(topRatedRow)">›</button>
     </div>
@@ -51,16 +60,20 @@
     <div class="carousel-wrapper">
       <button class="carousel-btn carousel-btn-left" (click)="scrollLeft(bestSellingRow)">‹</button>
       <div class="product-row" #bestSellingRow>
-        <div class="product-slide" *ngFor="let product of bestSellingProducts">
-          <app-product-card [product]="product"></app-product-card>
-        </div>
+        @for (product of bestSellingProducts; track product.id) {
+          <div class="product-slide">
+            <app-product-card [product]="product"></app-product-card>
+          </div>
+        }
       </div>
       <button class="carousel-btn carousel-btn-right" (click)="scrollRight(bestSellingRow)">›</button>
     </div>
   </section>
 
   <!-- Loading State -->
-  <div class="loading-container" *ngIf="isLoading">
-    <app-loading-spinner></app-loading-spinner>
-  </div>
+  @if (isLoading) {
+    <div class="loading-container">
+      <app-loading-spinner></app-loading-spinner>
+    </div>
+  }
 </div>

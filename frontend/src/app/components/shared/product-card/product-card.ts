@@ -1,4 +1,5 @@
 import { Component, Input } from '@angular/core';
+import { DecimalPipe } from '@angular/common';
 import { ProductList } from '../../../core/models/product-list.model';
 import { CartService } from '../../../core/services/cart.service';
 import { WishlistService } from '../../../core/services/wishlist.service';
@@ -8,7 +9,7 @@ import { AuthService } from '../../../core/services/auth.service';
 
 @Component({
   selector: 'app-product-card',
-  imports: [RouterLink, TranslateModule],
+  imports: [RouterLink, TranslateModule, DecimalPipe],
   templateUrl: './product-card.html',
   styleUrl: './product-card.scss',
 })

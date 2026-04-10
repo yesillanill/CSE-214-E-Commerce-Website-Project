@@ -112,3 +112,155 @@
 
 .wishlist-btn .icon { color: #ff4d4d; }
 .cart-btn { background: var(--input-focus, #3182ce); color: white; }
+
+// ─── Reviews Section ───────────────────────────────
+
+.reviews-section {
+  margin-top: 40px;
+  padding: 0 10px;
+}
+
+.reviews-title {
+  font-size: 1.4rem;
+  margin-bottom: 20px;
+  border-bottom: 2px solid var(--card-bg);
+  padding-bottom: 10px;
+}
+
+.review-form {
+  background: var(--card-bg);
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 24px;
+
+  h3 {
+    margin: 0 0 12px 0;
+    font-size: 1.1rem;
+  }
+
+  .rating-input {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 12px;
+
+    label {
+      font-weight: 600;
+    }
+  }
+
+  .star-select {
+    display: flex;
+    gap: 4px;
+  }
+
+  .star-btn {
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: #ccc;
+    transition: color 0.2s;
+
+    &.active {
+      color: #f5a623;
+    }
+  }
+
+  textarea {
+    width: 100%;
+    border: 1px solid var(--input-border);
+    border-radius: 8px;
+    padding: 10px;
+    font-size: 0.95rem;
+    background: var(--input-bg);
+    color: var(--text-color);
+    resize: vertical;
+    box-sizing: border-box;
+
+    &:focus {
+      outline: none;
+      border-color: var(--input-focus);
+    }
+  }
+
+  .review-error {
+    color: #e53e3e;
+    font-size: 0.85rem;
+    margin: 8px 0;
+  }
+
+  .submit-review-btn {
+    margin-top: 12px;
+    padding: 10px 24px;
+    border: none;
+    border-radius: 8px;
+    background: var(--input-focus, #3182ce);
+    color: white;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: opacity 0.2s;
+
+    &:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    &:hover:not(:disabled) {
+      opacity: 0.9;
+    }
+  }
+}
+
+.login-hint {
+  color: var(--disabled-text);
+  font-style: italic;
+  margin-bottom: 20px;
+}
+
+.reviews-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.review-card {
+  background: var(--card-bg);
+  border-radius: 10px;
+  padding: 16px;
+
+  .review-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 8px;
+    flex-wrap: wrap;
+  }
+
+  .review-user {
+    font-weight: 600;
+  }
+
+  .review-rating {
+    span {
+      color: #ccc;
+      &.filled {
+        color: #f5a623;
+      }
+    }
+  }
+
+  .review-date {
+    color: var(--disabled-text);
+    font-size: 0.85rem;
+    margin-left: auto;
+  }
+
+  .review-comment {
+    margin: 0;
+    line-height: 1.5;
+  }
+}
+
+.no-reviews {
+  color: var(--disabled-text);
+  font-style: italic;
+}

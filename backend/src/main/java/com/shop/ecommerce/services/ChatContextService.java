@@ -28,6 +28,7 @@ public class ChatContextService {
     private final OrderRepository orderRepository;
     private final IndividualCustomerRepository individualCustomerRepository;
     private final AuditLogRepository auditLogRepository;
+    private final ReviewRepository reviewRepository;
 
     private static final String BASE_URL = "http://localhost:4200";
 
@@ -380,7 +381,7 @@ public class ChatContextService {
               .append(" | Price: ").append(p.getPrice())
               .append(" | Stock: ").append(p.getInventory() != null ? p.getInventory().getStock() : "N/A")
               .append(" | Sold: ").append(p.getSoldCount())
-              .append(" | Rating: ").append(p.getRating())
+              .append(" | Rating: ").append(reviewRepository.averageRatingByProductId(p.getId()))
               .append(" | Link: ").append(BASE_URL).append("/products/").append(p.getId())
               .append("\n");
         }

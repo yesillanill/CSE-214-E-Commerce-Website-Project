@@ -12,7 +12,7 @@
     "MANAGEMENT": "MANAGEMENT",
     "CUSTOMERS": "Customers",
     "SHIPMENTS": "Shipments",
-    "REVİEWS": "Reviews",
+    "REVIEWS": "Reviews",
     "USERS": "Users",
     "CATEGORIES": "Categories",
     "INVENTORY": "Inventory",
@@ -97,7 +97,22 @@
     "DESCRIPTION":"Description",
     "CATEGORY": "Category",
     "STOCK": "Stock",
-    "SOLD": "This product has sold {{count}} units."
+    "SOLD": "This product has sold {{count}} units.",
+    "REVIEWS": "Reviews",
+    "ADD_REVIEW": "Add a Review",
+    "YOUR_RATING": "Your Rating",
+    "REVIEW_PLACEHOLDER": "Write your review here...",
+    "SUBMIT_REVIEW": "Submit Review",
+    "SUBMITTING": "Submitting...",
+    "LOGIN_TO_REVIEW": "Log in to leave a review.",
+    "NO_REVIEWS": "No reviews yet. Be the first to review!"
+  },
+
+  "MY_REVIEWS":{
+    "TITLE": "My Reviews",
+    "TOTAL": "reviews",
+    "NO_REVIEWS": "You haven't written any reviews yet.",
+    "DELETE": "Delete"
   }
 
 }

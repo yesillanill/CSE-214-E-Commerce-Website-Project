@@ -4,7 +4,7 @@
   <h3>{{product.name}}</h3>
   <div class="product-details">
     <p>{{product.price}}$</p>
-    <p>{{product.rating}}</p>
+    <p>{{product.rating | number:'1.1-1'}} ★</p>
   </div>
   <div class="product-actions">
     <a [routerLink]="['/products',product.id]">{{"PRODUCTS.DETAIL" | translate}}</a>

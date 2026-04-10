@@ -7,12 +7,13 @@ import java.math.BigDecimal;
 
 public class ProductMapper {
 
-    public static ProductListDTO toListDTO(Product product){
+    public static ProductListDTO toListDTO(Product product, double avgRating, long reviewCount){
         ProductListDTO dto = new ProductListDTO();
         dto.setId(product.getId());
         dto.setName(product.getName());
         dto.setPrice(product.getPrice() != null ? product.getPrice().doubleValue() : null);
-        dto.setRating(product.getRating());
+        dto.setRating(avgRating);
+        dto.setReviewCount(reviewCount);
         dto.setImg(product.getImg());
         dto.setCategoryName(product.getCategory() != null ? product.getCategory().getName() : null);
         dto.setBrandName(product.getBrand() != null ? product.getBrand().getName() : null);
@@ -20,13 +21,14 @@ public class ProductMapper {
         return dto;
     }
 
-    public static ProductDetailDTO toDetailDTO(Product product){
+    public static ProductDetailDTO toDetailDTO(Product product, double avgRating, long reviewCount){
         ProductDetailDTO dto = new ProductDetailDTO();
         dto.setId(product.getId());
         dto.setName(product.getName());
         dto.setDescription(product.getDescription());
         dto.setPrice(product.getPrice() != null ? product.getPrice().doubleValue() : null);
-        dto.setRating(product.getRating());
+        dto.setRating(avgRating);
+        dto.setReviewCount(reviewCount);
         dto.setBrandName(product.getBrand().getName());
         dto.setStoreName(product.getStore().getStoreName());
         dto.setCategoryName(product.getCategory().getName());

@@ -1,5 +1,4 @@
-import { Component, OnInit, ElementRef, ViewChild, AfterViewInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, OnInit } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { ProductService } from '../../../core/services/product.service';
 import { AuthService } from '../../../core/services/auth.service';
@@ -19,7 +18,7 @@ interface HomeStats {
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CommonModule, RouterLink, ProductCard, LoadingSpinner],
+  imports: [RouterLink, ProductCard, LoadingSpinner],
   templateUrl: './home.html',
   styleUrl: './home.scss',
 })
@@ -30,6 +29,8 @@ export class Home implements OnInit {
   userName: string = '';
   isLoggedIn: boolean = false;
   isLoading: boolean = true;
+
+  private loadCount = 0;
 
   constructor(
     private productService: ProductService,
@@ -45,23 +46,30 @@ export class Home implements OnInit {
       this.userName = user.name;
     }
 
-    this.productService.getHomeStats().subscribe(stats => {
-      this.stats = stats;
+    this.productService.getHomeStats().subscribe({
+      next: stats => this.stats = stats
     });
 
-    this.productService.getTopRatedProducts().subscribe(products => {
-      this.topRatedProducts = products;
-      this.checkLoading();
+    this.productService.getTopRatedProducts().subscribe({
+      next: products => {
+        this.topRatedProducts = products;
+        this.checkLoading();
+      },
+      error: () => this.checkLoading()
     });
 
-    this.productService.getBestSellingProducts().subscribe(products => {
-      this.bestSellingProducts = products;
-      this.checkLoading();
+    this.productService.getBestSellingProducts().subscribe({
+      next: products => {
+        this.bestSellingProducts = products;
+        this.checkLoading();
+      },
+      error: () => this.checkLoading()
     });
   }
 
   private checkLoading() {
-    if (this.topRatedProducts.length > 0 || this.bestSellingProducts.length > 0) {
+    this.loadCount++;
+    if (this.loadCount >= 2) {
       this.isLoading = false;
     }
   }

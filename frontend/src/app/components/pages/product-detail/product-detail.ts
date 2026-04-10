@@ -4,51 +4,92 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { CartService } from '../../../core/services/cart.service';
 import { WishlistService } from '../../../core/services/wishlist.service';
+import { ReviewService } from '../../../core/services/review.service';
+import { Review } from '../../../core/models/review.model';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { AuthService } from '../../../core/services/auth.service';
 
 import { CommonModule, DecimalPipe } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { LoadingSpinner } from '../../layout/loading-spinner/loading-spinner';
 import { Observable, map, switchMap, catchError, of, tap } from 'rxjs';
 
 @Component({
   selector: 'app-product-detail-page',
   standalone: true,
-  imports: [TranslateModule, RouterLink, CommonModule, LoadingSpinner, DecimalPipe],
+  imports: [TranslateModule, RouterLink, CommonModule, LoadingSpinner, DecimalPipe, FormsModule],
   templateUrl: './product-detail.html',
   styleUrl: './product-detail.scss',
 })
 export class ProductDetailPage implements OnInit{
   product$!: Observable<ProductDetail | null>;
+  reviews: Review[] = [];
+  newRating = 5;
+  newComment = '';
+  reviewSubmitting = false;
+  reviewError = '';
+  private currentProductId: number | null = null;
 
   constructor(
     private route: ActivatedRoute,
     private productService: ProductService,
+    private reviewService: ReviewService,
     public cart: CartService,
     public wishlist: WishlistService,
     public auth: AuthService
   ){}
 
   ngOnInit(): void {
-    console.log('ProductDetailPage initialized');
     this.product$ = this.route.paramMap.pipe(
       map(params => params.get('id')),
-      tap(id => console.log('Product ID from route:', id)),
       switchMap(id => {
         const numId = Number(id);
         if (!id || isNaN(numId)) {
-          console.warn('Invalid ID:', id);
           return of(null);
         }
+        this.currentProductId = numId;
+        this.loadReviews(numId);
         return this.productService.getProduct(numId).pipe(
-          tap(p => console.log('Product loaded successfully:', p)),
-          catchError(err => {
-            console.error('Error in getProduct API:', err);
-            return of(null);
-          })
+          catchError(() => of(null))
         );
       })
     );
+  }
+
+  loadReviews(productId: number): void {
+    this.reviewService.getProductReviews(productId).subscribe({
+      next: (reviews) => this.reviews = reviews,
+      error: () => this.reviews = []
+    });
+  }
+
+  submitReview(): void {
+    if (!this.currentProductId || this.reviewSubmitting) return;
+    this.reviewSubmitting = true;
+    this.reviewError = '';
+
+    this.reviewService.createReview({
+      productId: this.currentProductId,
+      rating: this.newRating,
+      comment: this.newComment
+    }).subscribe({
+      next: (review) => {
+        this.reviews.unshift(review);
+        this.newComment = '';
+        this.newRating = 5;
+        this.reviewSubmitting = false;
+        // Refresh product to get updated avg rating
+        if (this.currentProductId) {
+          this.product$ = this.productService.getProduct(this.currentProductId).pipe(
+            catchError(() => of(null))
+          );
+        }
+      },
+      error: (err) => {
+        this.reviewError = err.error?.message || err.error || 'Yorum eklenirken bir hata oluştu.';
+        this.reviewSubmitting = false;
+      }
+    });
   }
 
   addToCart(product: ProductDetail){

@@ -9,6 +9,7 @@ import com.shop.ecommerce.entities.WishlistItems;
 import com.shop.ecommerce.enums.Role;
 import com.shop.ecommerce.mapper.ProductMapper;
 import com.shop.ecommerce.repository.ProductRepository;
+import com.shop.ecommerce.repository.ReviewRepository;
 import com.shop.ecommerce.repository.UserRepository;
 import com.shop.ecommerce.repository.IndividualCustomerRepository;
 import com.shop.ecommerce.repository.WishlistItemsRepository;
@@ -27,6 +28,7 @@ import java.util.stream.Collectors;
 public class WishlistService {
 
     private final WishlistRepository wishlistRepository;
+    private final ReviewRepository reviewRepository;
     private final WishlistItemsRepository wishlistItemsRepository;
     private final UserRepository userRepository;
     private final ProductRepository productRepository;
@@ -90,7 +92,10 @@ public class WishlistService {
     private WishlistItemResponse mapToResponse(WishlistItems wishlistItem) {
         WishlistItemResponse response = new WishlistItemResponse();
         response.setId(wishlistItem.getId());
-        response.setProduct(ProductMapper.toListDTO(wishlistItem.getProduct()));
+        long productId = wishlistItem.getProduct().getId();
+        double avgRating = reviewRepository.averageRatingByProductId(productId);
+        long reviewCount = reviewRepository.countByProductId(productId);
+        response.setProduct(ProductMapper.toListDTO(wishlistItem.getProduct(), avgRating, reviewCount));
         return response;
     }
 }

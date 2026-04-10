@@ -10,6 +10,7 @@ public class ProductListDTO {
     private String name;
     private Double price;
     private double rating;
+    private long reviewCount;
     private String img;
     private String categoryName;
     private String brandName;

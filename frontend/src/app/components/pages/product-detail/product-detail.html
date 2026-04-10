@@ -11,7 +11,7 @@
       </div>
       <div class="product-info">
         <p><b>{{"PRODUCT-DETAIL.DESCRIPTION" | translate}}:</b> {{product.description}}</p>
-        <p><b>{{"PRODUCT-DETAIL.RATING" | translate}}:</b> {{product.rating}} ★</p>
+        <p><b>{{"PRODUCT-DETAIL.RATING" | translate}}:</b> {{product.rating | number:'1.1-1'}} ★ ({{product.reviewCount}} {{"PRODUCT-DETAIL.REVIEWS" | translate}})</p>
         <p><b>{{"PRODUCT-DETAIL.PRICE" | translate}}:</b> {{product.price | number:'1.2-2'}}$</p>
         <p><b>{{"PRODUCT-DETAIL.CATEGORY" | translate}}: </b><a [routerLink]="['/products/category', product.categoryName]">{{product.categoryName}}</a></p>
         <p><b>{{"PRODUCT-DETAIL.BRAND" | translate}}: </b><a [routerLink]="['/products/brand', product.brandName]">{{product.brandName}}</a></p>
@@ -42,6 +42,62 @@
     <div class="empty-state" *ngIf="!product">
       <p>Ürün bulunamadı veya bir hata oluştu.</p>
     </div>
+
+    <!-- Reviews Section -->
+    <section class="reviews-section">
+      <h2 class="reviews-title">{{"PRODUCT-DETAIL.REVIEWS" | translate}} ({{reviews.length}})</h2>
+
+      <!-- Add Review Form (Individual users only) -->
+      @if (auth.isIndividualUser()) {
+        <div class="review-form">
+          <h3>{{"PRODUCT-DETAIL.ADD_REVIEW" | translate}}</h3>
+          <div class="rating-input">
+            <label>{{"PRODUCT-DETAIL.YOUR_RATING" | translate}}:</label>
+            <div class="star-select">
+              @for (star of [1,2,3,4,5]; track star) {
+                <span class="star-btn" [class.active]="star <= newRating" (click)="newRating = star">★</span>
+              }
+            </div>
+          </div>
+          <textarea
+            [(ngModel)]="newComment"
+            [placeholder]="'PRODUCT-DETAIL.REVIEW_PLACEHOLDER' | translate"
+            rows="3"
+            maxlength="1000"
+          ></textarea>
+          @if (reviewError) {
+            <p class="review-error">{{reviewError}}</p>
+          }
+          <button class="submit-review-btn" (click)="submitReview()" [disabled]="reviewSubmitting">
+            {{ reviewSubmitting ? ('PRODUCT-DETAIL.SUBMITTING' | translate) : ('PRODUCT-DETAIL.SUBMIT_REVIEW' | translate) }}
+          </button>
+        </div>
+      }
+
+      @if (!auth.isLoggedIn()) {
+        <p class="login-hint">{{"PRODUCT-DETAIL.LOGIN_TO_REVIEW" | translate}}</p>
+      }
+
+      <!-- Reviews List -->
+      <div class="reviews-list">
+        @for (review of reviews; track review.id) {
+          <div class="review-card">
+            <div class="review-header">
+              <span class="review-user">{{review.userName}}</span>
+              <span class="review-rating">
+                @for (star of [1,2,3,4,5]; track star) {
+                  <span [class.filled]="star <= review.rating">★</span>
+                }
+              </span>
+              <span class="review-date">{{review.createdAt | date:'dd.MM.yyyy'}}</span>
+            </div>
+            <p class="review-comment">{{review.comment}}</p>
+          </div>
+        } @empty {
+          <p class="no-reviews">{{"PRODUCT-DETAIL.NO_REVIEWS" | translate}}</p>
+        }
+      </div>
+    </section>
   </div>
 
   <ng-template #stateTemplate>

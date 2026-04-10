@@ -13,6 +13,7 @@ public class ProductDetailDTO {
     private String brandName;
     private String categoryName;
     private double rating;
+    private long reviewCount;
     private String storeName;
     private String img;
     private int soldCount;

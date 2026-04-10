@@ -9,13 +9,13 @@
     <div class="bar3"></div>
   </div>
 
-<div class="mobile-header d-flex align-items-center">
-  <div class="brand-name mx-auto">{{'SIDEBAR.TITLE' | translate}}</div>
+<div class="mobile-header">
+  <img class="brand-logo" [src]="logoSrc" alt="">
 </div>
 
   <div class="sidebar-container" [class.show]="isMobileMenuOpen">
-    <div class="d-flex align-items-center p-3 border-only">
-      <h6>{{'SIDEBAR.TITLE' | translate}}</h6>
+    <div class="sidebar-logo">
+      <img class="brand-logo" [src]="logoSrc" alt="">
     </div>
   <nav class="nav flex-column p-3">
     <p>{{'SIDEBAR.MENU' | translate}}</p>
@@ -23,7 +23,10 @@
     <a routerLink="/ai-assistant" class="nav-link" (click)="toggleMobileMenu()">{{'SIDEBAR.AI' | translate}}</a>
     <a routerLink="/products" class="nav-link" (click)="toggleMobileMenu()">{{'SIDEBAR.PRODUCTS' | translate}}</a>
     <a routerLink="/analytics" class="nav-link" (click)="toggleMobileMenu()">{{'SIDEBAR.ANALYTICS' | translate}}</a>
+    <br>
+    <p *ngIf="auth.isIndividualUser()">{{'SIDEBAR.MANAGEMENT' | translate}}</p>
     <a *ngIf="auth.isIndividualUser()" routerLink="/orders" class="nav-link" (click)="toggleMobileMenu()">{{'SIDEBAR.ORDERS' | translate}}</a>
+    <a *ngIf="auth.isIndividualUser()" routerLink="/my-reviews" class="nav-link" (click)="toggleMobileMenu()">{{'SIDEBAR.REVIEWS' | translate}}</a>
     <br>
     <p *ngIf="auth.isCorporateUser()">{{'SIDEBAR.MANAGEMENT' | translate}}</p>
     <a *ngIf="auth.isCorporateUser()" routerLink="/inventory" class="nav-link" (click)="toggleMobileMenu()">{{'SIDEBAR.INVENTORY' | translate}}</a>
