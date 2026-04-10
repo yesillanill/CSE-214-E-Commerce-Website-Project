@@ -264,3 +264,94 @@
   color: var(--disabled-text);
   font-style: italic;
 }
+
+// ─── Report Styles ─────────────────────────────────
+
+.report-product-section {
+  margin-top: 20px;
+  padding: 0 10px;
+}
+
+.report-btn {
+  background: none;
+  border: 1px solid #e53e3e;
+  color: #e53e3e;
+  padding: 6px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  transition: all 0.2s;
+
+  &:hover {
+    background: #e53e3e;
+    color: white;
+  }
+}
+
+.report-review-btn {
+  background: none;
+  border: none;
+  color: #e53e3e;
+  cursor: pointer;
+  font-size: 0.8rem;
+  padding: 4px 0;
+  margin-top: 8px;
+  opacity: 0.7;
+  transition: opacity 0.2s;
+
+  &:hover {
+    opacity: 1;
+  }
+}
+
+.report-form {
+  margin-top: 10px;
+  padding: 12px;
+  background: var(--card-bg);
+  border-radius: 8px;
+  border: 1px solid rgba(229, 62, 62, 0.3);
+
+  textarea {
+    width: 100%;
+    border: 1px solid var(--input-border);
+    border-radius: 8px;
+    padding: 10px;
+    font-size: 0.9rem;
+    background: var(--input-bg);
+    color: var(--text-color);
+    resize: vertical;
+    box-sizing: border-box;
+
+    &:focus {
+      outline: none;
+      border-color: #e53e3e;
+    }
+  }
+}
+
+.report-submit-btn {
+  margin-top: 8px;
+  padding: 8px 18px;
+  border: none;
+  border-radius: 8px;
+  background: #e53e3e;
+  color: white;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: opacity 0.2s;
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+
+  &:hover:not(:disabled) {
+    opacity: 0.9;
+  }
+}
+
+.report-success {
+  color: #38a169;
+  font-weight: 600;
+  margin: 0;
+}

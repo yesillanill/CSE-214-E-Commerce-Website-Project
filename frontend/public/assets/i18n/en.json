@@ -21,7 +21,9 @@
     "CONFIGURATION": "System Configuration",
     "SETTINGS": "Settings",
     "LOGIN/REGISTER": "Login / Register",
-    "LOGOUT":"Logout"
+    "LOGOUT":"Logout",
+    "SUPPORT": "Support",
+    "SUPPORT_REQUESTS": "Support Requests"
   },
 
   "AUTH":{
@@ -105,7 +107,12 @@
     "SUBMIT_REVIEW": "Submit Review",
     "SUBMITTING": "Submitting...",
     "LOGIN_TO_REVIEW": "Log in to leave a review.",
-    "NO_REVIEWS": "No reviews yet. Be the first to review!"
+    "NO_REVIEWS": "No reviews yet. Be the first to review!",
+    "REPORT_PRODUCT": "Report Product",
+    "REPORT_REVIEW": "Report Review",
+    "REPORT_REASON": "Describe the reason for your report...",
+    "REPORT_SUBMIT": "Submit Report",
+    "REPORT_SUCCESS": "Your report has been submitted successfully."
   },
 
   "MY_REVIEWS":{
@@ -113,6 +120,38 @@
     "TOTAL": "reviews",
     "NO_REVIEWS": "You haven't written any reviews yet.",
     "DELETE": "Delete"
+  },
+
+  "SUPPORT":{
+    "TITLE": "Support",
+    "TOTAL": "tickets",
+    "NEW_TICKET": "New Ticket",
+    "CANCEL": "Cancel",
+    "SUBJECT_PLACEHOLDER": "Subject",
+    "MESSAGE_PLACEHOLDER": "Describe your issue...",
+    "SUBMITTING": "Submitting...",
+    "SUBMIT": "Submit",
+    "NO_TICKETS": "You have no support tickets yet.",
+    "STATUS_OPEN": "Open",
+    "STATUS_RESOLVED": "Resolved",
+    "STATUS_NO_ISSUE": "No Issue Found",
+    "RESPONSES": "Responses",
+    "TYPE_GENERAL": "General",
+    "TYPE_PRODUCT": "Product",
+    "TYPE_REVIEW": "Review"
+  },
+
+  "SUPPORT_ADMIN":{
+    "TITLE": "Support Requests",
+    "ALL": "All",
+    "NO_TICKETS": "No support tickets found.",
+    "RESPONSE_PLACEHOLDER": "Write your response...",
+    "SEND_RESPONSE": "Send Response",
+    "MARK_RESOLVED": "Mark Resolved",
+    "MARK_NO_ISSUE": "Mark No Issue Found",
+    "USER": "User",
+    "TYPE": "Type",
+    "PRODUCT": "Product"
   }
 
 }

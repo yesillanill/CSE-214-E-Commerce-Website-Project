@@ -36,11 +36,13 @@
     <a *ngIf="auth.isAdmin()" routerLink="/customers" class="nav-link" (click)="toggleMobileMenu()">{{'SIDEBAR.CUSTOMERS' | translate}}</a>
     <a *ngIf="auth.isAdmin()" routerLink="/stores" class="nav-link" (click)="toggleMobileMenu()">Stores</a>
     <a *ngIf="auth.isAdmin()" routerLink="/audit-logs" class="nav-link" (click)="toggleMobileMenu()">Audit Logs</a>
+    <a *ngIf="auth.isAdmin()" routerLink="/support-requests" class="nav-link" (click)="toggleMobileMenu()">{{'SIDEBAR.SUPPORT_REQUESTS' | translate}}</a>
   </nav>
 
 <div class="footer-controls">
     <a *ngIf="!auth.isLoggedIn()" routerLink="/auth" class="nav-link nav-link-bottom" (click)="toggleMobileMenu()">{{'SIDEBAR.LOGIN/REGISTER' | translate }}</a>
     <a *ngIf="auth.isLoggedIn()" routerLink="/" class="nav-link nav-link-bottom" (click)="logout()">{{'SIDEBAR.LOGOUT' | translate}}</a>
+    <a *ngIf="auth.isIndividualUser() || auth.isCorporateUser()" routerLink="/support" class="nav-link nav-link-bottom" (click)="toggleMobileMenu()">{{'SIDEBAR.SUPPORT' | translate}}</a>
     <a routerLink="/settings" class="nav-link nav-link-bottom" (click)="toggleMobileMenu()">{{'SIDEBAR.SETTINGS' | translate}}</a>
   <div class="theme-toggle">
     <label class="switch">

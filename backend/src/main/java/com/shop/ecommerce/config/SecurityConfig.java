@@ -62,6 +62,11 @@ public class SecurityConfig {
                         // Public — Chat (JWT token varsa kullanıcı tanınır, yoksa guest)
                         .requestMatchers("/api/chat/**").permitAll()
 
+                        // Support — Individual ve Corporate kullanıcılar destek talebi oluşturabilir
+                        .requestMatchers(HttpMethod.POST, "/api/support").authenticated()
+                        .requestMatchers(HttpMethod.GET, "/api/support/my-tickets/**").authenticated()
+                        .requestMatchers("/api/support/admin/**").hasRole("ADMIN")
+
                         // Authenticated — Profil ve Analytics
                         .requestMatchers("/api/users/profile/**").authenticated()
                         .requestMatchers("/api/analytics/individual").hasRole("INDIVIDUAL")

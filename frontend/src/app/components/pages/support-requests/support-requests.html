@@ -1,0 +1,94 @@
+<div class="support-requests-page">
+  <div class="page-header">
+    <h1>{{ 'SUPPORT_ADMIN.TITLE' | translate }}</h1>
+    <div class="filter-group">
+      <button [class.active]="statusFilter === 'ALL'" (click)="statusFilter = 'ALL'; applyFilter()">
+        {{ 'SUPPORT_ADMIN.ALL' | translate }}
+      </button>
+      <button [class.active]="statusFilter === 'OPEN'" (click)="statusFilter = 'OPEN'; applyFilter()">
+        {{ 'SUPPORT.STATUS_OPEN' | translate }}
+      </button>
+      <button [class.active]="statusFilter === 'RESOLVED'" (click)="statusFilter = 'RESOLVED'; applyFilter()">
+        {{ 'SUPPORT.STATUS_RESOLVED' | translate }}
+      </button>
+      <button [class.active]="statusFilter === 'NO_ISSUE_FOUND'" (click)="statusFilter = 'NO_ISSUE_FOUND'; applyFilter()">
+        {{ 'SUPPORT.STATUS_NO_ISSUE_FOUND' | translate }}
+      </button>
+    </div>
+  </div>
+
+  @if (isLoading) {
+    <div class="loading-container">
+      <app-loading-spinner></app-loading-spinner>
+    </div>
+  } @else if (filteredTickets.length === 0) {
+    <div class="empty-state">
+      <p>{{ 'SUPPORT_ADMIN.NO_TICKETS' | translate }}</p>
+    </div>
+  } @else {
+    <div class="tickets-list">
+      @for (ticket of filteredTickets; track ticket.id) {
+        <div class="ticket-card" [class.expanded]="expandedTicketId === ticket.id">
+          <div class="ticket-header" (click)="toggleExpand(ticket.id)">
+            <div class="ticket-info">
+              <span class="ticket-subject">{{ ticket.subject }}</span>
+              <span class="ticket-meta">
+                <span class="ticket-user">{{ ticket.userName }}</span>
+                · <span class="ticket-type">{{ ticket.type }}</span>
+                · {{ ticket.createdAt | date:'dd.MM.yyyy HH:mm' }}
+                @if (ticket.productName) {
+                  · <a [routerLink]="['/products', ticket.productId]" (click)="$event.stopPropagation()">{{ ticket.productName }}</a>
+                }
+              </span>
+            </div>
+            <span class="ticket-status" [ngClass]="getStatusClass(ticket.status)">
+              {{ 'SUPPORT.STATUS_' + ticket.status | translate }}
+            </span>
+          </div>
+
+          @if (expandedTicketId === ticket.id) {
+            <div class="ticket-body">
+              <div class="ticket-message">
+                <p>{{ ticket.message }}</p>
+              </div>
+
+              @if (ticket.responses.length > 0) {
+                <div class="responses">
+                  <h4>{{ 'SUPPORT.RESPONSES' | translate }}</h4>
+                  @for (resp of ticket.responses; track resp.id) {
+                    <div class="response-card">
+                      <div class="response-header">
+                        <span class="admin-name">{{ resp.adminName }}</span>
+                        <span class="response-date">{{ resp.createdAt | date:'dd.MM.yyyy HH:mm' }}</span>
+                      </div>
+                      <p class="response-message">{{ resp.message }}</p>
+                    </div>
+                  }
+                </div>
+              }
+
+              <div class="admin-actions">
+                <div class="respond-form">
+                  <textarea [(ngModel)]="responseText[ticket.id]"
+                            [placeholder]="'SUPPORT_ADMIN.RESPONSE_PLACEHOLDER' | translate"
+                            rows="3" maxlength="2000"></textarea>
+                  <div class="action-buttons">
+                    <button class="btn-respond" (click)="respondToTicket(ticket.id)">
+                      {{ 'SUPPORT_ADMIN.SEND_RESPONSE' | translate }}
+                    </button>
+                    <button class="btn-resolve" (click)="respondToTicket(ticket.id, 'RESOLVED')">
+                      {{ 'SUPPORT_ADMIN.MARK_RESOLVED' | translate }}
+                    </button>
+                    <button class="btn-no-issue" (click)="respondToTicket(ticket.id, 'NO_ISSUE_FOUND')">
+                      {{ 'SUPPORT_ADMIN.MARK_NO_ISSUE' | translate }}
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          }
+        </div>
+      }
+    </div>
+  }
+</div>

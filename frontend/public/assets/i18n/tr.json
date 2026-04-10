@@ -21,7 +21,9 @@
     "CONFIGURATION": "Sistem Yapılandırması",
     "SETTINGS": "Ayarlar",
     "LOGIN/REGISTER": "Giriş Yap / Kaydol",
-    "LOGOUT":"Çıkış Yap"
+    "LOGOUT":"Çıkış Yap",
+    "SUPPORT": "Destek",
+    "SUPPORT_REQUESTS": "Destek Talepleri"
   },
 
   "AUTH":{
@@ -103,7 +105,12 @@
     "SUBMIT_REVIEW": "Yorumu Gönder",
     "SUBMITTING": "Gönderiliyor...",
     "LOGIN_TO_REVIEW": "Yorum yapabilmek için giriş yapın.",
-    "NO_REVIEWS": "Henüz yorum yok. İlk yorumu siz yapın!"
+    "NO_REVIEWS": "Henüz yorum yok. İlk yorumu siz yapın!",
+    "REPORT_PRODUCT": "Ürünü Şikayet Et",
+    "REPORT_REVIEW": "Yorumu Şikayet Et",
+    "REPORT_REASON": "Şikayet nedeninizi açıklayın...",
+    "REPORT_SUBMIT": "Şikayeti Gönder",
+    "REPORT_SUCCESS": "Şikayetiniz başarıyla gönderildi."
   },
 
   "MY_REVIEWS":{
@@ -111,6 +118,38 @@
     "TOTAL": "yorum",
     "NO_REVIEWS": "Henüz hiç yorum yazmadınız.",
     "DELETE": "Sil"
+  },
+
+  "SUPPORT":{
+    "TITLE": "Destek",
+    "TOTAL": "talep",
+    "NEW_TICKET": "Yeni Talep",
+    "CANCEL": "İptal",
+    "SUBJECT_PLACEHOLDER": "Konu",
+    "MESSAGE_PLACEHOLDER": "Sorununuzu açıklayın...",
+    "SUBMITTING": "Gönderiliyor...",
+    "SUBMIT": "Gönder",
+    "NO_TICKETS": "Henüz destek talebiniz bulunmuyor.",
+    "STATUS_OPEN": "Açık",
+    "STATUS_RESOLVED": "Çözüldü",
+    "STATUS_NO_ISSUE": "Sorun Bulunamadı",
+    "RESPONSES": "Yanıtlar",
+    "TYPE_GENERAL": "Genel",
+    "TYPE_PRODUCT": "Ürün",
+    "TYPE_REVIEW": "Yorum"
+  },
+
+  "SUPPORT_ADMIN":{
+    "TITLE": "Destek Talepleri",
+    "ALL": "Tümü",
+    "NO_TICKETS": "Destek talebi bulunamadı.",
+    "RESPONSE_PLACEHOLDER": "Yanıtınızı yazın...",
+    "SEND_RESPONSE": "Yanıt Gönder",
+    "MARK_RESOLVED": "Çözüldü Olarak İşaretle",
+    "MARK_NO_ISSUE": "Sorun Bulunamadı İşaretle",
+    "USER": "Kullanıcı",
+    "TYPE": "Tür",
+    "PRODUCT": "Ürün"
   }
 
 }

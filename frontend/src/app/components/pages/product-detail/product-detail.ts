@@ -8,6 +8,7 @@ import { ReviewService } from '../../../core/services/review.service';
 import { Review } from '../../../core/models/review.model';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { AuthService } from '../../../core/services/auth.service';
+import { SupportService } from '../../../core/services/support.service';
 
 import { CommonModule, DecimalPipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -30,10 +31,21 @@ export class ProductDetailPage implements OnInit{
   reviewError = '';
   private currentProductId: number | null = null;
 
+  // Report state
+  showReportProduct = false;
+  reportProductMessage = '';
+  reportProductSubmitting = false;
+  reportProductSuccess = false;
+  reportReviewId: number | null = null;
+  reportReviewMessage = '';
+  reportReviewSubmitting = false;
+  reportReviewSuccess = false;
+
   constructor(
     private route: ActivatedRoute,
     private productService: ProductService,
     private reviewService: ReviewService,
+    private supportService: SupportService,
     public cart: CartService,
     public wishlist: WishlistService,
     public auth: AuthService
@@ -102,5 +114,60 @@ export class ProductDetailPage implements OnInit{
 
   toggleWish(product: ProductDetail){
     if (product) this.wishlist.toggle(product);
+  }
+
+  // Report product
+  toggleReportProduct() {
+    this.showReportProduct = !this.showReportProduct;
+    this.reportProductMessage = '';
+    this.reportProductSuccess = false;
+  }
+
+  submitReportProduct() {
+    if (!this.currentProductId || !this.reportProductMessage.trim() || this.reportProductSubmitting) return;
+    this.reportProductSubmitting = true;
+    this.supportService.createTicket({
+      subject: 'Product Report',
+      message: this.reportProductMessage,
+      type: 'PRODUCT',
+      productId: this.currentProductId
+    }).subscribe({
+      next: () => {
+        this.reportProductSubmitting = false;
+        this.reportProductSuccess = true;
+        this.reportProductMessage = '';
+      },
+      error: () => this.reportProductSubmitting = false
+    });
+  }
+
+  // Report review
+  toggleReportReview(reviewId: number) {
+    if (this.reportReviewId === reviewId) {
+      this.reportReviewId = null;
+    } else {
+      this.reportReviewId = reviewId;
+      this.reportReviewMessage = '';
+      this.reportReviewSuccess = false;
+    }
+  }
+
+  submitReportReview(reviewId: number) {
+    if (!this.reportReviewMessage.trim() || this.reportReviewSubmitting) return;
+    this.reportReviewSubmitting = true;
+    this.supportService.createTicket({
+      subject: 'Review Report',
+      message: this.reportReviewMessage,
+      type: 'REVIEW',
+      productId: this.currentProductId ?? undefined,
+      reviewId: reviewId
+    }).subscribe({
+      next: () => {
+        this.reportReviewSubmitting = false;
+        this.reportReviewSuccess = true;
+        this.reportReviewMessage = '';
+      },
+      error: () => this.reportReviewSubmitting = false
+    });
   }
 }

@@ -12,6 +12,8 @@ import { Reports } from './components/pages/reports/reports';
 import { Stores } from './components/pages/stores/stores';
 import { StoreOrders } from './components/pages/store-orders/store-orders';
 import { AuditLogs } from './components/pages/audit-logs/audit-logs';
+import { Support } from './components/pages/support/support';
+import { SupportRequests } from './components/pages/support-requests/support-requests';
 
 import { Auth } from './components/pages/auth/auth'
 import { Settings } from './components/pages/settings/settings';
@@ -45,6 +47,8 @@ export const routes: Routes = [
   {path:"store-orders", component: StoreOrders, canActivate: [roleGuard], data: {role:'CorporateUser'}},
   {path:"stores", component: Stores, canActivate: [roleGuard], data: {role:'Admin'}},
   {path:"audit-logs", component: AuditLogs, canActivate: [roleGuard], data: {role:'Admin'}},
+  {path:"support", component: Support},
+  {path:"support-requests", component: SupportRequests, canActivate: [roleGuard], data: {role:'Admin'}},
   {path:"products/brand/:name", component: Products, data: {type: 'brand'}},
   {path:"products/store/:name", component: Products, data: {type: 'store'}},
   {path:"products/category/:name", component: Products, data: {type: 'category'}},

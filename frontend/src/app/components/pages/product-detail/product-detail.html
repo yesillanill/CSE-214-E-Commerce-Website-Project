@@ -36,6 +36,32 @@
       </div>
     </div>
 
+    <!-- Report Product -->
+    @if (auth.isLoggedIn() && !auth.isAdmin()) {
+      <div class="report-product-section">
+        <button class="report-btn" (click)="toggleReportProduct()">
+          ⚠ {{ 'PRODUCT-DETAIL.REPORT_PRODUCT' | translate }}
+        </button>
+        @if (showReportProduct) {
+          <div class="report-form">
+            @if (reportProductSuccess) {
+              <p class="report-success">{{ 'PRODUCT-DETAIL.REPORT_SUCCESS' | translate }}</p>
+            } @else {
+              <textarea
+                [(ngModel)]="reportProductMessage"
+                [placeholder]="'PRODUCT-DETAIL.REPORT_REASON' | translate"
+                rows="3"
+                maxlength="2000"
+              ></textarea>
+              <button class="report-submit-btn" (click)="submitReportProduct()" [disabled]="reportProductSubmitting">
+                {{ reportProductSubmitting ? ('PRODUCT-DETAIL.SUBMITTING' | translate) : ('PRODUCT-DETAIL.REPORT_SUBMIT' | translate) }}
+              </button>
+            }
+          </div>
+        }
+      </div>
+    }
+
     <!-- Floating Action Buttons -->
 
 
@@ -92,6 +118,28 @@
               <span class="review-date">{{review.createdAt | date:'dd.MM.yyyy'}}</span>
             </div>
             <p class="review-comment">{{review.comment}}</p>
+            @if (auth.isLoggedIn() && !auth.isAdmin()) {
+              <button class="report-review-btn" (click)="toggleReportReview(review.id)">
+                ⚠ {{ 'PRODUCT-DETAIL.REPORT_REVIEW' | translate }}
+              </button>
+              @if (reportReviewId === review.id) {
+                <div class="report-form">
+                  @if (reportReviewSuccess) {
+                    <p class="report-success">{{ 'PRODUCT-DETAIL.REPORT_SUCCESS' | translate }}</p>
+                  } @else {
+                    <textarea
+                      [(ngModel)]="reportReviewMessage"
+                      [placeholder]="'PRODUCT-DETAIL.REPORT_REASON' | translate"
+                      rows="2"
+                      maxlength="2000"
+                    ></textarea>
+                    <button class="report-submit-btn" (click)="submitReportReview(review.id)" [disabled]="reportReviewSubmitting">
+                      {{ reportReviewSubmitting ? ('PRODUCT-DETAIL.SUBMITTING' | translate) : ('PRODUCT-DETAIL.REPORT_SUBMIT' | translate) }}
+                    </button>
+                  }
+                </div>
+              }
+            }
           </div>
         } @empty {
           <p class="no-reviews">{{"PRODUCT-DETAIL.NO_REVIEWS" | translate}}</p>
