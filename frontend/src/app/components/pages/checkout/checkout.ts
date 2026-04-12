@@ -148,6 +148,7 @@ export class Checkout implements OnInit {
       },
       error: (err) => {
         this.isProcessing = false;
+        this.cdr.markForCheck();
         Swal.fire({
           icon: 'error',
           title: this.translate.instant('CHECKOUT.ORDER_ERROR_TITLE'),

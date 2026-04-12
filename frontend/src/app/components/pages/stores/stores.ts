@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule, DecimalPipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
@@ -23,7 +23,7 @@ export class Stores implements OnInit {
   sortBy = 'storeName';
   sortDir = 'asc';
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, private cdr: ChangeDetectorRef) {}
 
   ngOnInit() { this.loadStores(); }
 
@@ -35,8 +35,9 @@ export class Stores implements OnInit {
         this.totalPages = res.totalPages || 0;
         this.totalElements = res.totalElements || 0;
         this.isLoading = false;
+        this.cdr.markForCheck();
       },
-      error: () => { this.stores = []; this.isLoading = false; }
+      error: () => { this.stores = []; this.isLoading = false; this.cdr.markForCheck(); }
     });
   }
 

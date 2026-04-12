@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule, DatePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
@@ -22,7 +22,7 @@ export class SupportRequests implements OnInit {
   statusFilter = 'ALL';
   responseText: { [ticketId: number]: string } = {};
 
-  constructor(private supportService: SupportService) {}
+  constructor(private supportService: SupportService, private cdr: ChangeDetectorRef) {}
 
   ngOnInit() {
     this.loadTickets();
@@ -35,8 +35,9 @@ export class SupportRequests implements OnInit {
         this.tickets = tickets;
         this.applyFilter();
         this.isLoading = false;
+        this.cdr.markForCheck();
       },
-      error: () => (this.isLoading = false),
+      error: () => { this.isLoading = false; this.cdr.markForCheck(); },
     });
   }
 
@@ -65,6 +66,7 @@ export class SupportRequests implements OnInit {
         }
         this.responseText[ticketId] = '';
         this.applyFilter();
+        this.cdr.markForCheck();
       },
     });
   }
@@ -75,6 +77,7 @@ export class SupportRequests implements OnInit {
         const ticket = this.tickets.find((t) => t.id === ticketId);
         if (ticket) ticket.status = updated.status;
         this.applyFilter();
+        this.cdr.markForCheck();
       },
     });
   }

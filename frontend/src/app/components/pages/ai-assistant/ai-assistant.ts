@@ -1,4 +1,4 @@
-import { Component, ViewChild, ElementRef, AfterViewChecked } from '@angular/core';
+import { Component, ViewChild, ElementRef, AfterViewChecked, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
@@ -24,7 +24,8 @@ export class AiAssistant implements AfterViewChecked {
   constructor(
     private chatService: ChatService,
     public auth: AuthService,
-    private router: Router
+    private router: Router,
+    private cdr: ChangeDetectorRef
   ) {
     const isLoggedIn = this.auth.isLoggedIn();
     const userName = this.auth.getUser()?.name || '';
@@ -79,6 +80,7 @@ export class AiAssistant implements AfterViewChecked {
         });
         this.isLoading = false;
         this.shouldScroll = true;
+        this.cdr.markForCheck();
       },
       error: (err) => {
         this.messages.push({
@@ -88,6 +90,7 @@ export class AiAssistant implements AfterViewChecked {
         });
         this.isLoading = false;
         this.shouldScroll = true;
+        this.cdr.markForCheck();
       }
     });
   }

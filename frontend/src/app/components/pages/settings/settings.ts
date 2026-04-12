@@ -1,5 +1,5 @@
 import { AppService } from './../../../core/services/app.service';
-import { Component, OnInit, OnDestroy, HostListener } from '@angular/core';
+import { Component, OnInit, OnDestroy, HostListener, ChangeDetectorRef } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
@@ -31,7 +31,8 @@ export class Settings implements OnInit, OnDestroy, CanComponentDeactivate {
     public appService: AppService,
     public translate: TranslateService,
     public themeService: ThemeService,
-    public cardService: CardService
+    public cardService: CardService,
+    private cdr: ChangeDetectorRef
   ){}
 
   ngOnInit(){
@@ -55,6 +56,7 @@ export class Settings implements OnInit, OnDestroy, CanComponentDeactivate {
             // Reset dirty state after loading profile data
             this.userForm.markAsPristine();
             this.userForm.markAsUntouched();
+            this.cdr.markForCheck();
           }
         });
       } else {

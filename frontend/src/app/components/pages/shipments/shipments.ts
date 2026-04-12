@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule, DecimalPipe, DatePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
@@ -25,7 +25,7 @@ export class Shipments implements OnInit {
   sortBy = 'shipmentDate';
   sortDir = 'desc';
 
-  constructor(private http: HttpClient, private auth: AuthService) {}
+  constructor(private http: HttpClient, private auth: AuthService, private cdr: ChangeDetectorRef) {}
 
   ngOnInit() {
     const user = this.auth.getUser();
@@ -33,9 +33,9 @@ export class Shipments implements OnInit {
       this.http.get<any>(`http://localhost:8080/api/stores/my-store?userId=${user.id}`).subscribe({
         next: (store: any) => {
           if (store && store.id) { this.storeId = store.id; this.loadShipments(); }
-          else { this.isLoading = false; }
+          else { this.isLoading = false; this.cdr.markForCheck(); }
         },
-        error: () => { this.isLoading = false; }
+        error: () => { this.isLoading = false; this.cdr.markForCheck(); }
       });
     }
   }
@@ -52,8 +52,9 @@ export class Shipments implements OnInit {
         this.totalPages = res.totalPages || 0;
         this.totalElements = res.totalElements || 0;
         this.isLoading = false;
+        this.cdr.markForCheck();
       },
-      error: () => { this.shipments = []; this.isLoading = false; }
+      error: () => { this.shipments = []; this.isLoading = false; this.cdr.markForCheck(); }
     });
   }
 

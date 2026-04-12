@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { LowerCasePipe } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { ProductService } from '../../../core/services/product.service';
@@ -30,15 +30,15 @@ export class Home implements OnInit {
   stats: HomeStats | null = null;
   userName: string = '';
   isLoggedIn: boolean = false;
-  isLoading: boolean = true;
-
-  private loadCount = 0;
+  isLoadingTopRated: boolean = true;
+  isLoadingBestSelling: boolean = true;
 
   constructor(
     private productService: ProductService,
     public auth: AuthService,
     public cartService: CartService,
-    public wishlistService: WishlistService
+    public wishlistService: WishlistService,
+    private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit() {
@@ -49,31 +49,26 @@ export class Home implements OnInit {
     }
 
     this.productService.getHomeStats().subscribe({
-      next: stats => this.stats = stats
+      next: stats => { this.stats = stats; this.cdr.markForCheck(); }
     });
 
     this.productService.getTopRatedProducts().subscribe({
       next: products => {
         this.topRatedProducts = products;
-        this.checkLoading();
+        this.isLoadingTopRated = false;
+        this.cdr.markForCheck();
       },
-      error: () => this.checkLoading()
+      error: () => { this.isLoadingTopRated = false; this.cdr.markForCheck(); }
     });
 
     this.productService.getBestSellingProducts().subscribe({
       next: products => {
         this.bestSellingProducts = products;
-        this.checkLoading();
+        this.isLoadingBestSelling = false;
+        this.cdr.markForCheck();
       },
-      error: () => this.checkLoading()
+      error: () => { this.isLoadingBestSelling = false; this.cdr.markForCheck(); }
     });
-  }
-
-  private checkLoading() {
-    this.loadCount++;
-    if (this.loadCount >= 2) {
-      this.isLoading = false;
-    }
   }
 
   scrollLeft(container: HTMLElement) {

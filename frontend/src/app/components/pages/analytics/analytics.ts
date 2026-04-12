@@ -81,9 +81,11 @@ export class Analytics implements OnInit, OnDestroy, AfterViewChecked {
       next: (data) => {
         this.publicStats = data;
         this.isLoadingPublic = false;
+        this.cdr.markForCheck();
       },
       error: () => {
         this.isLoadingPublic = false;
+        this.cdr.markForCheck();
       }
     });
   }
@@ -96,24 +98,27 @@ export class Analytics implements OnInit, OnDestroy, AfterViewChecked {
         next: (data) => {
           this.individualData = data;
           this.isLoadingPrivate = false;
+          this.cdr.markForCheck();
         },
-        error: () => this.isLoadingPrivate = false
+        error: () => { this.isLoadingPrivate = false; this.cdr.markForCheck(); }
       });
     } else if (this.auth.isCorporateUser()) {
       this.analyticsService.getCorporateAnalytics().subscribe({
         next: (data) => {
           this.corporateData = data;
           this.isLoadingPrivate = false;
+          this.cdr.markForCheck();
         },
-        error: () => this.isLoadingPrivate = false
+        error: () => { this.isLoadingPrivate = false; this.cdr.markForCheck(); }
       });
     } else if (this.auth.isAdmin()) {
       this.analyticsService.getAdminAnalytics().subscribe({
         next: (data) => {
           this.adminData = data;
           this.isLoadingPrivate = false;
+          this.cdr.markForCheck();
         },
-        error: () => this.isLoadingPrivate = false
+        error: () => { this.isLoadingPrivate = false; this.cdr.markForCheck(); }
       });
     } else {
       this.isLoadingPrivate = false;

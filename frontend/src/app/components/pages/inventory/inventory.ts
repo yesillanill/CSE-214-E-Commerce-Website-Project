@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule, DecimalPipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
@@ -27,7 +27,7 @@ export class Inventory implements OnInit {
   sortBy = 'name';
   sortDir = 'asc';
 
-  constructor(private http: HttpClient, private auth: AuthService, private router: Router, private translate: TranslateService) {}
+  constructor(private http: HttpClient, private auth: AuthService, private router: Router, private translate: TranslateService, private cdr: ChangeDetectorRef) {}
 
   ngOnInit() {
     const user = this.auth.getUser();
@@ -37,9 +37,9 @@ export class Inventory implements OnInit {
           if (store && store.id) {
             this.storeId = store.id;
             this.loadProducts();
-          } else { this.isLoading = false; }
+          } else { this.isLoading = false; this.cdr.markForCheck(); }
         },
-        error: () => { this.isLoading = false; }
+        error: () => { this.isLoading = false; this.cdr.markForCheck(); }
       });
     }
   }
@@ -56,8 +56,9 @@ export class Inventory implements OnInit {
         this.totalPages = res.totalPages || 0;
         this.totalElements = res.totalElements || 0;
         this.isLoading = false;
+        this.cdr.markForCheck();
       },
-      error: () => { this.products = []; this.isLoading = false; }
+      error: () => { this.products = []; this.isLoading = false; this.cdr.markForCheck(); }
     });
   }
 

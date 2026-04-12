@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule, DatePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
@@ -34,7 +34,7 @@ export class AuditLogs implements OnInit {
     'PAYMENT_PROCESSED','SHIPMENT_UPDATED'
   ];
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, private cdr: ChangeDetectorRef) {}
 
   ngOnInit() { this.loadLogs(); }
 
@@ -52,8 +52,9 @@ export class AuditLogs implements OnInit {
         this.totalPages = res.totalPages || 0;
         this.totalElements = res.totalElements || 0;
         this.isLoading = false;
+        this.cdr.markForCheck();
       },
-      error: () => { this.logs = []; this.isLoading = false; }
+      error: () => { this.logs = []; this.isLoading = false; this.cdr.markForCheck(); }
     });
   }
 

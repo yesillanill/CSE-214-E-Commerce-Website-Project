@@ -45,9 +45,9 @@ export class StoreOrders implements OnInit {
           if (store && store.id) {
             this.storeId = store.id;
             this.loadOrders();
-          } else { this.isLoading = false; }
+          } else { this.isLoading = false; this.cdr.markForCheck(); }
         },
-        error: () => { this.isLoading = false; }
+        error: () => { this.isLoading = false; this.cdr.markForCheck(); }
       });
     }
   }
@@ -64,8 +64,9 @@ export class StoreOrders implements OnInit {
         this.totalPages = res.totalPages || 0;
         this.totalElements = res.totalElements || 0;
         this.isLoading = false;
+        this.cdr.markForCheck();
       },
-      error: () => { this.orders = []; this.isLoading = false; }
+      error: () => { this.orders = []; this.isLoading = false; this.cdr.markForCheck(); }
     });
   }
 

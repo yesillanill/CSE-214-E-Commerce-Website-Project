@@ -1,4 +1,4 @@
-import { Component, OnInit, HostListener } from '@angular/core';
+import { Component, OnInit, HostListener, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
@@ -40,7 +40,8 @@ export class EditProduct implements OnInit, CanComponentDeactivate {
     private http: HttpClient,
     private route: ActivatedRoute,
     private router: Router,
-    private translate: TranslateService
+    private translate: TranslateService,
+    private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit() {
@@ -58,9 +59,11 @@ export class EditProduct implements OnInit, CanComponentDeactivate {
         this.categoryName = p.category?.name || '';
         this.brandName = p.brand?.name || '';
         this.isLoading = false;
+        this.cdr.markForCheck();
       },
       error: () => {
         this.isLoading = false;
+        this.cdr.markForCheck();
         Swal.fire({
           icon: 'error',
           title: this.translate.instant('EDIT_PRODUCT.ERROR_TITLE'),

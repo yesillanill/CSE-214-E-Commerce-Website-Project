@@ -5,6 +5,7 @@ import { HttpClient } from '@angular/common/http';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import Swal from 'sweetalert2';
 import { Subject, debounceTime, distinctUntilChanged } from 'rxjs';
+import { ChangeDetectorRef } from '@angular/core';
 
 @Component({
   selector: 'app-customers',
@@ -26,7 +27,7 @@ export class Customers implements OnInit {
   sortBy = 'name';
   sortDir = 'asc';
 
-  constructor(private http: HttpClient, private translate: TranslateService) {
+  constructor(private http: HttpClient, private translate: TranslateService, private cdr: ChangeDetectorRef) {
     this.searchSubject.pipe(debounceTime(300), distinctUntilChanged()).subscribe(term => {
       this.searchTerm = term;
       this.currentPage = 0;
@@ -44,8 +45,9 @@ export class Customers implements OnInit {
         this.totalPages = res.totalPages || 0;
         this.totalElements = res.totalElements || 0;
         this.isLoading = false;
+        this.cdr.markForCheck();
       },
-      error: () => { this.customers = []; this.isLoading = false; }
+      error: () => { this.customers = []; this.isLoading = false; this.cdr.markForCheck(); }
     });
   }
 

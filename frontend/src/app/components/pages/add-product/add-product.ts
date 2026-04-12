@@ -1,4 +1,4 @@
-import { Component, OnInit, HostListener } from '@angular/core';
+import { Component, OnInit, HostListener, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
@@ -36,7 +36,8 @@ export class AddProduct implements OnInit, CanComponentDeactivate {
     private http: HttpClient,
     private auth: AuthService,
     private router: Router,
-    private translate: TranslateService
+    private translate: TranslateService,
+    private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit() {
@@ -44,16 +45,16 @@ export class AddProduct implements OnInit, CanComponentDeactivate {
     if (user) {
       this.http.get<any>(`http://localhost:8080/api/stores/my-store?userId=${user.id}`).subscribe({
         next: (store) => {
-          if (store?.id) this.storeId = store.id;
+          if (store?.id) { this.storeId = store.id; this.cdr.markForCheck(); }
         }
       });
     }
 
     this.http.get<any[]>('http://localhost:8080/api/inventory/categories').subscribe({
-      next: (cats) => this.categories = cats || []
+      next: (cats) => { this.categories = cats || []; this.cdr.markForCheck(); }
     });
     this.http.get<any[]>('http://localhost:8080/api/inventory/brands').subscribe({
-      next: (brands) => this.brands = brands || []
+      next: (brands) => { this.brands = brands || []; this.cdr.markForCheck(); }
     });
   }
 

@@ -37,17 +37,23 @@
       <a routerLink="/products" class="see-all-link">{{ 'HOME.SEE_ALL' | translate }}</a>
     </div>
 
-    <div class="carousel-wrapper">
-      <button class="carousel-btn carousel-btn-left" (click)="scrollLeft(topRatedRow)">‹</button>
-      <div class="product-row" #topRatedRow>
-        @for (product of topRatedProducts; track product.id) {
-          <div class="product-slide">
-            <app-product-card [product]="product"></app-product-card>
-          </div>
-        }
+    @if (isLoadingTopRated) {
+      <div class="section-spinner">
+        <app-loading-spinner></app-loading-spinner>
       </div>
-      <button class="carousel-btn carousel-btn-right" (click)="scrollRight(topRatedRow)">›</button>
-    </div>
+    } @else {
+      <div class="carousel-wrapper">
+        <button class="carousel-btn carousel-btn-left" (click)="scrollLeft(topRatedRow)">‹</button>
+        <div class="product-row" #topRatedRow>
+          @for (product of topRatedProducts; track product.id) {
+            <div class="product-slide">
+              <app-product-card [product]="product"></app-product-card>
+            </div>
+          }
+        </div>
+        <button class="carousel-btn carousel-btn-right" (click)="scrollRight(topRatedRow)">›</button>
+      </div>
+    }
   </section>
 
   <!-- Best Selling Products -->
@@ -57,23 +63,22 @@
       <a routerLink="/products" class="see-all-link">{{ 'HOME.SEE_ALL' | translate }}</a>
     </div>
 
-    <div class="carousel-wrapper">
-      <button class="carousel-btn carousel-btn-left" (click)="scrollLeft(bestSellingRow)">‹</button>
-      <div class="product-row" #bestSellingRow>
-        @for (product of bestSellingProducts; track product.id) {
-          <div class="product-slide">
-            <app-product-card [product]="product"></app-product-card>
-          </div>
-        }
+    @if (isLoadingBestSelling) {
+      <div class="section-spinner">
+        <app-loading-spinner></app-loading-spinner>
       </div>
-      <button class="carousel-btn carousel-btn-right" (click)="scrollRight(bestSellingRow)">›</button>
-    </div>
+    } @else {
+      <div class="carousel-wrapper">
+        <button class="carousel-btn carousel-btn-left" (click)="scrollLeft(bestSellingRow)">‹</button>
+        <div class="product-row" #bestSellingRow>
+          @for (product of bestSellingProducts; track product.id) {
+            <div class="product-slide">
+              <app-product-card [product]="product"></app-product-card>
+            </div>
+          }
+        </div>
+        <button class="carousel-btn carousel-btn-right" (click)="scrollRight(bestSellingRow)">›</button>
+      </div>
+    }
   </section>
-
-  <!-- Loading State -->
-  @if (isLoading) {
-    <div class="loading-container">
-      <app-loading-spinner></app-loading-spinner>
-    </div>
-  }
 </div>

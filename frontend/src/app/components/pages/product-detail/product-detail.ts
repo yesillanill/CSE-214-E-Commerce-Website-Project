@@ -1,6 +1,6 @@
 import { ProductDetail } from './../../../core/models/product-detail.model';
 import { ProductService } from './../../../core/services/product.service';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { CartService } from '../../../core/services/cart.service';
 import { WishlistService } from '../../../core/services/wishlist.service';
@@ -48,7 +48,8 @@ export class ProductDetailPage implements OnInit{
     private supportService: SupportService,
     public cart: CartService,
     public wishlist: WishlistService,
-    public auth: AuthService
+    public auth: AuthService,
+    private cdr: ChangeDetectorRef
   ){}
 
   ngOnInit(): void {
@@ -70,8 +71,8 @@ export class ProductDetailPage implements OnInit{
 
   loadReviews(productId: number): void {
     this.reviewService.getProductReviews(productId).subscribe({
-      next: (reviews) => this.reviews = reviews,
-      error: () => this.reviews = []
+      next: (reviews) => { this.reviews = reviews; this.cdr.markForCheck(); },
+      error: () => { this.reviews = []; this.cdr.markForCheck(); }
     });
   }
 
@@ -96,10 +97,12 @@ export class ProductDetailPage implements OnInit{
             catchError(() => of(null))
           );
         }
+        this.cdr.markForCheck();
       },
       error: (err) => {
         this.reviewError = err.error?.message || err.error || 'Yorum eklenirken bir hata oluştu.';
         this.reviewSubmitting = false;
+        this.cdr.markForCheck();
       }
     });
   }
@@ -136,8 +139,9 @@ export class ProductDetailPage implements OnInit{
         this.reportProductSubmitting = false;
         this.reportProductSuccess = true;
         this.reportProductMessage = '';
+        this.cdr.markForCheck();
       },
-      error: () => this.reportProductSubmitting = false
+      error: () => { this.reportProductSubmitting = false; this.cdr.markForCheck(); }
     });
   }
 
@@ -166,8 +170,9 @@ export class ProductDetailPage implements OnInit{
         this.reportReviewSubmitting = false;
         this.reportReviewSuccess = true;
         this.reportReviewMessage = '';
+        this.cdr.markForCheck();
       },
-      error: () => this.reportReviewSubmitting = false
+      error: () => { this.reportReviewSubmitting = false; this.cdr.markForCheck(); }
     });
   }
 }

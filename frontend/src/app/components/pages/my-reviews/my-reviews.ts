@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { DatePipe } from '@angular/common';
 import { TranslateModule } from '@ngx-translate/core';
@@ -17,7 +17,7 @@ export class MyReviews implements OnInit {
   reviews: Review[] = [];
   isLoading = true;
 
-  constructor(private reviewService: ReviewService) {}
+  constructor(private reviewService: ReviewService, private cdr: ChangeDetectorRef) {}
 
   ngOnInit() {
     this.loadReviews();
@@ -29,9 +29,11 @@ export class MyReviews implements OnInit {
       next: (reviews) => {
         this.reviews = reviews;
         this.isLoading = false;
+        this.cdr.markForCheck();
       },
       error: () => {
         this.isLoading = false;
+        this.cdr.markForCheck();
       },
     });
   }
@@ -40,6 +42,7 @@ export class MyReviews implements OnInit {
     this.reviewService.deleteReview(reviewId).subscribe({
       next: () => {
         this.reviews = this.reviews.filter((r) => r.id !== reviewId);
+        this.cdr.markForCheck();
       },
     });
   }

@@ -57,7 +57,7 @@ export class Auth implements OnInit {
 
     if (this.isLoginMode) {
       const remember = this.authForm.value.remember;
-      const loginObs = this.loginMethod === 'email' 
+      const loginObs = this.loginMethod === 'email'
         ? this.auth.loginWithEmail({ email: this.authForm.value.email, password: this.authForm.value.password }, remember)
         : this.auth.loginWithPhone({ phone: this.authForm.value.phone, password: this.authForm.value.password }, remember);
 
@@ -67,6 +67,7 @@ export class Auth implements OnInit {
         },
         error: (err) => {
           this.errorMessage = 'E-posta/Telefon veya şifre hatalı!';
+          this.cdr.markForCheck();
         }
       });
     } else {
@@ -86,7 +87,7 @@ export class Auth implements OnInit {
         };
         this.auth.registerIndividual(dto).subscribe({
           next: () => this.handleRegisterSuccess(),
-          error: (err) => this.errorMessage = 'Kayıt başarısız oldu.'
+          error: (err) => { this.errorMessage = 'Kayıt başarısız oldu.'; this.cdr.markForCheck(); }
         });
       } else {
         const dto = {
@@ -99,11 +100,11 @@ export class Auth implements OnInit {
           companyName: this.authForm.value.companyName,
           taxNumber: this.authForm.value.taxNumber,
           taxOffice: this.authForm.value.taxOffice,
-          componyAddress: this.authForm.value.companyAddress 
+          componyAddress: this.authForm.value.companyAddress
         };
         this.auth.registerStore(dto).subscribe({
           next: () => this.handleRegisterSuccess(),
-          error: (err) => this.errorMessage = 'Kayıt başarısız oldu.'
+          error: (err) => { this.errorMessage = 'Kayıt başarısız oldu.'; this.cdr.markForCheck(); }
         });
       }
     }
