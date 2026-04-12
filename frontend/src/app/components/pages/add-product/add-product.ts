@@ -5,6 +5,7 @@ import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { AuthService } from '../../../core/services/auth.service';
+import { ProductService } from '../../../core/services/product.service';
 import { CanComponentDeactivate } from '../../../core/guards/pending-changes-guard';
 import Swal from 'sweetalert2';
 
@@ -37,7 +38,8 @@ export class AddProduct implements OnInit, CanComponentDeactivate {
     private auth: AuthService,
     private router: Router,
     private translate: TranslateService,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private productService: ProductService
   ) {}
 
   ngOnInit() {
@@ -65,6 +67,7 @@ export class AddProduct implements OnInit, CanComponentDeactivate {
     this.http.post<any>(`http://localhost:8080/api/inventory?storeId=${this.storeId}`, this.product).subscribe({
       next: () => {
         this.saved = true;
+        this.productService.invalidateCache();
         Swal.fire({
           icon: 'success',
           title: this.translate.instant('ADD_PRODUCT.SUCCESS_TITLE'),

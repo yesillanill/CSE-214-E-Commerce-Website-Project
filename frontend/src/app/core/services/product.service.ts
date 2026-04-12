@@ -1,8 +1,15 @@
 import { Injectable } from '@angular/core';
 import { ProductList } from '../models/product-list.model';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, shareReplay } from 'rxjs';
 import { ProductDetail } from '../models/product-detail.model';
+
+interface HomeStats {
+  categoryCount: number;
+  brandCount: number;
+  storeCount: number;
+  productCount: number;
+}
 
 @Injectable({
   providedIn: 'root',
@@ -10,10 +17,20 @@ import { ProductDetail } from '../models/product-detail.model';
 export class ProductService {
   private api = "http://localhost:8080/products";
 
+  // Cached observables
+  private topRatedCache$?: Observable<ProductList[]>;
+  private bestSellingCache$?: Observable<ProductList[]>;
+  private homeStatsCache$?: Observable<HomeStats>;
+  private categoriesCache$?: Observable<string[]>;
+  private allProductsCache$?: Observable<ProductList[]>;
+
   constructor(private http: HttpClient){}
 
   getProducts(): Observable<ProductList[]>{
-    return this.http.get<ProductList[]>(this.api);
+    if (!this.allProductsCache$) {
+      this.allProductsCache$ = this.http.get<ProductList[]>(this.api).pipe(shareReplay(1));
+    }
+    return this.allProductsCache$;
   }
 
   getProduct(id: number): Observable<ProductDetail>{
@@ -45,18 +62,47 @@ export class ProductService {
   }
 
   getCategories(): Observable<string[]>{
-    return this.http.get<string[]>(`${this.api}/categories`);
+    if (!this.categoriesCache$) {
+      this.categoriesCache$ = this.http.get<string[]>(`${this.api}/categories`).pipe(shareReplay(1));
+    }
+    return this.categoriesCache$;
   }
 
   getTopRatedProducts(): Observable<ProductList[]>{
-    return this.http.get<ProductList[]>(`${this.api}/top-rated`);
+    if (!this.topRatedCache$) {
+      this.topRatedCache$ = this.http.get<ProductList[]>(`${this.api}/top-rated`).pipe(shareReplay(1));
+    }
+    return this.topRatedCache$;
   }
 
   getBestSellingProducts(): Observable<ProductList[]>{
-    return this.http.get<ProductList[]>(`${this.api}/best-selling`);
+    if (!this.bestSellingCache$) {
+      this.bestSellingCache$ = this.http.get<ProductList[]>(`${this.api}/best-selling`).pipe(shareReplay(1));
+    }
+    return this.bestSellingCache$;
   }
 
-  getHomeStats(): Observable<{categoryCount: number, brandCount: number, storeCount: number, productCount: number}>{
-    return this.http.get<{categoryCount: number, brandCount: number, storeCount: number, productCount: number}>(`${this.api}/home-stats`);
+  getHomeStats(): Observable<HomeStats>{
+    if (!this.homeStatsCache$) {
+      this.homeStatsCache$ = this.http.get<HomeStats>(`${this.api}/home-stats`).pipe(shareReplay(1));
+    }
+    return this.homeStatsCache$;
+  }
+
+  /** Preload home page data so it's ready when user navigates */
+  preloadHomeData(): void {
+    this.getHomeStats().subscribe();
+    this.getTopRatedProducts().subscribe();
+    this.getBestSellingProducts().subscribe();
+    this.getCategories().subscribe();
+  }
+
+  /** Clear all caches (call after product add/edit/delete) */
+  invalidateCache(): void {
+    this.topRatedCache$ = undefined;
+    this.bestSellingCache$ = undefined;
+    this.homeStatsCache$ = undefined;
+    this.categoriesCache$ = undefined;
+    this.allProductsCache$ = undefined;
   }
 }

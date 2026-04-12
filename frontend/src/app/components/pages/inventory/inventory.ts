@@ -5,6 +5,7 @@ import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { AuthService } from '../../../core/services/auth.service';
+import { ProductService } from '../../../core/services/product.service';
 import Swal from 'sweetalert2';
 
 @Component({
@@ -27,7 +28,7 @@ export class Inventory implements OnInit {
   sortBy = 'name';
   sortDir = 'asc';
 
-  constructor(private http: HttpClient, private auth: AuthService, private router: Router, private translate: TranslateService, private cdr: ChangeDetectorRef) {}
+  constructor(private http: HttpClient, private auth: AuthService, private router: Router, private translate: TranslateService, private cdr: ChangeDetectorRef, private productService: ProductService) {}
 
   ngOnInit() {
     const user = this.auth.getUser();
@@ -114,7 +115,7 @@ export class Inventory implements OnInit {
     }).then((r) => {
       if (r.isConfirmed) {
         this.http.delete<any>(`http://localhost:8080/api/inventory/${id}`).subscribe({
-          next: () => { this.products = this.products.filter(p => p.id !== id); Swal.fire(this.translate.instant('INVENTORY.DELETED'), this.translate.instant('INVENTORY.DELETED_TEXT'), 'success'); },
+          next: () => { this.products = this.products.filter(p => p.id !== id); this.productService.invalidateCache(); Swal.fire(this.translate.instant('INVENTORY.DELETED'), this.translate.instant('INVENTORY.DELETED_TEXT'), 'success'); },
           error: () => Swal.fire(this.translate.instant('INVENTORY.ERROR'), this.translate.instant('INVENTORY.ERROR_DELETE'), 'error')
         });
       }

@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { BehaviorSubject } from 'rxjs';
 import { ThemeService } from './theme.service';
+import { ProductService } from './product.service';
 
 @Injectable({
   providedIn: 'root',
@@ -16,7 +17,11 @@ export class AppService {
   font$ = this.fontSub.asObservable();
   theme$ = this.themeSub.asObservable();
 
-  constructor(private translate: TranslateService, private theme: ThemeService) {}
+  constructor(
+    private translate: TranslateService,
+    private theme: ThemeService,
+    private productService: ProductService
+  ) {}
 
   initApp() {
     const savedTheme =localStorage.getItem('app-theme') ||'dark';
@@ -25,6 +30,9 @@ export class AppService {
     this.setTheme(savedTheme);
     this.setLang(savedLang);
     this.setFont(savedFont);
+
+    // Preload frequently used data so pages render instantly
+    this.productService.preloadHomeData();
   }
 
   setTheme(theme: string){
