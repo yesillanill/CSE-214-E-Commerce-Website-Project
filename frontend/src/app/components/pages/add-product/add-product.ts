@@ -66,8 +66,8 @@ export class AddProduct implements OnInit, CanComponentDeactivate {
         this.saved = true;
         Swal.fire({
           icon: 'success',
-          title: 'Product Added!',
-          text: 'Product has been successfully created.',
+          title: this.translate.instant('ADD_PRODUCT.SUCCESS_TITLE'),
+          text: this.translate.instant('ADD_PRODUCT.SUCCESS_TEXT'),
           background: getComputedStyle(document.body).getPropertyValue('--card-bg').trim(),
           color: getComputedStyle(document.body).getPropertyValue('--text-color').trim(),
           timer: 1500,
@@ -78,8 +78,8 @@ export class AddProduct implements OnInit, CanComponentDeactivate {
         this.isSaving = false;
         Swal.fire({
           icon: 'error',
-          title: 'Error',
-          text: 'Could not create the product.',
+          title: this.translate.instant('ADD_PRODUCT.ERROR_TITLE'),
+          text: this.translate.instant('ADD_PRODUCT.ERROR_TEXT'),
           background: getComputedStyle(document.body).getPropertyValue('--card-bg').trim(),
           color: getComputedStyle(document.body).getPropertyValue('--text-color').trim()
         });
@@ -106,14 +106,14 @@ export class AddProduct implements OnInit, CanComponentDeactivate {
   canDeactivate(): Promise<boolean> | boolean {
     if (!this.isDirty()) return true;
     return Swal.fire({
-      title: 'Unsaved Changes',
-      text: 'You have unsaved changes. What would you like to do?',
+      title: this.translate.instant('ADD_PRODUCT.UNSAVED_TITLE'),
+      text: this.translate.instant('ADD_PRODUCT.UNSAVED_TEXT'),
       icon: 'warning',
       showCancelButton: true,
       showDenyButton: true,
-      confirmButtonText: 'Save',
-      denyButtonText: 'Discard',
-      cancelButtonText: 'Stay',
+      confirmButtonText: this.translate.instant('ADD_PRODUCT.UNSAVED_SAVE'),
+      denyButtonText: this.translate.instant('ADD_PRODUCT.UNSAVED_DISCARD'),
+      cancelButtonText: this.translate.instant('ADD_PRODUCT.UNSAVED_STAY'),
       background: getComputedStyle(document.body).getPropertyValue('--card-bg').trim(),
       color: getComputedStyle(document.body).getPropertyValue('--text-color').trim()
     }).then(result => {

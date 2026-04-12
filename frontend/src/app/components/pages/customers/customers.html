@@ -1,14 +1,14 @@
 <div class="customers-page">
   <div class="page-header">
-    <h1 class="page-title">Customers</h1>
+    <h1 class="page-title">{{ 'CUSTOMERS.TITLE' | translate }}</h1>
     <button class="export-btn" (click)="exportCsv()">
       <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-      Export CSV
+      {{ 'CUSTOMERS.EXPORT_CSV' | translate }}
     </button>
   </div>
 
   <div class="search-bar">
-    <input type="text" placeholder="Search by name or email..." (input)="onSearch($event)" class="search-input">
+    <input type="text" [placeholder]="'CUSTOMERS.SEARCH' | translate" (input)="onSearch($event)" class="search-input">
   </div>
 
   @if(isLoading) {
@@ -20,33 +20,33 @@
   } @else if(customers.length === 0) {
     <div class="empty-state">
       <div class="empty-icon">👥</div>
-      <h3>No customers found</h3>
-      <p>Individual customers will appear here.</p>
+      <h3>{{ 'CUSTOMERS.NO_CUSTOMERS' | translate }}</h3>
+      <p>{{ 'CUSTOMERS.EMPTY_DESC' | translate }}</p>
     </div>
   } @else {
     <div class="table-controls">
       <div class="page-size-control">
-        <label>Show</label>
+        <label>{{ 'CUSTOMERS.SHOW' | translate }}</label>
         <select [value]="pageSize" (change)="onPageSizeChange($event)">
           @for(opt of pageSizeOptions; track opt) { <option [value]="opt">{{ opt }}</option> }
         </select>
-        <label>entries</label>
+        <label>{{ 'CUSTOMERS.ENTRIES' | translate }}</label>
       </div>
-      <div class="results-info">{{ totalElements }} customers</div>
+      <div class="results-info">{{ totalElements }} {{ 'SIDEBAR.CUSTOMERS' | translate | lowercase }}</div>
     </div>
 
     <div class="table-wrapper">
       <table class="data-table">
         <thead>
           <tr>
-            <th (click)="sort('id')">ID <span class="sort-icon">{{ getSortIcon('id') }}</span></th>
-            <th (click)="sort('name')">Name <span class="sort-icon">{{ getSortIcon('name') }}</span></th>
-            <th (click)="sort('email')">Email <span class="sort-icon">{{ getSortIcon('email') }}</span></th>
-            <th>Registered</th>
-            <th (click)="sort('totalOrders')">Orders <span class="sort-icon">{{ getSortIcon('totalOrders') }}</span></th>
-            <th (click)="sort('totalSpend')">Total Spend <span class="sort-icon">{{ getSortIcon('totalSpend') }}</span></th>
-            <th>Membership</th>
-            <th>Actions</th>
+            <th (click)="sort('id')">{{ 'CUSTOMERS.ID' | translate }} <span class="sort-icon">{{ getSortIcon('id') }}</span></th>
+            <th (click)="sort('name')">{{ 'CUSTOMERS.NAME' | translate }} <span class="sort-icon">{{ getSortIcon('name') }}</span></th>
+            <th (click)="sort('email')">{{ 'CUSTOMERS.EMAIL' | translate }} <span class="sort-icon">{{ getSortIcon('email') }}</span></th>
+            <th>{{ 'CUSTOMERS.REGISTERED' | translate }}</th>
+            <th (click)="sort('totalOrders')">{{ 'CUSTOMERS.ORDERS' | translate }} <span class="sort-icon">{{ getSortIcon('totalOrders') }}</span></th>
+            <th (click)="sort('totalSpend')">{{ 'CUSTOMERS.TOTAL_SPEND' | translate }} <span class="sort-icon">{{ getSortIcon('totalSpend') }}</span></th>
+            <th>{{ 'CUSTOMERS.MEMBERSHIP' | translate }}</th>
+            <th>{{ 'CUSTOMERS.ACTIONS' | translate }}</th>
           </tr>
         </thead>
         <tbody>
@@ -78,7 +78,7 @@
     <div class="pagination">
       <button class="page-btn" [disabled]="currentPage === 0" (click)="goToPage(0)">«</button>
       <button class="page-btn" [disabled]="currentPage === 0" (click)="goToPage(currentPage - 1)">‹</button>
-      <span class="page-info">Page {{ currentPage + 1 }} of {{ totalPages }}</span>
+      <span class="page-info">{{ 'CUSTOMERS.PAGE_INFO' | translate:{current: currentPage + 1, total: totalPages} }}</span>
       <button class="page-btn" [disabled]="currentPage >= totalPages - 1" (click)="goToPage(currentPage + 1)">›</button>
       <button class="page-btn" [disabled]="currentPage >= totalPages - 1" (click)="goToPage(totalPages - 1)">»</button>
     </div>

@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule, DecimalPipe, DatePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import Swal from 'sweetalert2';
 import { Subject, debounceTime, distinctUntilChanged } from 'rxjs';
 
@@ -26,7 +26,7 @@ export class Customers implements OnInit {
   sortBy = 'name';
   sortDir = 'asc';
 
-  constructor(private http: HttpClient) {
+  constructor(private http: HttpClient, private translate: TranslateService) {
     this.searchSubject.pipe(debounceTime(300), distinctUntilChanged()).subscribe(term => {
       this.searchTerm = term;
       this.currentPage = 0;
@@ -88,12 +88,12 @@ export class Customers implements OnInit {
   }
 
   deleteUser(userId: number, name: string) {
-    Swal.fire({ title: 'Delete Customer', text: `Delete "${name}"?`, icon: 'warning', showCancelButton: true, confirmButtonText: 'Delete', confirmButtonColor: '#ff4d4d' })
+    Swal.fire({ title: this.translate.instant('CUSTOMERS.DELETE_TITLE'), text: `${this.translate.instant('CUSTOMERS.DELETE_CONFIRM', {name})}`, icon: 'warning', showCancelButton: true, confirmButtonText: this.translate.instant('CUSTOMERS.DELETE_BTN'), confirmButtonColor: '#ff4d4d' })
       .then((r) => {
         if (r.isConfirmed) {
           this.http.delete<any>(`http://localhost:8080/api/admin/users/${userId}`).subscribe({
-            next: () => { this.customers = this.customers.filter(c => c.id !== userId); Swal.fire('Deleted!', 'Customer deleted.', 'success'); },
-            error: () => Swal.fire('Error', 'Could not delete.', 'error')
+            next: () => { this.customers = this.customers.filter(c => c.id !== userId); Swal.fire(this.translate.instant('CUSTOMERS.DELETED'), this.translate.instant('CUSTOMERS.DELETED_TEXT'), 'success'); },
+            error: () => Swal.fire(this.translate.instant('CUSTOMERS.ERROR'), this.translate.instant('CUSTOMERS.ERROR_DELETE'), 'error')
           });
         }
       });

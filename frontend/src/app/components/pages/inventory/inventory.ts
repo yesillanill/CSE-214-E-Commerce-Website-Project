@@ -3,7 +3,7 @@ import { CommonModule, DecimalPipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { AuthService } from '../../../core/services/auth.service';
 import Swal from 'sweetalert2';
 
@@ -27,7 +27,7 @@ export class Inventory implements OnInit {
   sortBy = 'name';
   sortDir = 'asc';
 
-  constructor(private http: HttpClient, private auth: AuthService, private router: Router) {}
+  constructor(private http: HttpClient, private auth: AuthService, private router: Router, private translate: TranslateService) {}
 
   ngOnInit() {
     const user = this.auth.getUser();
@@ -108,13 +108,13 @@ export class Inventory implements OnInit {
 
   deleteProduct(id: number, name: string) {
     Swal.fire({
-      title: 'Delete Product', text: `Are you sure you want to delete "${name}"?`,
-      icon: 'warning', showCancelButton: true, confirmButtonText: 'Delete', confirmButtonColor: '#ff4d4d',
+      title: this.translate.instant('INVENTORY.DELETE_TITLE'), text: this.translate.instant('INVENTORY.DELETE_TEXT', {name}),
+      icon: 'warning', showCancelButton: true, confirmButtonText: this.translate.instant('INVENTORY.DELETE'), confirmButtonColor: '#ff4d4d',
     }).then((r) => {
       if (r.isConfirmed) {
         this.http.delete<any>(`http://localhost:8080/api/inventory/${id}`).subscribe({
-          next: () => { this.products = this.products.filter(p => p.id !== id); Swal.fire('Deleted!', 'Product deleted.', 'success'); },
-          error: () => Swal.fire('Error', 'Could not delete.', 'error')
+          next: () => { this.products = this.products.filter(p => p.id !== id); Swal.fire(this.translate.instant('INVENTORY.DELETED'), this.translate.instant('INVENTORY.DELETED_TEXT'), 'success'); },
+          error: () => Swal.fire(this.translate.instant('INVENTORY.ERROR'), this.translate.instant('INVENTORY.ERROR_DELETE'), 'error')
         });
       }
     });

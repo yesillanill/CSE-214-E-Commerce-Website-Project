@@ -7,11 +7,12 @@ import { AuthService } from '../../../core/services/auth.service';
 import { CardService } from '../../../core/services/card.service';
 import { HttpClient } from '@angular/common/http';
 import Swal from 'sweetalert2';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-checkout',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink],
+  imports: [CommonModule, FormsModule, RouterLink, TranslateModule],
   templateUrl: './checkout.html',
   styleUrl: './checkout.scss',
 })
@@ -48,7 +49,8 @@ export class Checkout implements OnInit {
     public cardService: CardService,
     private http: HttpClient,
     private router: Router,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private translate: TranslateService
   ) {}
 
   ngOnInit() {
@@ -134,8 +136,8 @@ export class Checkout implements OnInit {
         this.cart.refreshCart();
         Swal.fire({
           icon: 'success',
-          title: 'Siparişiniz Alındı!',
-          text: 'Siparişiniz başarıyla oluşturuldu. Ana sayfaya yönlendiriliyorsunuz.',
+          title: this.translate.instant('CHECKOUT.ORDER_SUCCESS_TITLE'),
+          text: this.translate.instant('CHECKOUT.ORDER_SUCCESS_TEXT'),
           background: getComputedStyle(document.body).getPropertyValue('--card-bg').trim(),
           color: getComputedStyle(document.body).getPropertyValue('--text-color').trim(),
           timer: 2500,
@@ -148,8 +150,8 @@ export class Checkout implements OnInit {
         this.isProcessing = false;
         Swal.fire({
           icon: 'error',
-          title: 'Hata',
-          text: err.error?.message || 'Sipariş oluşturulurken bir hata oluştu.',
+          title: this.translate.instant('CHECKOUT.ORDER_ERROR_TITLE'),
+          text: err.error?.message || this.translate.instant('CHECKOUT.ORDER_ERROR_TEXT'),
           background: getComputedStyle(document.body).getPropertyValue('--card-bg').trim(),
           color: getComputedStyle(document.body).getPropertyValue('--text-color').trim()
         });

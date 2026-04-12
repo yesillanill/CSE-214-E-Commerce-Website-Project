@@ -7,11 +7,12 @@ import { AuthService } from '../../../core/services/auth.service';
 import { CartService } from '../../../core/services/cart.service';
 import { WishlistService } from '../../../core/services/wishlist.service';
 import { ChatService, ChatMessage } from '../../../core/services/chat.service';
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-floating-actions',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink],
+  imports: [CommonModule, FormsModule, RouterLink, TranslateModule],
   templateUrl: './floating-actions.html',
   styleUrl: './floating-actions.scss',
 })

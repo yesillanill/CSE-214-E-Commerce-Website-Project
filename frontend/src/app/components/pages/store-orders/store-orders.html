@@ -3,15 +3,15 @@
     <h1 class="page-title">{{'SIDEBAR.ORDERS' | translate}}</h1>
     <button class="export-btn" (click)="exportCsv()">
       <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-      Export CSV
+      {{ 'STORE_ORDERS.EXPORT_CSV' | translate }}
     </button>
   </div>
 
   <div class="filters-bar">
-    <input type="date" [(ngModel)]="startDate" class="filter-input" placeholder="Start Date">
-    <input type="date" [(ngModel)]="endDate" class="filter-input" placeholder="End Date">
-    <button class="apply-btn" (click)="applyFilters()">Apply</button>
-    <button class="clear-btn" (click)="clearFilters()">Clear</button>
+    <input type="date" [(ngModel)]="startDate" class="filter-input" [placeholder]="'STORE_ORDERS.START_DATE' | translate">
+    <input type="date" [(ngModel)]="endDate" class="filter-input" [placeholder]="'STORE_ORDERS.END_DATE' | translate">
+    <button class="apply-btn" (click)="applyFilters()">{{ 'STORE_ORDERS.APPLY' | translate }}</button>
+    <button class="clear-btn" (click)="clearFilters()">{{ 'STORE_ORDERS.CLEAR' | translate }}</button>
   </div>
 
   @if(isLoading) {
@@ -23,19 +23,19 @@
   } @else if(orders.length === 0) {
     <div class="empty-state">
       <div class="empty-icon">📋</div>
-      <h3>No incoming orders</h3>
-      <p>Orders containing your store's products will appear here.</p>
+      <h3>{{ 'STORE_ORDERS.NO_ORDERS' | translate }}</h3>
+      <p>{{ 'STORE_ORDERS.EMPTY_DESC' | translate }}</p>
     </div>
   } @else {
     <div class="table-controls">
       <div class="page-size-control">
-        <label>Show</label>
+        <label>{{ 'STORE_ORDERS.SHOW' | translate }}</label>
         <select [value]="pageSize" (change)="onPageSizeChange($event)">
           @for(opt of pageSizeOptions; track opt) { <option [value]="opt">{{ opt }}</option> }
         </select>
-        <label>entries</label>
+        <label>{{ 'STORE_ORDERS.ENTRIES' | translate }}</label>
       </div>
-      <div class="results-info">{{ totalElements }} orders</div>
+      <div class="results-info">{{ 'STORE_ORDERS.ORDERS_COUNT' | translate:{count: totalElements} }}</div>
     </div>
 
     <div class="table-wrapper">
@@ -43,15 +43,15 @@
         <thead>
           <tr>
             <th class="expand-col"></th>
-            <th (click)="sort('id')">Order ID <span class="sort-icon">{{ getSortIcon('id') }}</span></th>
-            <th (click)="sort('createdAt')">Date <span class="sort-icon">{{ getSortIcon('createdAt') }}</span></th>
-            <th (click)="sort('grandTotal')">Total <span class="sort-icon">{{ getSortIcon('grandTotal') }}</span></th>
-            <th>Payment</th>
-            <th>Status</th>
-            <th>Tracking</th>
-            <th>Shipping</th>
-            <th>Est. Delivery</th>
-            <th>Actions</th>
+            <th (click)="sort('id')">{{ 'STORE_ORDERS.ORDER_ID' | translate }} <span class="sort-icon">{{ getSortIcon('id') }}</span></th>
+            <th (click)="sort('createdAt')">{{ 'STORE_ORDERS.DATE' | translate }} <span class="sort-icon">{{ getSortIcon('createdAt') }}</span></th>
+            <th (click)="sort('grandTotal')">{{ 'STORE_ORDERS.TOTAL' | translate }} <span class="sort-icon">{{ getSortIcon('grandTotal') }}</span></th>
+            <th>{{ 'STORE_ORDERS.PAYMENT' | translate }}</th>
+            <th>{{ 'STORE_ORDERS.STATUS' | translate }}</th>
+            <th>{{ 'STORE_ORDERS.TRACKING' | translate }}</th>
+            <th>{{ 'STORE_ORDERS.SHIPPING' | translate }}</th>
+            <th>{{ 'STORE_ORDERS.EST_DELIVERY' | translate }}</th>
+            <th>{{ 'STORE_ORDERS.ACTIONS' | translate }}</th>
           </tr>
         </thead>
         <tbody>
@@ -68,10 +68,10 @@
               <td>{{ order.estimatedDelivery ? (order.estimatedDelivery | date:'dd/MM/yyyy') : '-' }}</td>
               <td class="actions-cell" (click)="$event.stopPropagation()">
                 @if(canShip(order.shipmentStatus)) {
-                  <button class="action-btn ship-btn" (click)="updateStatus(order.id, 'SHIPPED')">📦 Ship</button>
+                  <button class="action-btn ship-btn" (click)="updateStatus(order.id, 'SHIPPED')">📦 {{ 'STORE_ORDERS.SHIP' | translate }}</button>
                 }
                 @if(canReject(order.shipmentStatus)) {
-                  <button class="action-btn reject-btn" (click)="updateStatus(order.id, 'REJECTED')">✖ Reject</button>
+                  <button class="action-btn reject-btn" (click)="updateStatus(order.id, 'REJECTED')">✖ {{ 'STORE_ORDERS.REJECT' | translate }}</button>
                 }
               </td>
             </tr>
@@ -81,27 +81,27 @@
                 <td [attr.colspan]="10">
                   <div class="detail-content">
                     <div class="detail-section">
-                      <h4>📍 Shipping Address</h4>
+                      <h4>{{ 'STORE_ORDERS.SHIPPING_ADDRESS' | translate }}</h4>
                       <p class="address-text">{{ order.shippingAddress || '-' }}</p>
                     </div>
                     @if(order.shipmentStatus) {
                       <div class="detail-section shipment-info">
-                        <h4>🚚 Shipment Details</h4>
+                        <h4>{{ 'STORE_ORDERS.SHIPMENT_DETAILS' | translate }}</h4>
                         <div class="shipment-grid">
-                          <div class="info-item"><span class="info-label">Ship Date</span><span>{{ order.shipmentDate ? (order.shipmentDate | date:'dd/MM/yyyy') : '-' }}</span></div>
-                          <div class="info-item"><span class="info-label">Est. Delivery</span><span>{{ order.estimatedDelivery ? (order.estimatedDelivery | date:'dd/MM/yyyy') : '-' }}</span></div>
-                          <div class="info-item"><span class="info-label">Delivery Date</span><span>{{ order.deliveryDate ? (order.deliveryDate | date:'dd/MM/yyyy') : '-' }}</span></div>
-                          <div class="info-item"><span class="info-label">Shipping Method</span><span>{{ order.shippingMethod || '-' }}</span></div>
-                          <div class="info-item"><span class="info-label">Tracking</span><span class="mono">{{ order.trackingNumber || '-' }}</span></div>
-                          <div class="info-item"><span class="info-label">Shipment Status</span><span class="status-badge" [ngClass]="getStatusClass(order.shipmentStatus)">{{ order.shipmentStatus }}</span></div>
+                          <div class="info-item"><span class="info-label">{{ 'STORE_ORDERS.SHIP_DATE' | translate }}</span><span>{{ order.shipmentDate ? (order.shipmentDate | date:'dd/MM/yyyy') : '-' }}</span></div>
+                          <div class="info-item"><span class="info-label">{{ 'STORE_ORDERS.EST_DELIVERY' | translate }}</span><span>{{ order.estimatedDelivery ? (order.estimatedDelivery | date:'dd/MM/yyyy') : '-' }}</span></div>
+                          <div class="info-item"><span class="info-label">{{ 'STORE_ORDERS.DELIVERY_DATE' | translate }}</span><span>{{ order.deliveryDate ? (order.deliveryDate | date:'dd/MM/yyyy') : '-' }}</span></div>
+                          <div class="info-item"><span class="info-label">{{ 'STORE_ORDERS.SHIPPING_METHOD' | translate }}</span><span>{{ order.shippingMethod || '-' }}</span></div>
+                          <div class="info-item"><span class="info-label">{{ 'STORE_ORDERS.TRACKING' | translate }}</span><span class="mono">{{ order.trackingNumber || '-' }}</span></div>
+                          <div class="info-item"><span class="info-label">{{ 'STORE_ORDERS.SHIPMENT_STATUS' | translate }}</span><span class="status-badge" [ngClass]="getStatusClass(order.shipmentStatus)">{{ order.shipmentStatus }}</span></div>
                         </div>
                       </div>
                     }
                     @if(order.orderItems) {
                       <div class="detail-section">
-                        <h4>📦 Order Items</h4>
+                        <h4>{{ 'STORE_ORDERS.ORDER_ITEMS' | translate }}</h4>
                         <table class="sub-table">
-                          <thead><tr><th>Product</th><th>Brand</th><th>Seller</th><th>Unit Price</th><th>Qty</th><th>Line Total</th></tr></thead>
+                          <thead><tr><th>{{ 'STORE_ORDERS.PRODUCT' | translate }}</th><th>{{ 'STORE_ORDERS.BRAND' | translate }}</th><th>{{ 'STORE_ORDERS.SELLER' | translate }}</th><th>{{ 'STORE_ORDERS.UNIT_PRICE' | translate }}</th><th>{{ 'STORE_ORDERS.QTY' | translate }}</th><th>{{ 'STORE_ORDERS.LINE_TOTAL' | translate }}</th></tr></thead>
                           <tbody>
                             @for(item of order.orderItems; track item.id) {
                               <tr>
@@ -129,7 +129,7 @@
     <div class="pagination">
       <button class="page-btn" [disabled]="currentPage === 0" (click)="goToPage(0)">«</button>
       <button class="page-btn" [disabled]="currentPage === 0" (click)="goToPage(currentPage - 1)">‹</button>
-      <span class="page-info">Page {{ currentPage + 1 }} of {{ totalPages }}</span>
+      <span class="page-info">{{ 'STORE_ORDERS.PAGE_INFO' | translate:{current: currentPage + 1, total: totalPages} }}</span>
       <button class="page-btn" [disabled]="currentPage >= totalPages - 1" (click)="goToPage(currentPage + 1)">›</button>
       <button class="page-btn" [disabled]="currentPage >= totalPages - 1" (click)="goToPage(totalPages - 1)">»</button>
     </div>

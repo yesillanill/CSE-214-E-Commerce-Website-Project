@@ -1,6 +1,6 @@
 <div class="cart-container">
   <h2>{{"PRODUCTS.CART" | translate}}</h2>
-  
+
   <div class="products-grid">
     @for(item of cart.getCart(); track item.product.id){
       <div class="product-card">
@@ -8,11 +8,11 @@
         <h3>{{item.product.name}}</h3>
         <div class="product-details">
           <p>{{item.product.price}}$</p>
-          <p>Total: {{item.product.price * item.quantity}}$</p>
+          <p>{{ 'CART.TOTAL' | translate }}: {{item.product.price * item.quantity}}$</p>
         </div>
         <div class="product-actions">
            <a [routerLink]="['/products',item.product.id]">{{"PRODUCTS.DETAIL" | translate}}</a>
-           
+
            <div class="qty-controls">
               <button class="qty-btn" (click)="cart.decrease(item)">-</button>
               <span class="qty">{{item.quantity}}</span>
@@ -25,12 +25,12 @@
 
   @if (cart.getCart().length === 0) {
     <div class="empty-state">
-      <p>Your cart is empty.</p>
+      <p>{{ 'CART.EMPTY' | translate }}</p>
     </div>
   } @else {
     <div class="cart-summary">
-      <h2>Total: {{cart.getTotal() | number:'1.2-2'}}$</h2>
-      <button class="checkout-btn" (click)="checkout()">Checkout</button>
+      <h2>{{ 'CART.TOTAL' | translate }}: {{cart.getTotal() | number:'1.2-2'}}$</h2>
+      <button class="checkout-btn" (click)="checkout()">{{ 'CART.CHECKOUT' | translate }}</button>
     </div>
   }
 </div>

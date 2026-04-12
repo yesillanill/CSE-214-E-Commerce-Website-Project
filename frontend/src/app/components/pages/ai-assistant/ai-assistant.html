@@ -2,10 +2,10 @@
   <div class="chat-header">
     <div class="header-icon">🤖</div>
     <div class="header-info">
-      <h2>AI Assistant</h2>
+      <h2>{{ 'AI_ASSISTANT.TITLE' | translate }}</h2>
       <span class="status-badge">
         <span class="status-dot"></span>
-        Online
+        {{ 'AI_ASSISTANT.ONLINE' | translate }}
       </span>
     </div>
   </div>
@@ -52,7 +52,7 @@
       <textarea
         [(ngModel)]="userInput"
         (keydown)="onKeyDown($event)"
-        placeholder="Bir soru sorun... (ör: Samsung ürünleri neler?)"
+        [placeholder]="'AI_ASSISTANT.PLACEHOLDER' | translate"
         rows="1"
         class="chat-input"
         [disabled]="isLoading"

@@ -106,7 +106,7 @@ export class Settings implements OnInit, OnDestroy, CanComponentDeactivate {
           next: () => {
             Swal.fire({
               icon: 'success',
-              title: 'Success',
+              title: this.translate.instant('SETTINGS.SUCCESS'),
               background: getComputedStyle(document.body).getPropertyValue('--card-bg').trim(),
               color: getComputedStyle(document.body).getPropertyValue('--text-color').trim(),
               timer: 1500
@@ -158,11 +158,11 @@ export class Settings implements OnInit, OnDestroy, CanComponentDeactivate {
 
   deleteCard(cardId: number) {
     Swal.fire({
-      title: 'Kartı silmek istediğinize emin misiniz?',
+      title: this.translate.instant('SETTINGS.DELETE_CARD_CONFIRM'),
       icon: 'warning',
       showCancelButton: true,
-      confirmButtonText: 'Sil',
-      cancelButtonText: 'İptal',
+      confirmButtonText: this.translate.instant('SETTINGS.DELETE_CARD_DELETE'),
+      cancelButtonText: this.translate.instant('SETTINGS.DELETE_CARD_CANCEL'),
       background: getComputedStyle(document.body).getPropertyValue('--card-bg').trim(),
       color: getComputedStyle(document.body).getPropertyValue('--text-color').trim()
     }).then(result => {

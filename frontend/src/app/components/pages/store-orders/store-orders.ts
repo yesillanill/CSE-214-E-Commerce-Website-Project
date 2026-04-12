@@ -3,7 +3,7 @@ import { CommonModule, DecimalPipe, DatePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { RouterLink } from '@angular/router';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { AuthService } from '../../../core/services/auth.service';
 import Swal from 'sweetalert2';
 
@@ -35,7 +35,7 @@ export class StoreOrders implements OnInit {
   startDate = '';
   endDate = '';
 
-  constructor(private http: HttpClient, private auth: AuthService, private cdr: ChangeDetectorRef) {}
+  constructor(private http: HttpClient, private auth: AuthService, private cdr: ChangeDetectorRef, private translate: TranslateService) {}
 
   ngOnInit() {
     const user = this.auth.getUser();
@@ -85,7 +85,7 @@ export class StoreOrders implements OnInit {
 
   updateStatus(orderId: number, status: string) {
     if (status === 'REJECTED') {
-      Swal.fire({ title: 'Reject Order', text: 'Are you sure?', icon: 'warning', showCancelButton: true, confirmButtonText: 'Reject', confirmButtonColor: '#ff4d4d' })
+      Swal.fire({ title: this.translate.instant('STORE_ORDERS.REJECT_TITLE'), text: this.translate.instant('STORE_ORDERS.REJECT_TEXT'), icon: 'warning', showCancelButton: true, confirmButtonText: this.translate.instant('STORE_ORDERS.REJECT'), confirmButtonColor: '#ff4d4d' })
         .then((r) => { if (r.isConfirmed) this.sendStatusUpdate(orderId, status); });
     } else { this.sendStatusUpdate(orderId, status); }
   }
@@ -103,9 +103,9 @@ export class StoreOrders implements OnInit {
           this.orders = [...this.orders];
         }
         this.cdr.detectChanges();
-        Swal.fire('Updated!', `Status → ${status}`, 'success');
+        Swal.fire(this.translate.instant('STORE_ORDERS.UPDATED'), `${this.translate.instant('STORE_ORDERS.STATUS')} → ${status}`, 'success');
       },
-      error: () => Swal.fire('Error', 'Could not update.', 'error')
+      error: () => Swal.fire(this.translate.instant('STORE_ORDERS.ERROR'), this.translate.instant('STORE_ORDERS.ERROR_UPDATE'), 'error')
     });
   }
 

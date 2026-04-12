@@ -2,7 +2,7 @@
   <div class="floating-actions-row">
     <!-- Wishlist & Cart for Individual users (all pages) -->
     @if (auth.isIndividualUser()) {
-      <a routerLink="/wishlist" class="fab-btn wishlist-btn" title="Wishlist">
+      <a routerLink="/wishlist" class="fab-btn wishlist-btn" [title]="'FLOATING.WISHLIST' | translate">
         <svg class="fab-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640">
           <path d="M192 64C156.7 64 128 92.7 128 128L128 544C128 555.5 134.2 566.2 144.2 571.8C154.2 577.4 166.5 577.3 176.4 571.4L320 485.3L463.5 571.4C473.4 577.3 485.7 577.5 495.7 571.8C505.7 566.1 512 555.5 512 544L512 128C512 92.7 483.3 64 448 64L192 64z"/>
         </svg>
@@ -10,7 +10,7 @@
           <span class="fab-badge">{{ wishlistService.getWishlist().length }}</span>
         }
       </a>
-      <a routerLink="/cart" class="fab-btn cart-btn" title="Sepet">
+      <a routerLink="/cart" class="fab-btn cart-btn" [title]="'FLOATING.CART' | translate">
         <svg class="fab-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640">
           <path d="M24 48C10.7 48 0 58.7 0 72C0 85.3 10.7 96 24 96L69.3 96C73.2 96 76.5 98.8 77.2 102.6L129.3 388.9C135.5 423.1 165.3 448 200.1 448L456 448C469.3 448 480 437.3 480 424C480 410.7 469.3 400 456 400L200.1 400C188.5 400 178.6 391.7 176.5 380.3L171.4 352L475 352C505.8 352 532.2 330.1 537.9 299.8L568.9 133.9C572.6 114.2 557.5 96 537.4 96L124.7 96L124.3 94C119.5 67.4 96.3 48 69.2 48L24 48zM208 576C234.5 576 256 554.5 256 528C256 501.5 234.5 480 208 480C181.5 480 160 501.5 160 528C160 554.5 181.5 576 208 576zM432 576C458.5 576 480 554.5 480 528C480 501.5 458.5 480 432 480C405.5 480 384 501.5 384 528C384 554.5 405.5 576 432 576z"/>
         </svg>
@@ -20,7 +20,7 @@
 
     <!-- AI Assistant FAB (hidden on ai-assistant page) -->
     @if (!isAiAssistantPage) {
-      <button class="fab-btn ai-btn" (click)="toggleChat()" title="AI Asistan">
+      <button class="fab-btn ai-btn" (click)="toggleChat()" [title]="'FLOATING.AI_ASSISTANT' | translate">
         @if (isChatOpen) {
           <svg class="fab-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512">
             <path d="M342.6 150.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L192 210.7 86.6 105.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L146.7 256 41.4 361.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L192 301.3 297.4 406.6c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L237.3 256 342.6 150.6z"/>
@@ -38,7 +38,7 @@
   @if (isChatOpen && !isAiAssistantPage) {
     <div class="chatbot-panel">
       <div class="chatbot-header">
-        <span>🤖 AI Asistan</span>
+        <span>{{ 'FLOATING.AI_HEADER' | translate }}</span>
         <button class="chatbot-close" (click)="toggleChat()">✕</button>
       </div>
 
@@ -65,7 +65,7 @@
           type="text"
           [(ngModel)]="chatInput"
           (keydown)="onChatKeyDown($event)"
-          placeholder="Soru sorun..."
+          [placeholder]="'FLOATING.CHAT_PLACEHOLDER' | translate"
           [disabled]="isChatLoading"
         />
         <button (click)="sendChatMessage()" [disabled]="!chatInput.trim() || isChatLoading">

@@ -2,9 +2,9 @@
   <div class="form-header">
     <button class="back-btn" (click)="goBack()">
       <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
-      Back to Inventory
+      {{ 'EDIT_PRODUCT.BACK' | translate }}
     </button>
-    <h1 class="form-title">Edit Product</h1>
+    <h1 class="form-title">{{ 'EDIT_PRODUCT.TITLE' | translate }}</h1>
   </div>
 
   @if(isLoading) {
@@ -18,27 +18,27 @@
     <form class="product-form" (ngSubmit)="onSubmit()" #productForm="ngForm">
       <div class="form-grid">
         <div class="form-group full-width">
-          <label for="name">Product Name</label>
+          <label for="name">{{ 'EDIT_PRODUCT.PRODUCT_NAME' | translate }}</label>
           <input id="name" type="text" [(ngModel)]="product.name" name="name">
         </div>
 
         <div class="form-group full-width">
-          <label for="description">Description</label>
+          <label for="description">{{ 'EDIT_PRODUCT.DESCRIPTION' | translate }}</label>
           <textarea id="description" [(ngModel)]="product.description" name="description" rows="4"></textarea>
         </div>
 
         <div class="form-group">
-          <label for="price">Price (TL)</label>
+          <label for="price">{{ 'EDIT_PRODUCT.PRICE' | translate }}</label>
           <input id="price" type="number" [(ngModel)]="product.price" name="price" min="0" step="0.01">
         </div>
 
         <div class="form-group">
-          <label for="stock">Stock</label>
+          <label for="stock">{{ 'EDIT_PRODUCT.STOCK' | translate }}</label>
           <input id="stock" type="number" [(ngModel)]="product.stock" name="stock" min="0">
         </div>
 
         <div class="form-group full-width">
-          <label for="img">Image URL</label>
+          <label for="img">{{ 'EDIT_PRODUCT.IMAGE_URL' | translate }}</label>
           <input id="img" type="text" [(ngModel)]="product.img" name="img">
         </div>
 
@@ -50,22 +50,22 @@
 
         <div class="readonly-info full-width">
           <div class="info-chip" *ngIf="categoryName">
-            <span class="info-label">Category:</span> {{ categoryName }}
+            <span class="info-label">{{ 'EDIT_PRODUCT.CATEGORY' | translate }}</span> {{ categoryName }}
           </div>
           <div class="info-chip" *ngIf="brandName">
-            <span class="info-label">Brand:</span> {{ brandName }}
+            <span class="info-label">{{ 'EDIT_PRODUCT.BRAND' | translate }}</span> {{ brandName }}
           </div>
         </div>
       </div>
 
       <div class="form-actions">
-        <button type="button" class="cancel-btn" (click)="goBack()">Cancel</button>
+        <button type="button" class="cancel-btn" (click)="goBack()">{{ 'EDIT_PRODUCT.CANCEL' | translate }}</button>
         <button type="submit" class="submit-btn" [disabled]="!hasChanges() || isSaving">
           @if(isSaving) {
-            <span class="spinner"></span> Updating...
+            <span class="spinner"></span> {{ 'EDIT_PRODUCT.UPDATING' | translate }}
           } @else {
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
-            Update Product
+            {{ 'EDIT_PRODUCT.UPDATE' | translate }}
           }
         </button>
       </div>

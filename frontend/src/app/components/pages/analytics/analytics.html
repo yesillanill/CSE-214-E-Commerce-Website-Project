@@ -4,12 +4,12 @@
   <!-- SECTION 1: PUBLIC STATS (Visible to ALL users)         -->
   <!-- ═══════════════════════════════════════════════════════ -->
   <section class="public-stats-section">
-    <h1 class="section-title">📊 Platform İstatistikleri</h1>
+    <h1 class="section-title">{{ 'ANALYTICS.PLATFORM_STATS' | translate }}</h1>
 
     @if (isLoadingPublic) {
       <div class="loading-row">
         <div class="spinner"></div>
-        <span>Yükleniyor...</span>
+        <span>{{ 'ANALYTICS.LOADING' | translate }}</span>
       </div>
     } @else if (publicStats) {
       <div class="stats-grid">
@@ -17,35 +17,35 @@
           <div class="stat-icon">👥</div>
           <div class="stat-info">
             <span class="stat-value">{{ publicStats.totalUsers | number }}</span>
-            <span class="stat-label">Toplam Kullanıcı</span>
+            <span class="stat-label">{{ 'ANALYTICS.TOTAL_USERS' | translate }}</span>
           </div>
         </div>
         <div class="stat-card">
           <div class="stat-icon">📦</div>
           <div class="stat-info">
             <span class="stat-value">{{ publicStats.totalProducts | number }}</span>
-            <span class="stat-label">Toplam Ürün</span>
+            <span class="stat-label">{{ 'ANALYTICS.TOTAL_PRODUCTS' | translate }}</span>
           </div>
         </div>
         <div class="stat-card">
           <div class="stat-icon">📁</div>
           <div class="stat-info">
             <span class="stat-value">{{ publicStats.totalCategories | number }}</span>
-            <span class="stat-label">Toplam Kategori</span>
+            <span class="stat-label">{{ 'ANALYTICS.TOTAL_CATEGORIES' | translate }}</span>
           </div>
         </div>
         <div class="stat-card">
           <div class="stat-icon">🏷️</div>
           <div class="stat-info">
             <span class="stat-value">{{ publicStats.totalBrands | number }}</span>
-            <span class="stat-label">Toplam Marka</span>
+            <span class="stat-label">{{ 'ANALYTICS.TOTAL_BRANDS' | translate }}</span>
           </div>
         </div>
         <div class="stat-card">
           <div class="stat-icon">🏪</div>
           <div class="stat-info">
             <span class="stat-value">{{ publicStats.totalStores | number }}</span>
-            <span class="stat-label">Toplam Mağaza</span>
+            <span class="stat-label">{{ 'ANALYTICS.TOTAL_STORES' | translate }}</span>
           </div>
         </div>
       </div>
@@ -59,9 +59,9 @@
     <section class="login-prompt">
       <div class="prompt-card">
         <span class="prompt-icon">🔒</span>
-        <h2>Detaylı analitik verileri görmek için giriş yapın</h2>
-        <p>Kişisel harcama trendleriniz, sipariş analizleriniz ve daha fazlası sizi bekliyor.</p>
-        <a routerLink="/auth" class="cta-btn">Giriş Yap</a>
+        <h2>{{ 'ANALYTICS.LOGIN_PROMPT' | translate }}</h2>
+        <p>{{ 'ANALYTICS.LOGIN_PROMPT_DESC' | translate }}</p>
+        <a routerLink="/auth" class="cta-btn">{{ 'ANALYTICS.LOGIN_BTN' | translate }}</a>
       </div>
     </section>
   }
@@ -70,7 +70,7 @@
     <section class="loading-section">
       <div class="loading-row">
         <div class="spinner"></div>
-        <span>Analitik veriler yükleniyor...</span>
+        <span>{{ 'ANALYTICS.LOADING_ANALYTICS' | translate }}</span>
       </div>
     </section>
   }
@@ -78,25 +78,25 @@
   <!-- ─── INDIVIDUAL USER ANALYTICS ─── -->
   @if (auth.isIndividualUser() && individualData) {
     <section class="private-section">
-      <h2 class="section-title">📈 Kişisel Analizlerim</h2>
+      <h2 class="section-title">{{ 'ANALYTICS.PERSONAL_ANALYTICS' | translate }}</h2>
 
       <!-- Cards -->
       <div class="metric-cards">
         <div class="metric-card purple">
           <span class="metric-value">₺{{ individualData.totalSpend | number:'1.2-2' }}</span>
-          <span class="metric-label">Toplam Harcama</span>
+          <span class="metric-label">{{ 'ANALYTICS.TOTAL_SPEND' | translate }}</span>
         </div>
         <div class="metric-card blue">
           <span class="metric-value">{{ individualData.totalOrders }}</span>
-          <span class="metric-label">Toplam Sipariş</span>
+          <span class="metric-label">{{ 'ANALYTICS.TOTAL_ORDERS' | translate }}</span>
         </div>
         <div class="metric-card green">
           <span class="metric-value">₺{{ individualData.avgOrderValue | number:'1.2-2' }}</span>
-          <span class="metric-label">Ortalama Sipariş</span>
+          <span class="metric-label">{{ 'ANALYTICS.AVG_ORDER' | translate }}</span>
         </div>
         <div class="metric-card orange">
           <span class="metric-value">{{ individualData.reviewCount }}</span>
-          <span class="metric-label">İnceleme Sayısı</span>
+          <span class="metric-label">{{ 'ANALYTICS.REVIEW_COUNT' | translate }}</span>
         </div>
       </div>
 
@@ -126,25 +126,25 @@
   <!-- ─── CORPORATE USER ANALYTICS ─── -->
   @if (auth.isCorporateUser() && corporateData) {
     <section class="private-section">
-      <h2 class="section-title">🏢 Mağaza Analizlerim</h2>
+      <h2 class="section-title">{{ 'ANALYTICS.STORE_ANALYTICS' | translate }}</h2>
 
       <!-- Cards -->
       <div class="metric-cards">
         <div class="metric-card green">
           <span class="metric-value">₺{{ corporateData.totalRevenue | number:'1.2-2' }}</span>
-          <span class="metric-label">Toplam Gelir</span>
+          <span class="metric-label">{{ 'ANALYTICS.TOTAL_REVENUE' | translate }}</span>
         </div>
         <div class="metric-card blue">
           <span class="metric-value">{{ corporateData.totalOrders }}</span>
-          <span class="metric-label">Toplam Sipariş</span>
+          <span class="metric-label">{{ 'ANALYTICS.TOTAL_ORDERS' | translate }}</span>
         </div>
         <div class="metric-card purple">
           <span class="metric-value">{{ corporateData.activeCustomers }}</span>
-          <span class="metric-label">Aktif Müşteri</span>
+          <span class="metric-label">{{ 'ANALYTICS.ACTIVE_CUSTOMERS' | translate }}</span>
         </div>
         <div class="metric-card orange">
           <span class="metric-value">⭐ {{ corporateData.avgRating }}</span>
-          <span class="metric-label">Ortalama Puan</span>
+          <span class="metric-label">{{ 'ANALYTICS.AVG_RATING' | translate }}</span>
         </div>
       </div>
 
@@ -189,8 +189,8 @@
       <!-- Fulfillment Metric -->
       <div class="metric-cards single">
         <div class="metric-card teal wide-metric">
-          <span class="metric-value">{{ corporateData.avgFulfillmentDays }} gün</span>
-          <span class="metric-label">Ortalama Sipariş → Teslimat Süresi</span>
+          <span class="metric-value">{{ corporateData.avgFulfillmentDays }} {{ 'ANALYTICS.DAYS' | translate }}</span>
+          <span class="metric-label">{{ 'ANALYTICS.AVG_FULFILLMENT' | translate }}</span>
         </div>
       </div>
     </section>
@@ -199,25 +199,25 @@
   <!-- ─── ADMIN ANALYTICS ─── -->
   @if (auth.isAdmin() && adminData) {
     <section class="private-section">
-      <h2 class="section-title">🛡️ Admin Panel Analizleri</h2>
+      <h2 class="section-title">{{ 'ANALYTICS.ADMIN_ANALYTICS' | translate }}</h2>
 
       <!-- Cards -->
       <div class="metric-cards">
         <div class="metric-card green">
           <span class="metric-value">₺{{ adminData.platformRevenue | number:'1.2-2' }}</span>
-          <span class="metric-label">Platform Toplam Geliri</span>
+          <span class="metric-label">{{ 'ANALYTICS.PLATFORM_REVENUE' | translate }}</span>
         </div>
         <div class="metric-card orange">
           <span class="metric-value">{{ adminData.avgDailyOrders }}</span>
-          <span class="metric-label">Günlük Ort. Sipariş</span>
+          <span class="metric-label">{{ 'ANALYTICS.DAILY_AVG_ORDERS' | translate }}</span>
         </div>
         <div class="metric-card teal">
           <span class="metric-value">⭐ {{ adminData.platformAvgRating }}</span>
-          <span class="metric-label">Platform Ort. Puanı</span>
+          <span class="metric-label">{{ 'ANALYTICS.PLATFORM_AVG_RATING' | translate }}</span>
         </div>
         <div class="metric-card red">
           <span class="metric-value">{{ adminData.pendingStoreApprovals }}</span>
-          <span class="metric-label">Bekleyen Mağaza Onayı</span>
+          <span class="metric-label">{{ 'ANALYTICS.PENDING_APPROVALS' | translate }}</span>
         </div>
       </div>
 

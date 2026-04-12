@@ -63,8 +63,8 @@ export class EditProduct implements OnInit, CanComponentDeactivate {
         this.isLoading = false;
         Swal.fire({
           icon: 'error',
-          title: 'Error',
-          text: 'Could not load product data.',
+          title: this.translate.instant('EDIT_PRODUCT.ERROR_TITLE'),
+          text: this.translate.instant('EDIT_PRODUCT.ERROR_LOAD'),
           background: getComputedStyle(document.body).getPropertyValue('--card-bg').trim(),
           color: getComputedStyle(document.body).getPropertyValue('--text-color').trim()
         });
@@ -99,8 +99,8 @@ export class EditProduct implements OnInit, CanComponentDeactivate {
         this.saved = true;
         Swal.fire({
           icon: 'success',
-          title: 'Product Updated!',
-          text: 'Changes have been saved.',
+          title: this.translate.instant('EDIT_PRODUCT.SUCCESS_TITLE'),
+          text: this.translate.instant('EDIT_PRODUCT.SUCCESS_TEXT'),
           background: getComputedStyle(document.body).getPropertyValue('--card-bg').trim(),
           color: getComputedStyle(document.body).getPropertyValue('--text-color').trim(),
           timer: 1500,
@@ -111,8 +111,8 @@ export class EditProduct implements OnInit, CanComponentDeactivate {
         this.isSaving = false;
         Swal.fire({
           icon: 'error',
-          title: 'Error',
-          text: 'Could not update the product.',
+          title: this.translate.instant('EDIT_PRODUCT.ERROR_TITLE'),
+          text: this.translate.instant('EDIT_PRODUCT.ERROR_UPDATE'),
           background: getComputedStyle(document.body).getPropertyValue('--card-bg').trim(),
           color: getComputedStyle(document.body).getPropertyValue('--text-color').trim()
         });
@@ -127,14 +127,14 @@ export class EditProduct implements OnInit, CanComponentDeactivate {
   canDeactivate(): Promise<boolean> | boolean {
     if (this.saved || !this.hasChanges()) return true;
     return Swal.fire({
-      title: 'Unsaved Changes',
-      text: 'You have unsaved changes. What would you like to do?',
+      title: this.translate.instant('EDIT_PRODUCT.UNSAVED_TITLE'),
+      text: this.translate.instant('EDIT_PRODUCT.UNSAVED_TEXT'),
       icon: 'warning',
       showCancelButton: true,
       showDenyButton: true,
-      confirmButtonText: 'Save',
-      denyButtonText: 'Discard',
-      cancelButtonText: 'Stay',
+      confirmButtonText: this.translate.instant('EDIT_PRODUCT.UNSAVED_SAVE'),
+      denyButtonText: this.translate.instant('EDIT_PRODUCT.UNSAVED_DISCARD'),
+      cancelButtonText: this.translate.instant('EDIT_PRODUCT.UNSAVED_STAY'),
       background: getComputedStyle(document.body).getPropertyValue('--card-bg').trim(),
       color: getComputedStyle(document.body).getPropertyValue('--text-color').trim()
     }).then(result => {

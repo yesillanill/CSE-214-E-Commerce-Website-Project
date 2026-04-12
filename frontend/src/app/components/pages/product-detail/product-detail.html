@@ -1,7 +1,7 @@
 <div class="product-detail-container">
   <!-- Header stays visible -->
   <h1 class="product-title">
-    {{ (product$ | async)?.name || 'Ürün Detayı' }}
+    {{ (product$ | async)?.name || ('PRODUCT-DETAIL.TITLE' | translate) }}
   </h1>
 
   <div class="content-wrapper" *ngIf="product$ | async as product; else stateTemplate">

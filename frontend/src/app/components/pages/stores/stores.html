@@ -1,14 +1,14 @@
 <div class="stores-page">
   <div class="page-header">
-    <h1 class="page-title">Stores</h1>
+    <h1 class="page-title">{{ 'STORES.TITLE' | translate }}</h1>
     <button class="export-btn" (click)="exportCsv()">
       <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-      Export CSV
+      {{ 'STORES.EXPORT_CSV' | translate }}
     </button>
   </div>
 
   <div class="search-bar">
-    <input type="text" placeholder="Search stores..." (input)="onSearch($event)" class="search-input">
+    <input type="text" [placeholder]="'STORES.SEARCH' | translate" (input)="onSearch($event)" class="search-input">
   </div>
 
   @if(isLoading) {
@@ -20,31 +20,31 @@
   } @else if(stores.length === 0) {
     <div class="empty-state">
       <div class="empty-icon">🏪</div>
-      <h3>No stores found</h3>
-      <p>Registered stores will appear here.</p>
+      <h3>{{ 'STORES.NO_STORES' | translate }}</h3>
+      <p>{{ 'STORES.EMPTY_DESC' | translate }}</p>
     </div>
   } @else {
     <div class="table-controls">
       <div class="page-size-control">
-        <label>Show</label>
+        <label>{{ 'STORES.SHOW' | translate }}</label>
         <select [value]="pageSize" (change)="onPageSizeChange($event)">
           @for(opt of pageSizeOptions; track opt) { <option [value]="opt">{{ opt }}</option> }
         </select>
-        <label>entries</label>
+        <label>{{ 'STORES.ENTRIES' | translate }}</label>
       </div>
-      <div class="results-info">{{ totalElements }} stores</div>
+      <div class="results-info">{{ totalElements }} {{ 'SIDEBAR.STORES' | translate | lowercase }}</div>
     </div>
 
     <div class="table-wrapper">
       <table class="data-table">
         <thead>
           <tr>
-            <th (click)="sort('id')">ID <span class="sort-icon">{{ getSortIcon('id') }}</span></th>
-            <th (click)="sort('storeName')">Store Name <span class="sort-icon">{{ getSortIcon('storeName') }}</span></th>
-            <th (click)="sort('companyName')">Company <span class="sort-icon">{{ getSortIcon('companyName') }}</span></th>
-            <th>Owner</th>
-            <th>Tax Number</th>
-            <th (click)="sort('totalRevenue')">Revenue <span class="sort-icon">{{ getSortIcon('totalRevenue') }}</span></th>
+            <th (click)="sort('id')">{{ 'STORES.ID' | translate }} <span class="sort-icon">{{ getSortIcon('id') }}</span></th>
+            <th (click)="sort('storeName')">{{ 'STORES.STORE_NAME' | translate }} <span class="sort-icon">{{ getSortIcon('storeName') }}</span></th>
+            <th (click)="sort('companyName')">{{ 'STORES.COMPANY' | translate }} <span class="sort-icon">{{ getSortIcon('companyName') }}</span></th>
+            <th>{{ 'STORES.OWNER' | translate }}</th>
+            <th>{{ 'STORES.TAX_NUMBER' | translate }}</th>
+            <th (click)="sort('totalRevenue')">{{ 'STORES.REVENUE' | translate }} <span class="sort-icon">{{ getSortIcon('totalRevenue') }}</span></th>
           </tr>
         </thead>
         <tbody>
@@ -65,7 +65,7 @@
     <div class="pagination">
       <button class="page-btn" [disabled]="currentPage === 0" (click)="goToPage(0)">«</button>
       <button class="page-btn" [disabled]="currentPage === 0" (click)="goToPage(currentPage - 1)">‹</button>
-      <span class="page-info">Page {{ currentPage + 1 }} of {{ totalPages }}</span>
+      <span class="page-info">{{ 'STORES.PAGE_INFO' | translate:{current: currentPage + 1, total: totalPages} }}</span>
       <button class="page-btn" [disabled]="currentPage >= totalPages - 1" (click)="goToPage(currentPage + 1)">›</button>
       <button class="page-btn" [disabled]="currentPage >= totalPages - 1" (click)="goToPage(totalPages - 1)">»</button>
     </div>

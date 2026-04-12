@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { LowerCasePipe } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { ProductService } from '../../../core/services/product.service';
 import { AuthService } from '../../../core/services/auth.service';
@@ -7,6 +8,7 @@ import { WishlistService } from '../../../core/services/wishlist.service';
 import { ProductList } from '../../../core/models/product-list.model';
 import { ProductCard } from '../../shared/product-card/product-card';
 import { LoadingSpinner } from '../../layout/loading-spinner/loading-spinner';
+import { TranslateModule } from '@ngx-translate/core';
 
 interface HomeStats {
   categoryCount: number;
@@ -18,7 +20,7 @@ interface HomeStats {
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [RouterLink, ProductCard, LoadingSpinner],
+  imports: [RouterLink, ProductCard, LoadingSpinner, TranslateModule, LowerCasePipe],
   templateUrl: './home.html',
   styleUrl: './home.scss',
 })

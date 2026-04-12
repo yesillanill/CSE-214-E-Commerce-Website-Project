@@ -4,27 +4,27 @@
     <div class="hero-content">
       @if (isLoggedIn) {
         <h1 class="hero-title">
-          Hoşgeldin, <span class="highlight">{{ userName }}</span> 👋
+          {{ 'HOME.GREETING_USER' | translate:{name: userName} }}
         </h1>
       } @else {
         <h1 class="hero-title">
-          Hoşgeldiniz 👋
+          {{ 'HOME.GREETING_GUEST' | translate }}
         </h1>
       }
 
       @if (stats) {
         <p class="stats-line">
-          <span class="stat-num">{{ stats.categoryCount }}</span> kategori,
-          <span class="stat-num">{{ stats.brandCount }}</span> marka ve
-          <span class="stat-num">{{ stats.storeCount }}</span> mağazadan toplam
-          <span class="stat-num">{{ stats.productCount }}</span> ürünümüzü keşfedin.
+          <span class="stat-num">{{ stats.categoryCount }}</span> {{ 'PRODUCTS.CATEGORIES' | translate | lowercase }},
+          <span class="stat-num">{{ stats.brandCount }}</span> {{ 'PRODUCT-DETAIL.BRAND' | translate | lowercase }}
+          <span class="stat-num">{{ stats.storeCount }}</span> {{ 'SIDEBAR.STORES' | translate | lowercase }}
+          <span class="stat-num">{{ stats.productCount }}</span> {{ 'SIDEBAR.PRODUCTS' | translate | lowercase }}
         </p>
       }
 
       @if (!isLoggedIn) {
         <p class="cta-line">
-          <a routerLink="/auth" class="cta-link">Giriş yapın veya Kayıt olun</a>
-          bu dünyaya katılın ve tüm avantajlardan faydalanın!
+          <a routerLink="/auth" class="cta-link">{{ 'HOME.CTA_LINK' | translate }}</a>
+          {{ 'HOME.CTA_TEXT' | translate }}
         </p>
       }
     </div>
@@ -33,8 +33,8 @@
   <!-- Top Rated Products -->
   <section class="product-section">
     <div class="section-header">
-      <h2 class="section-title">⭐ En Yüksek Puanlı Ürünler</h2>
-      <a routerLink="/products" class="see-all-link">Tümünü Gör →</a>
+      <h2 class="section-title">{{ 'HOME.TOP_RATED' | translate }}</h2>
+      <a routerLink="/products" class="see-all-link">{{ 'HOME.SEE_ALL' | translate }}</a>
     </div>
 
     <div class="carousel-wrapper">
@@ -53,8 +53,8 @@
   <!-- Best Selling Products -->
   <section class="product-section">
     <div class="section-header">
-      <h2 class="section-title">🔥 En Çok Satan Ürünler</h2>
-      <a routerLink="/products" class="see-all-link">Tümünü Gör →</a>
+      <h2 class="section-title">{{ 'HOME.BEST_SELLING' | translate }}</h2>
+      <a routerLink="/products" class="see-all-link">{{ 'HOME.SEE_ALL' | translate }}</a>
     </div>
 
     <div class="carousel-wrapper">

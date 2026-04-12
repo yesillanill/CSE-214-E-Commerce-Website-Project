@@ -1,27 +1,27 @@
 <div class="audit-page">
   <div class="page-header">
-    <h1 class="page-title">Audit Logs</h1>
+    <h1 class="page-title">{{ 'AUDIT_LOGS.TITLE' | translate }}</h1>
     <button class="export-btn" (click)="exportCsv()">
       <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-      Export CSV
+      {{ 'AUDIT_LOGS.EXPORT_CSV' | translate }}
     </button>
   </div>
 
   <div class="filters-bar">
     <select [(ngModel)]="actionFilter" class="filter-select">
-      <option value="">All Actions</option>
+      <option value="">{{ 'AUDIT_LOGS.ALL_ACTIONS' | translate }}</option>
       @for(a of actions; track a) { <option [value]="a">{{ a }}</option> }
     </select>
     <select [(ngModel)]="roleFilter" class="filter-select">
-      <option value="">All Roles</option>
-      <option value="INDIVIDUAL">Individual</option>
-      <option value="CORPORATE">Corporate</option>
-      <option value="ADMIN">Admin</option>
+      <option value="">{{ 'AUDIT_LOGS.ALL_ROLES' | translate }}</option>
+      <option value="INDIVIDUAL">{{ 'AUDIT_LOGS.INDIVIDUAL' | translate }}</option>
+      <option value="CORPORATE">{{ 'AUDIT_LOGS.CORPORATE' | translate }}</option>
+      <option value="ADMIN">{{ 'AUDIT_LOGS.ADMIN' | translate }}</option>
     </select>
     <input type="date" [(ngModel)]="startDate" class="filter-input">
     <input type="date" [(ngModel)]="endDate" class="filter-input">
-    <button class="apply-btn" (click)="applyFilters()">Apply</button>
-    <button class="clear-btn" (click)="clearFilters()">Clear</button>
+    <button class="apply-btn" (click)="applyFilters()">{{ 'AUDIT_LOGS.APPLY' | translate }}</button>
+    <button class="clear-btn" (click)="clearFilters()">{{ 'AUDIT_LOGS.CLEAR' | translate }}</button>
   </div>
 
   @if(isLoading) {
@@ -33,14 +33,14 @@
   } @else if(logs.length === 0) {
     <div class="empty-state">
       <div class="empty-icon">📋</div>
-      <h3>No audit logs found</h3>
-      <p>Audit log entries will appear here as actions are performed.</p>
+      <h3>{{ 'AUDIT_LOGS.NO_LOGS' | translate }}</h3>
+      <p>{{ 'AUDIT_LOGS.EMPTY_DESC' | translate }}</p>
     </div>
   } @else {
     <div class="table-controls">
-      <div class="results-info">{{ totalElements }} entries</div>
+      <div class="results-info">{{ 'AUDIT_LOGS.ENTRIES_COUNT' | translate:{count: totalElements} }}</div>
       <div class="page-size-control">
-        <label>Show</label>
+        <label>{{ 'AUDIT_LOGS.SHOW' | translate }}</label>
         <select [value]="pageSize" (change)="onPageSizeChange($event)">
           @for(opt of pageSizeOptions; track opt) { <option [value]="opt">{{ opt }}</option> }
         </select>
@@ -51,14 +51,14 @@
       <table class="data-table">
         <thead>
           <tr>
-            <th>ID</th>
-            <th>Timestamp</th>
-            <th>User</th>
-            <th>Role</th>
-            <th>Action</th>
-            <th>Target</th>
-            <th>IP</th>
-            <th>Details</th>
+            <th>{{ 'AUDIT_LOGS.ID' | translate }}</th>
+            <th>{{ 'AUDIT_LOGS.TIMESTAMP' | translate }}</th>
+            <th>{{ 'AUDIT_LOGS.USER' | translate }}</th>
+            <th>{{ 'AUDIT_LOGS.ROLE' | translate }}</th>
+            <th>{{ 'AUDIT_LOGS.ACTION' | translate }}</th>
+            <th>{{ 'AUDIT_LOGS.TARGET' | translate }}</th>
+            <th>{{ 'AUDIT_LOGS.IP' | translate }}</th>
+            <th>{{ 'AUDIT_LOGS.DETAILS' | translate }}</th>
           </tr>
         </thead>
         <tbody>
@@ -81,7 +81,7 @@
     <div class="pagination">
       <button class="page-btn" [disabled]="currentPage === 0" (click)="goToPage(0)">«</button>
       <button class="page-btn" [disabled]="currentPage === 0" (click)="goToPage(currentPage - 1)">‹</button>
-      <span class="page-info">Page {{ currentPage + 1 }} of {{ totalPages }}</span>
+      <span class="page-info">{{ 'AUDIT_LOGS.PAGE_INFO' | translate:{current: currentPage + 1, total: totalPages} }}</span>
       <button class="page-btn" [disabled]="currentPage >= totalPages - 1" (click)="goToPage(currentPage + 1)">›</button>
       <button class="page-btn" [disabled]="currentPage >= totalPages - 1" (click)="goToPage(totalPages - 1)">»</button>
     </div>

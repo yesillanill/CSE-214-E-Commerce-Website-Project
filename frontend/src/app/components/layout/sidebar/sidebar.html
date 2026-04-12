@@ -34,8 +34,8 @@
     <br>
     <p *ngIf="auth.isAdmin()">{{'SIDEBAR.MANAGEMENT' | translate}}</p>
     <a *ngIf="auth.isAdmin()" routerLink="/customers" class="nav-link" (click)="toggleMobileMenu()">{{'SIDEBAR.CUSTOMERS' | translate}}</a>
-    <a *ngIf="auth.isAdmin()" routerLink="/stores" class="nav-link" (click)="toggleMobileMenu()">Stores</a>
-    <a *ngIf="auth.isAdmin()" routerLink="/audit-logs" class="nav-link" (click)="toggleMobileMenu()">Audit Logs</a>
+    <a *ngIf="auth.isAdmin()" routerLink="/stores" class="nav-link" (click)="toggleMobileMenu()">{{'SIDEBAR.STORES' | translate}}</a>
+    <a *ngIf="auth.isAdmin()" routerLink="/audit-logs" class="nav-link" (click)="toggleMobileMenu()">{{'SIDEBAR.AUDIT_LOGS' | translate}}</a>
     <a *ngIf="auth.isAdmin()" routerLink="/support-requests" class="nav-link" (click)="toggleMobileMenu()">{{'SIDEBAR.SUPPORT_REQUESTS' | translate}}</a>
   </nav>
 

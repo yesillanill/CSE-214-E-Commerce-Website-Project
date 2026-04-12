@@ -1,14 +1,14 @@
 <div class="shipments-page">
   <div class="page-header">
-    <h1 class="page-title">Shipments</h1>
+    <h1 class="page-title">{{ 'SHIPMENTS.TITLE' | translate }}</h1>
     <button class="export-btn" (click)="exportCsv()">
       <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-      Export CSV
+      {{ 'SHIPMENTS.EXPORT_CSV' | translate }}
     </button>
   </div>
 
   <div class="search-bar">
-    <input type="text" placeholder="Search by tracking number..." (input)="onSearch($event)" class="search-input">
+    <input type="text" [placeholder]="'SHIPMENTS.SEARCH' | translate" (input)="onSearch($event)" class="search-input">
   </div>
 
   @if(isLoading) {
@@ -20,33 +20,33 @@
   } @else if(shipments.length === 0) {
     <div class="empty-state">
       <div class="empty-icon">🚚</div>
-      <h3>No shipments found</h3>
-      <p>Shipments for your store's orders will appear here.</p>
+      <h3>{{ 'SHIPMENTS.NO_SHIPMENTS' | translate }}</h3>
+      <p>{{ 'SHIPMENTS.EMPTY_DESC' | translate }}</p>
     </div>
   } @else {
     <div class="table-controls">
       <div class="page-size-control">
-        <label>Show</label>
+        <label>{{ 'SHIPMENTS.SHOW' | translate }}</label>
         <select [value]="pageSize" (change)="onPageSizeChange($event)">
           @for(opt of pageSizeOptions; track opt) { <option [value]="opt">{{ opt }}</option> }
         </select>
-        <label>entries</label>
+        <label>{{ 'SHIPMENTS.ENTRIES' | translate }}</label>
       </div>
-      <div class="results-info">{{ totalElements }} shipments</div>
+      <div class="results-info">{{ 'SHIPMENTS.SHIPMENTS_COUNT' | translate:{count: totalElements} }}</div>
     </div>
 
     <div class="table-wrapper">
       <table class="data-table">
         <thead>
           <tr>
-            <th (click)="sort('id')">ID <span class="sort-icon">{{ getSortIcon('id') }}</span></th>
-            <th>Order ID</th>
-            <th>Tracking Number</th>
-            <th (click)="sort('status')">Status <span class="sort-icon">{{ getSortIcon('status') }}</span></th>
-            <th (click)="sort('shipmentDate')">Ship Date <span class="sort-icon">{{ getSortIcon('shipmentDate') }}</span></th>
-            <th>Est. Delivery</th>
-            <th>Delivery Date</th>
-            <th>Carrier</th>
+            <th (click)="sort('id')">{{ 'SHIPMENTS.ID' | translate }} <span class="sort-icon">{{ getSortIcon('id') }}</span></th>
+            <th>{{ 'SHIPMENTS.ORDER_ID' | translate }}</th>
+            <th>{{ 'SHIPMENTS.TRACKING_NUMBER' | translate }}</th>
+            <th (click)="sort('status')">{{ 'SHIPMENTS.STATUS' | translate }} <span class="sort-icon">{{ getSortIcon('status') }}</span></th>
+            <th (click)="sort('shipmentDate')">{{ 'SHIPMENTS.SHIP_DATE' | translate }} <span class="sort-icon">{{ getSortIcon('shipmentDate') }}</span></th>
+            <th>{{ 'SHIPMENTS.EST_DELIVERY' | translate }}</th>
+            <th>{{ 'SHIPMENTS.DELIVERY_DATE' | translate }}</th>
+            <th>{{ 'SHIPMENTS.CARRIER' | translate }}</th>
           </tr>
         </thead>
         <tbody>
@@ -69,7 +69,7 @@
     <div class="pagination">
       <button class="page-btn" [disabled]="currentPage === 0" (click)="goToPage(0)">«</button>
       <button class="page-btn" [disabled]="currentPage === 0" (click)="goToPage(currentPage - 1)">‹</button>
-      <span class="page-info">Page {{ currentPage + 1 }} of {{ totalPages }}</span>
+      <span class="page-info">{{ 'SHIPMENTS.PAGE_INFO' | translate:{current: currentPage + 1, total: totalPages} }}</span>
       <button class="page-btn" [disabled]="currentPage >= totalPages - 1" (click)="goToPage(currentPage + 1)">›</button>
       <button class="page-btn" [disabled]="currentPage >= totalPages - 1" (click)="goToPage(totalPages - 1)">»</button>
     </div>

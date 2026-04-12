@@ -35,30 +35,30 @@
           @if(auth.isIndividualUser()){
           <div class="row w-100 m-0 p-0">
             <div class="form-group col-md-4 mb-3">
-              <label>Street</label>
+              <label>{{ 'AUTH.STREET' | translate }}</label>
               <input type="text" formControlName="street" class="form-control">
             </div>
             <div class="form-group col-md-4 mb-3">
-              <label>City</label>
+              <label>{{ 'AUTH.CITY' | translate }}</label>
               <input type="text" formControlName="city" class="form-control">
             </div>
             <div class="form-group col-md-4 mb-3">
-              <label>Postal Code</label>
+              <label>{{ 'AUTH.POSTAL_CODE' | translate }}</label>
               <input type="text" formControlName="postalCode" class="form-control">
             </div>
             <div class="form-group col-md-3 mb-3">
-              <label>Country</label>
+              <label>{{ 'AUTH.COUNTRY' | translate }}</label>
               <input type="text" formControlName="country" class="form-control">
             </div>
             <div class="form-group col-md-3 mb-3">
-              <label>Gender</label>
+              <label>{{ 'AUTH.GENDER' | translate }}</label>
               <select formControlName="gender" class="form-control">
-                <option value="MALE">Male</option>
-                <option value="FEMALE">Female</option>
+                <option value="MALE">{{ 'AUTH.MALE' | translate }}</option>
+                <option value="FEMALE">{{ 'AUTH.FEMALE' | translate }}</option>
               </select>
             </div>
             <div class="form-group col-md-3 mb-3">
-              <label>Membership</label>
+              <label>{{ 'AUTH.MEMBERSHIP' | translate }}</label>
               <input type="text" formControlName="membershipType" class="form-control text-uppercase font-weight-bold" [class.text-warning]="userForm.get('membershipType')?.value === 'GOLD'" [class.text-secondary]="userForm.get('membershipType')?.value === 'SILVER'" [class.text-danger]="userForm.get('membershipType')?.value === 'BRONZE'">
             </div>
             <div class="form-group col-md-3 mb-3">
@@ -71,23 +71,23 @@
           @if(auth.isCorporateUser()){
           <div class="row w-100 m-0 p-0">
              <div class="form-group col-md-4 mb-3">
-              <label>Store Name</label>
+              <label>{{ 'AUTH.STORE_NAME' | translate }}</label>
               <input type="text" formControlName="storeName" class="form-control">
             </div>
             <div class="form-group col-md-4 mb-3">
-              <label>Company Name</label>
+              <label>{{ 'AUTH.COMPANY_NAME' | translate }}</label>
               <input type="text" formControlName="companyName" class="form-control">
             </div>
             <div class="form-group col-md-4 mb-3">
-              <label>Tax Number</label>
+              <label>{{ 'AUTH.TAX_NUMBER' | translate }}</label>
               <input type="text" formControlName="taxNumber" class="form-control">
             </div>
             <div class="form-group col-md-4 mb-3">
-              <label>Tax Office</label>
+              <label>{{ 'AUTH.TAX_OFFICE' | translate }}</label>
               <input type="text" formControlName="taxOffice" class="form-control">
             </div>
             <div class="form-group col-md-8 mb-3">
-              <label>Company Address</label>
+              <label>{{ 'AUTH.COMPANY_ADDRESS' | translate }}</label>
               <input type="text" formControlName="companyAddress" class="form-control">
             </div>
           </div>
@@ -108,7 +108,7 @@
 
   @if(auth.isIndividualUser()){
   <div class="settings-card">
-    <h2 class="card-title">💳 Kartlarım</h2>
+    <h2 class="card-title">💳 {{ 'SETTINGS.MY_CARDS' | translate }}</h2>
 
     <div class="cards-list">
       @for(card of cardService.getCards(); track card.id){
@@ -122,27 +122,27 @@
           <button class="delete-card-btn" (click)="deleteCard(card.id!)">🗑️</button>
         </div>
       } @empty {
-        <p class="empty-cards">Henüz kayıtlı kartınız bulunmamaktadır.</p>
+        <p class="empty-cards">{{ 'SETTINGS.NO_CARDS' | translate }}</p>
       }
     </div>
 
     <button class="add-card-toggle-btn" (click)="toggleAddCardForm()">
-      {{ showAddCardForm ? '✕ İptal' : '+ Yeni Kart Ekle' }}
+      {{ showAddCardForm ? ('SETTINGS.CANCEL_CARD' | translate) : ('SETTINGS.ADD_CARD' | translate) }}
     </button>
 
     @if(showAddCardForm){
     <div class="add-card-form">
       <div class="row">
         <div class="form-group col-md-6 mb-3">
-          <label>Kart Üzerindeki İsim</label>
+          <label>{{ 'SETTINGS.CARD_HOLDER' | translate }}</label>
           <input type="text" class="form-control" [(ngModel)]="newCard.cardHolderName" placeholder="AD SOYAD">
         </div>
         <div class="form-group col-md-6 mb-3">
-          <label>Kart Numarası</label>
+          <label>{{ 'SETTINGS.CARD_NUMBER' | translate }}</label>
           <input type="text" class="form-control" [(ngModel)]="newCard.cardNumber" placeholder="1234567890123456" maxlength="16">
         </div>
         <div class="form-group col-md-3 mb-3">
-          <label>Ay</label>
+          <label>{{ 'SETTINGS.MONTH' | translate }}</label>
           <select class="form-control" [(ngModel)]="newCard.expiryMonth">
             @for(m of [1,2,3,4,5,6,7,8,9,10,11,12]; track m){
               <option [value]="m">{{ m < 10 ? '0'+m : m }}</option>
@@ -150,7 +150,7 @@
           </select>
         </div>
         <div class="form-group col-md-3 mb-3">
-          <label>Yıl</label>
+          <label>{{ 'SETTINGS.YEAR' | translate }}</label>
           <select class="form-control" [(ngModel)]="newCard.expiryYear">
             @for(y of [2026,2027,2028,2029,2030,2031]; track y){
               <option [value]="y">{{ y }}</option>
@@ -162,7 +162,7 @@
           <input type="password" class="form-control" [(ngModel)]="newCard.cvv" placeholder="***" maxlength="3">
         </div>
         <div class="form-group col-md-3 mb-3 d-flex align-items-end">
-          <button class="custom-submit-btn w-100" (click)="addCard()">Kartı Kaydet</button>
+          <button class="custom-submit-btn w-100" (click)="addCard()">{{ 'SETTINGS.SAVE_CARD' | translate }}</button>
         </div>
       </div>
     </div>

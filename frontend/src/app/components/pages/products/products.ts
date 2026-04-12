@@ -6,7 +6,7 @@ import { BehaviorSubject, combineLatest, map, Observable, switchMap, tap, catchE
 import { ProductCard } from '../../shared/product-card/product-card';
 import { CommonModule, DecimalPipe } from '@angular/common';
 import { LoadingSpinner } from '../../layout/loading-spinner/loading-spinner';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { CartService } from '../../../core/services/cart.service';
 import { WishlistService } from '../../../core/services/wishlist.service';
 import { AuthService } from '../../../core/services/auth.service';
@@ -23,7 +23,7 @@ export class Products implements OnInit {
   filteredProducts$!: Observable<ProductList[]>;
   paginatedProducts$!: Observable<ProductList[]>;
   categories$!: Observable<string[]>;
-  
+
   // Filter States
   searchQuery$ = new BehaviorSubject<string>('');
   selectedCategory$ = new BehaviorSubject<string>('all');
@@ -51,7 +51,8 @@ export class Products implements OnInit {
     public cartService: CartService,
     public wishlistService: WishlistService,
     private route: ActivatedRoute,
-    public auth: AuthService
+    public auth: AuthService,
+    private translate: TranslateService
   ) {}
 
   ngOnInit() {
@@ -64,19 +65,19 @@ export class Products implements OnInit {
 
         let request: Observable<ProductList[]>;
         if (type === 'store') {
-          this.title = `${name} Mağazası Ürünleri`;
+          this.title = this.translate.instant('PRODUCTS.TITLE_STORE', { name });
           request = this.productService.getProductsByStore(name);
         } else if (type === 'brand') {
-          this.title = `${name} Marka Ürünler`;
+          this.title = this.translate.instant('PRODUCTS.TITLE_BRAND', { name });
           request = this.productService.getProductsByBrand(name);
         } else if (type === 'category') {
-          this.title = `${name} Kategorisi`;
+          this.title = this.translate.instant('PRODUCTS.TITLE_CATEGORY', { name });
           this.isCategoryPage = true;
           this.currentCategory = name;
           this.selectedCategory$.next(name);
           request = this.productService.getProductsByCategory(name);
         } else {
-          this.title = 'Tüm Ürünler';
+          this.title = this.translate.instant('PRODUCTS.TITLE_ALL');
           this.isCategoryPage = false;
           this.selectedCategory$.next('all');
           request = this.productService.getProducts();
@@ -104,12 +105,12 @@ export class Products implements OnInit {
       map(([products, search, category, minP, maxP, minR, sort]) => {
         let filtered = products.filter(p => {
           const nameMatch = (p.name || '').toLowerCase().includes(search.toLowerCase());
-          const categoryMatch = category === 'all' || 
-                                !p.categoryName || 
+          const categoryMatch = category === 'all' ||
+                                !p.categoryName ||
                                 p.categoryName.toLowerCase() === category.toLowerCase();
           const priceMatch = (p.price ?? 0) >= minP && (p.price ?? 0) <= maxP;
           const ratingMatch = (p.rating ?? 0) >= minR;
-          
+
           return nameMatch && categoryMatch && priceMatch && ratingMatch;
         });
 
@@ -149,7 +150,7 @@ export class Products implements OnInit {
   // Event Handlers
   updateSearch(event: Event) { this.searchQuery$.next((event.target as HTMLInputElement).value); }
   updateCategory(cat: string) { if (!this.isCategoryPage || cat === this.currentCategory) this.selectedCategory$.next(cat); }
-  
+
   updateMinPrice(event: Event) {
     const val = +(event.target as HTMLInputElement).value;
     if (val <= this.maxPrice$.value) this.minPrice$.next(val);
@@ -163,7 +164,7 @@ export class Products implements OnInit {
   }
 
   updateRating(event: Event) { this.minRating$.next(+(event.target as HTMLInputElement).value); }
-  
+
   toggleFilters() { this.isFilterOpen = !this.isFilterOpen; if (this.isFilterOpen) this.isSortOpen = false; }
   toggleSort() { this.isSortOpen = !this.isSortOpen; if (this.isSortOpen) this.isFilterOpen = false; }
   selectSort(opt: string) { this.sortOption$.next(opt); this.isSortOpen = false; }

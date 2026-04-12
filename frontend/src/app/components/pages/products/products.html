@@ -9,6 +9,7 @@
           type="text"
           (input)="updateSearch($event)"
           class="search-input"
+          placeholder="Search"
         />
       </div>
     </div>
@@ -25,13 +26,13 @@
 
         <div class="filters-dropdown custom-dropdown" [class.open]="isFilterOpen">
           <div class="filter-section">
-            <h3>Kategoriler</h3>
+            <h3>{{ 'PRODUCTS.CATEGORIES' | translate }}</h3>
             <div class="category-list">
               <button
                 *ngIf="!isCategoryPage"
                 (click)="updateCategory('all')"
                 [class.selected]="(selectedCategory$ | async) === 'all'">
-                Tümü
+                {{ 'PRODUCTS.ALL' | translate }}
               </button>
               <button
                 *ngFor="let cat of (categories$ | async)"
@@ -45,7 +46,7 @@
           </div>
 
           <div class="filter-section">
-            <h3>Fiyat Aralığı</h3>
+            <h3>{{ 'PRODUCTS.PRICE_RANGE' | translate }}</h3>
             <div class="dual-range-slider refined-slider">
               <input type="range" min="0" max="10000" step="100" [value]="minPrice$ | async" (input)="updateMinPrice($event)" class="min-range">
               <input type="range" min="0" max="10000" step="100" [value]="maxPrice$ | async" (input)="updateMaxPrice($event)" class="max-range">
@@ -56,7 +57,7 @@
           </div>
 
           <div class="filter-section">
-            <h3>Minimum Rating</h3>
+            <h3>{{ 'PRODUCTS.MIN_RATING' | translate }}</h3>
             <div class="slider-wrapper refined-slider">
               <input type="range" min="0" max="5" step="0.5" [value]="minRating$ | async" (input)="updateRating($event)">
               <div class="range-labels">
@@ -98,13 +99,13 @@
   <div class="products-layout">
     <div class="pagination-toolbar">
       <div class="page-size-control">
-        <label>Show</label>
+        <label>{{ 'PRODUCTS.SHOW' | translate }}</label>
         <select [value]="pageSize" (change)="onPageSizeChange($event)">
           <option *ngFor="let opt of pageSizeOptions" [value]="opt">{{ opt }}</option>
         </select>
-        <label>per page</label>
+        <label>{{ 'PRODUCTS.PER_PAGE' | translate }}</label>
       </div>
-      <div class="results-info">{{ totalFilteredCount }} products</div>
+      <div class="results-info">{{ totalFilteredCount }} {{ 'SIDEBAR.PRODUCTS' | translate | lowercase }}</div>
     </div>
 
     <div class="products-grid" *ngIf="paginatedProducts$ | async as products; else loading">
@@ -114,7 +115,7 @@
       </app-product-card>
 
       <div class="empty-state" *ngIf="products.length === 0">
-        <p>Aradığınız kriterde ürün bulunamadı.</p>
+        <p>{{ 'PRODUCTS.NO_PRODUCTS' | translate }}</p>
       </div>
     </div>
 
@@ -125,7 +126,7 @@
     <div class="pagination" *ngIf="totalPages > 1">
       <button class="page-btn" [disabled]="currentPage === 0" (click)="goToPage(0)">«</button>
       <button class="page-btn" [disabled]="currentPage === 0" (click)="goToPage(currentPage - 1)">‹</button>
-      <span class="page-info">Page {{ currentPage + 1 }} of {{ totalPages }}</span>
+      <span class="page-info">{{ 'PRODUCTS.PAGE_INFO' | translate:{current: currentPage + 1, total: totalPages} }}</span>
       <button class="page-btn" [disabled]="currentPage >= totalPages - 1" (click)="goToPage(currentPage + 1)">›</button>
       <button class="page-btn" [disabled]="currentPage >= totalPages - 1" (click)="goToPage(totalPages - 1)">»</button>
     </div>
