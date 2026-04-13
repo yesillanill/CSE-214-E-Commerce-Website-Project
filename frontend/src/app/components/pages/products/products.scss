@@ -320,13 +320,13 @@
 .page-btn {
   padding: 8px 14px;
   border-radius: 8px;
-  border: 1px solid rgba(255,255,255,0.1);
+  border: 1px solid var(--border-color);
   background: var(--card-bg);
   color: var(--text-color);
   cursor: pointer;
   font-size: 0.9rem;
   transition: all 0.2s;
-  &:hover:not(:disabled) { background: rgba(255,255,255,0.06); }
+  &:hover:not(:disabled) { background: var(--surface-hover); }
   &:disabled { opacity: 0.3; cursor: not-allowed; }
 }
 
@@ -367,7 +367,7 @@
   text-decoration: none;
   box-shadow: var(--card-shadow);
   transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-  border: 1px solid rgba(255,255,255,0.05);
+  border: 1px solid var(--border-subtle);
 
   &:hover {
     transform: translateY(-5px) scale(1.05);

@@ -2,6 +2,7 @@
   --bg-color: #f8f9fa;
   --card-bg: #ecedff;
   --text-color: #2d3748;
+  --text-muted: #718096;
   --card-shadow: 0px 0px 1px rgba(48, 49, 51, 0.05), 0px 4px 8px rgba(48, 49, 51, 0.1);
   --disabled-bg: rgba(0, 0, 0, 0.06);
   --disabled-text: rgba(45, 55, 72, 0.6);
@@ -9,12 +10,21 @@
   --input-border: #cbd5e0;
   --input-focus: #3182ce;
   --theme-invert: 0;
+  /* Surface & border tokens (theme-aware) */
+  --surface-1: rgba(0, 0, 0, 0.03);
+  --surface-2: rgba(0, 0, 0, 0.05);
+  --surface-hover: rgba(0, 0, 0, 0.04);
+  --border-color: rgba(0, 0, 0, 0.10);
+  --border-subtle: rgba(0, 0, 0, 0.07);
+  --skeleton-bg: rgba(0, 0, 0, 0.07);
+  --chat-bubble-bg: rgba(0, 0, 0, 0.06);
 }
 
 body.dark{
   --bg-color: #1a202c;
   --card-bg: #2d3748;
   --text-color:#ffffff;
+  --text-muted: #a0aec0;
   --card-shadow: 0px 0px 1px rgba(48, 49, 51, 0.05), 0px 4px 8px rgba(48, 49, 51, 0.1);
   --disabled-bg: rgba(255, 255, 255, 0.08);
   --disabled-text: rgba(255, 255, 255, 0.5);
@@ -22,6 +32,14 @@ body.dark{
   --input-border: #4a5568;
   --input-focus: #63b3ed;
   --theme-invert: 1;
+  /* Surface & border tokens (theme-aware) */
+  --surface-1: rgba(255, 255, 255, 0.03);
+  --surface-2: rgba(255, 255, 255, 0.05);
+  --surface-hover: rgba(255, 255, 255, 0.04);
+  --border-color: rgba(255, 255, 255, 0.10);
+  --border-subtle: rgba(255, 255, 255, 0.06);
+  --skeleton-bg: rgba(255, 255, 255, 0.08);
+  --chat-bubble-bg: rgba(255, 255, 255, 0.06);
 }
 
 body {

@@ -24,7 +24,7 @@
   overflow: hidden;
   background: var(--card-bg, #1a1a2e);
   box-shadow: var(--card-shadow, 0 8px 32px rgba(0, 0, 0, 0.3));
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--border-subtle);
 }
 
 @media (max-width: 1280px) {
@@ -39,8 +39,8 @@
   align-items: center;
   gap: 14px;
   padding: 18px 24px;
-  background: rgba(255, 255, 255, 0.03);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  background: var(--surface-1);
+  border-bottom: 1px solid var(--border-subtle);
 }
 
 .header-icon {
@@ -68,7 +68,7 @@
   align-items: center;
   gap: 6px;
   font-size: 0.78rem;
-  color: var(--text-muted, #a0a0a0);
+  color: var(--text-muted);
 }
 
 .status-dot {
@@ -96,7 +96,7 @@
   &::-webkit-scrollbar { width: 6px; }
   &::-webkit-scrollbar-track { background: transparent; }
   &::-webkit-scrollbar-thumb {
-    background: rgba(255, 255, 255, 0.1);
+    background: var(--border-color);
     border-radius: 3px;
   }
 }
@@ -131,7 +131,7 @@
   justify-content: center;
   font-size: 1.1rem;
   flex-shrink: 0;
-  background: rgba(255, 255, 255, 0.06);
+  background: var(--chat-bubble-bg);
 }
 
 .message-content {
@@ -158,9 +158,10 @@
 }
 
 .assistant-message .message-bubble {
-  background: rgba(255, 255, 255, 0.06);
+  background: var(--chat-bubble-bg);
   color: var(--text-color, #e0e0e0);
   border-bottom-left-radius: 4px;
+  border: 1px solid var(--border-subtle);
 }
 
 .message-text {
@@ -201,12 +202,12 @@
   }
 
   strong {
-    color: #e8e8ff;
+    color: var(--text-color);
     font-weight: 600;
   }
 
   em {
-    color: #c0c0e0;
+    color: var(--text-muted);
   }
 
   ul {
@@ -263,16 +264,16 @@
 
 .chat-input-area {
   padding: 16px 24px;
-  border-top: 1px solid rgba(255, 255, 255, 0.06);
-  background: rgba(255, 255, 255, 0.02);
+  border-top: 1px solid var(--border-subtle);
+  background: var(--surface-1);
 }
 
 .input-wrapper {
   display: flex;
   align-items: center;
   gap: 12px;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: var(--input-bg);
+  border: 1px solid var(--input-border);
   border-radius: 14px;
   padding: 8px 12px;
   transition: border-color 0.3s;
