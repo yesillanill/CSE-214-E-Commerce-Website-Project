@@ -1,5 +1,9 @@
 {
 
+  "ERRORS": {
+    "PROFANITY": "Your message contains inappropriate language. Please remove it and try again."
+  },
+
   "SIDEBAR":{
     "TITLE": "E-Commerce Analytics",
     "MENU": "MAIN MENU",

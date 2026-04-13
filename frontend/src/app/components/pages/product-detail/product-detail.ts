@@ -9,6 +9,7 @@ import { Review } from '../../../core/models/review.model';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { AuthService } from '../../../core/services/auth.service';
 import { SupportService } from '../../../core/services/support.service';
+import { ProfanityService } from '../../../core/services/profanity.service';
 
 import { CommonModule, DecimalPipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -36,10 +37,12 @@ export class ProductDetailPage implements OnInit{
   reportProductMessage = '';
   reportProductSubmitting = false;
   reportProductSuccess = false;
+  reportProductError = '';
   reportReviewId: number | null = null;
   reportReviewMessage = '';
   reportReviewSubmitting = false;
   reportReviewSuccess = false;
+  reportReviewError = '';
 
   constructor(
     private route: ActivatedRoute,
@@ -49,7 +52,9 @@ export class ProductDetailPage implements OnInit{
     public cart: CartService,
     public wishlist: WishlistService,
     public auth: AuthService,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private profanity: ProfanityService,
+    private translate: TranslateService
   ){}
 
   ngOnInit(): void {
@@ -78,6 +83,10 @@ export class ProductDetailPage implements OnInit{
 
   submitReview(): void {
     if (!this.currentProductId || this.reviewSubmitting) return;
+    if (this.profanity.contains(this.newComment)) {
+      this.reviewError = this.translate.instant('ERRORS.PROFANITY');
+      return;
+    }
     this.reviewSubmitting = true;
     this.reviewError = '';
 
@@ -124,10 +133,16 @@ export class ProductDetailPage implements OnInit{
     this.showReportProduct = !this.showReportProduct;
     this.reportProductMessage = '';
     this.reportProductSuccess = false;
+    this.reportProductError = '';
   }
 
   submitReportProduct() {
     if (!this.currentProductId || !this.reportProductMessage.trim() || this.reportProductSubmitting) return;
+    if (this.profanity.contains(this.reportProductMessage)) {
+      this.reportProductError = this.translate.instant('ERRORS.PROFANITY');
+      return;
+    }
+    this.reportProductError = '';
     this.reportProductSubmitting = true;
     this.supportService.createTicket({
       subject: 'Product Report',
@@ -153,11 +168,17 @@ export class ProductDetailPage implements OnInit{
       this.reportReviewId = reviewId;
       this.reportReviewMessage = '';
       this.reportReviewSuccess = false;
+      this.reportReviewError = '';
     }
   }
 
   submitReportReview(reviewId: number) {
     if (!this.reportReviewMessage.trim() || this.reportReviewSubmitting) return;
+    if (this.profanity.contains(this.reportReviewMessage)) {
+      this.reportReviewError = this.translate.instant('ERRORS.PROFANITY');
+      return;
+    }
+    this.reportReviewError = '';
     this.reportReviewSubmitting = true;
     this.supportService.createTicket({
       subject: 'Review Report',

@@ -18,6 +18,9 @@
       <textarea [(ngModel)]="newMessage"
                 [placeholder]="'SUPPORT.MESSAGE_PLACEHOLDER' | translate"
                 rows="4" maxlength="2000"></textarea>
+      @if (submitError) {
+        <p class="submit-error">{{ submitError }}</p>
+      }
       <button class="submit-btn" (click)="submitTicket()" [disabled]="submitting">
         {{ submitting ? ('SUPPORT.SUBMITTING' | translate) : ('SUPPORT.SUBMIT' | translate) }}
       </button>

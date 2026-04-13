@@ -53,6 +53,9 @@
                 rows="3"
                 maxlength="2000"
               ></textarea>
+              @if (reportProductError) {
+                <p class="review-error">{{ reportProductError }}</p>
+              }
               <button class="report-submit-btn" (click)="submitReportProduct()" [disabled]="reportProductSubmitting">
                 {{ reportProductSubmitting ? ('PRODUCT-DETAIL.SUBMITTING' | translate) : ('PRODUCT-DETAIL.REPORT_SUBMIT' | translate) }}
               </button>
@@ -133,6 +136,9 @@
                       rows="2"
                       maxlength="2000"
                     ></textarea>
+                    @if (reportReviewError) {
+                      <p class="review-error">{{ reportReviewError }}</p>
+                    }
                     <button class="report-submit-btn" (click)="submitReportReview(review.id)" [disabled]="reportReviewSubmitting">
                       {{ reportReviewSubmitting ? ('PRODUCT-DETAIL.SUBMITTING' | translate) : ('PRODUCT-DETAIL.REPORT_SUBMIT' | translate) }}
                     </button>

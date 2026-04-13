@@ -2,10 +2,11 @@ import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule, DatePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { SupportService } from '../../../core/services/support.service';
 import { SupportTicket } from '../../../core/models/support.model';
 import { LoadingSpinner } from '../../layout/loading-spinner/loading-spinner';
+import { ProfanityService } from '../../../core/services/profanity.service';
 
 @Component({
   selector: 'app-support',
@@ -23,8 +24,9 @@ export class Support implements OnInit {
   newSubject = '';
   newMessage = '';
   submitting = false;
+  submitError = '';
 
-  constructor(private supportService: SupportService, private cdr: ChangeDetectorRef) {}
+  constructor(private supportService: SupportService, private cdr: ChangeDetectorRef, private profanity: ProfanityService, private translate: TranslateService) {}
 
   ngOnInit() {
     this.loadTickets();
@@ -44,10 +46,16 @@ export class Support implements OnInit {
 
   toggleForm() {
     this.showForm = !this.showForm;
+    this.submitError = '';
   }
 
   submitTicket() {
     if (!this.newSubject.trim() || !this.newMessage.trim() || this.submitting) return;
+    if (this.profanity.contains(this.newSubject) || this.profanity.contains(this.newMessage)) {
+      this.submitError = this.translate.instant('ERRORS.PROFANITY');
+      return;
+    }
+    this.submitError = '';
     this.submitting = true;
     this.supportService
       .createTicket({ subject: this.newSubject, message: this.newMessage, type: 'GENERAL' })

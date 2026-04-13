@@ -1,5 +1,9 @@
 {
 
+  "ERRORS": {
+    "PROFANITY": "Mesajınız uygunsuz ifadeler içeriyor. Lütfen düzenleyip tekrar deneyin."
+  },
+
   "SIDEBAR":{
     "TITLE": "E-Ticaret Analitiği",
     "MENU": "ANA MENÜ",
