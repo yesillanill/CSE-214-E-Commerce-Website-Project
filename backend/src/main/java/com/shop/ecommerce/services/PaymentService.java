@@ -15,6 +15,8 @@ import com.shop.ecommerce.exceptionHandler.PaymentException;
 import com.shop.ecommerce.repository.OrderRepository;
 import com.shop.ecommerce.repository.PaymentCardRepository;
 import com.shop.ecommerce.repository.PaymentRepository;
+import com.shop.ecommerce.repository.CartRepository;
+import com.shop.ecommerce.repository.CartItemRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -36,6 +38,8 @@ public class PaymentService {
     private final PaymentRepository paymentRepository;
     private final PaymentCardRepository paymentCardRepository;
     private final OrderRepository orderRepository;
+    private final CartRepository cartRepository;
+    private final CartItemRepository cartItemRepository;
 
     /**
      * Provider'a göre ödeme işlemini yönlendirir ve sonucu veritabanına kaydeder
@@ -112,6 +116,14 @@ public class PaymentService {
 
         paymentRepository.save(payment);
 
+        // Sepeti ödeme onaylandığında temizle
+        boolean shouldClearCart = paymentStatus == PaymentStatus.SUCCESS
+                || paymentStatus == PaymentStatus.AWAITING_DELIVERY
+                || paymentStatus == PaymentStatus.PENDING && "CRYPTO".equalsIgnoreCase(request.getProvider());
+        if (shouldClearCart) {
+            clearCartForUser(order.getUser().getId());
+        }
+
         // Kart kaydetme isteği varsa (Stripe)
         if (Boolean.TRUE.equals(request.getSaveCard()) && "STRIPE".equalsIgnoreCase(request.getProvider())
                 && request.getCardToken() != null) {
@@ -139,6 +151,7 @@ public class PaymentService {
             payment.setPaidAt(LocalDateTime.now());
             payment.setProviderTransactionId(paypalOrderId);
             paymentRepository.save(payment);
+            clearCartForUser(payment.getOrder().getUser().getId());
         }
 
         return response;
@@ -183,6 +196,15 @@ public class PaymentService {
     public Payment getPaymentByOrderId(Long orderId) {
         return paymentRepository.findByOrderId(orderId)
                 .orElseThrow(() -> new PaymentException("Bu siparişe ait ödeme bulunamadı: " + orderId));
+    }
+
+    /**
+     * Kullanıcının sepetini temizler (ödeme tamamlandığında)
+     */
+    private void clearCartForUser(Long userId) {
+        cartRepository.findByUserId(userId).ifPresent(cart ->
+            cartItemRepository.deleteByCartId(cart.getCartId())
+        );
     }
 
     /**

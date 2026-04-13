@@ -76,7 +76,7 @@
       [class.disabled]="!canPlaceOrder() || isProcessing"
       [disabled]="!canPlaceOrder() || isProcessing"
       (click)="placeOrder()">
-      {{ isProcessing ? ('CHECKOUT.PROCESSING' | translate) : 'Devam Et → Ödeme' }}
+      {{ isProcessing ? ('CHECKOUT.PROCESSING' | translate) : ('CHECKOUT.CONTINUE' | translate) }}
     </button>
   </div>
 </div>

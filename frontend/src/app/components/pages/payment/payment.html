@@ -5,10 +5,10 @@
 <div class="payment-container">
   <!-- Başlık -->
   <div class="payment-header">
-    <h1 class="payment-title">💳 Ödeme</h1>
+    <h1 class="payment-title">{{ 'PAYMENT.TITLE' | translate }}</h1>
     @if(orderAmount > 0) {
     <div class="payment-amount-display">
-      <span class="amount-label">Ödenecek Tutar</span>
+      <span class="amount-label">{{ 'PAYMENT.AMOUNT_LABEL' | translate }}</span>
       <span class="amount-value">{{ orderAmount | number:'1.2-2' }} {{ currency }}</span>
     </div>
     }
@@ -18,7 +18,7 @@
   @if(isLoading) {
   <div class="loading-spinner">
     <div class="spinner"></div>
-    <p>Yükleniyor...</p>
+    <p>{{ 'PAYMENT.LOADING' | translate }}</p>
   </div>
   }
 
@@ -27,7 +27,7 @@
   <div class="payment-tabs">
     <button class="tab-btn" [class.active]="activeTab === 'STRIPE'" (click)="selectTab('STRIPE')">
       <span class="tab-icon">💳</span>
-      <span class="tab-label">Kredi Kartı</span>
+      <span class="tab-label">{{ 'PAYMENT.TAB_CREDIT_CARD' | translate }}</span>
       <span class="tab-sub">Stripe</span>
     </button>
     <button class="tab-btn" [class.active]="activeTab === 'PAYPAL'" (click)="selectTab('PAYPAL')">
@@ -37,30 +37,30 @@
     </button>
     <button class="tab-btn" [class.active]="activeTab === 'CRYPTO'" (click)="selectTab('CRYPTO')">
       <span class="tab-icon">₿</span>
-      <span class="tab-label">Kripto</span>
+      <span class="tab-label">{{ 'PAYMENT.TAB_CRYPTO' | translate }}</span>
       <span class="tab-sub">Coinbase</span>
     </button>
     <button class="tab-btn" [class.active]="activeTab === 'COD'" (click)="selectTab('COD')">
       <span class="tab-icon">🚪</span>
-      <span class="tab-label">Kapıda</span>
-      <span class="tab-sub">Nakit/Kart</span>
+      <span class="tab-label">{{ 'PAYMENT.TAB_COD' | translate }}</span>
+      <span class="tab-sub">{{ 'PAYMENT.TAB_COD_SUB' | translate }}</span>
     </button>
   </div>
 
   <!-- STRIPE SEKMESİ -->
   @if(activeTab === 'STRIPE') {
   <div class="payment-card tab-content">
-    <h2 class="section-title">💳 Stripe ile Öde</h2>
+    <h2 class="section-title">{{ 'PAYMENT.STRIPE_TITLE' | translate }}</h2>
 
     <!-- Kayıtlı Kartlar -->
     @if(savedCards.length > 0) {
     <div class="saved-cards-section">
       <div class="card-option-toggle">
         <label class="toggle-option" [class.active]="useExistingCard" (click)="useExistingCard = true">
-          <span>📋 Kayıtlı Kart</span>
+          <span>{{ 'PAYMENT.SAVED_CARD' | translate }}</span>
         </label>
         <label class="toggle-option" [class.active]="!useExistingCard" (click)="useExistingCard = false">
-          <span>➕ Yeni Kart</span>
+          <span>{{ 'PAYMENT.NEW_CARD' | translate }}</span>
         </label>
       </div>
 
@@ -84,22 +84,22 @@
     @if(!useExistingCard || savedCards.length === 0) {
     <div class="new-card-section">
       <div class="form-group">
-        <label class="form-label">Kart Sahibi</label>
-        <input type="text" class="form-input" [(ngModel)]="cardHolderName" placeholder="AD SOYAD">
+        <label class="form-label">{{ 'PAYMENT.CARD_HOLDER' | translate }}</label>
+        <input type="text" class="form-input" [(ngModel)]="cardHolderName" [placeholder]="'PAYMENT.CARD_HOLDER_PLACEHOLDER' | translate">
       </div>
 
       <!-- GÜVENLİK: Bu div içine Stripe Elements iframe'i mount edilir -->
       <!-- Kart numarası ve CVV ASLA Angular değişkenine atanmaz -->
       <div class="form-group">
-        <label class="form-label">Kart Bilgileri</label>
+        <label class="form-label">{{ 'PAYMENT.CARD_INFO' | translate }}</label>
         <div id="stripe-card-element" class="stripe-element-container"></div>
-        <p class="security-note">🔒 Kart bilgileriniz Stripe tarafından güvenle işlenir</p>
+        <p class="security-note">{{ 'PAYMENT.STRIPE_SECURITY' | translate }}</p>
       </div>
 
       <!-- Kartı Kaydet -->
       <label class="save-card-check">
         <input type="checkbox" [(ngModel)]="saveCardChecked">
-        <span>Bu kartı sonraki ödemeler için kaydet</span>
+        <span>{{ 'PAYMENT.SAVE_CARD' | translate }}</span>
       </label>
     </div>
     }
@@ -109,9 +109,9 @@
             [disabled]="isProcessing || (!useExistingCard && !cardHolderName)"
             (click)="payWithStripe()">
       @if(isProcessing) {
-        <span class="btn-spinner"></span> İşleniyor...
+        <span class="btn-spinner"></span> {{ 'PAYMENT.PROCESSING' | translate }}
       } @else {
-        🔒 Stripe ile Öde — {{ orderAmount | number:'1.2-2' }} {{ currency }}
+        {{ 'PAYMENT.STRIPE_PAY_BTN' | translate }} {{ orderAmount | number:'1.2-2' }} {{ currency }}
       }
     </button>
   </div>
@@ -120,28 +120,27 @@
   <!-- PAYPAL SEKMESİ -->
   @if(activeTab === 'PAYPAL') {
   <div class="payment-card tab-content">
-    <h2 class="section-title">🅿️ PayPal ile Öde</h2>
-    <p class="provider-desc">PayPal hesabınız üzerinden güvenli ödeme yapın.</p>
+    <h2 class="section-title">{{ 'PAYMENT.PAYPAL_TITLE' | translate }}</h2>
+    <p class="provider-desc">{{ 'PAYMENT.PAYPAL_DESC' | translate }}</p>
+
+    <div class="paypal-unavailable-notice">
+      <span class="warning-icon">⚠️</span>
+      <span>{{ 'PAYMENT.PAYPAL_UNAVAILABLE' | translate }}</span>
+    </div>
 
     <div class="paypal-section">
       <div id="paypal-button-container" class="paypal-btn-container"></div>
-      @if(!paypalReady && !paypalButtonRendered) {
-      <div class="loading-indicator">
-        <div class="spinner small"></div>
-        <span>PayPal yükleniyor...</span>
-      </div>
-      }
     </div>
 
-    <p class="security-note">🔒 PayPal güvenli ödeme altyapısı kullanılmaktadır</p>
+    <p class="security-note">{{ 'PAYMENT.PAYPAL_SECURITY' | translate }}</p>
   </div>
   }
 
   <!-- KRİPTO SEKMESİ -->
   @if(activeTab === 'CRYPTO') {
   <div class="payment-card tab-content">
-    <h2 class="section-title">₿ Kripto ile Öde</h2>
-    <p class="provider-desc">Bitcoin, Ethereum ve diğer kripto paralarla ödeme yapın. Coinbase Commerce altyapısı kullanılmaktadır.</p>
+    <h2 class="section-title">{{ 'PAYMENT.CRYPTO_TITLE' | translate }}</h2>
+    <p class="provider-desc">{{ 'PAYMENT.CRYPTO_DESC' | translate }}</p>
 
     <div class="crypto-info">
       <div class="crypto-icons">
@@ -150,43 +149,42 @@
         <span class="crypto-icon">◎</span>
         <span class="crypto-icon">Ł</span>
       </div>
-      <p class="crypto-note">Ödeme butonuna tıkladığınızda Coinbase Commerce ödeme sayfasına yönlendirileceksiniz.</p>
+      <p class="crypto-note">{{ 'PAYMENT.CRYPTO_NOTE' | translate }}</p>
     </div>
 
     <button class="pay-btn crypto-btn"
             [disabled]="isProcessing"
             (click)="payWithCrypto()">
       @if(isProcessing) {
-        <span class="btn-spinner"></span> Yönlendiriliyor...
+        <span class="btn-spinner"></span> {{ 'PAYMENT.REDIRECTING' | translate }}
       } @else {
-        ₿ Kripto ile Öde — {{ orderAmount | number:'1.2-2' }} {{ currency }}
+        {{ 'PAYMENT.CRYPTO_PAY_BTN' | translate }} {{ orderAmount | number:'1.2-2' }} {{ currency }}
       }
     </button>
 
-    <p class="security-note">🔒 Coinbase Commerce güvenli kripto ödeme altyapısı</p>
+    <p class="security-note">{{ 'PAYMENT.CRYPTO_SECURITY' | translate }}</p>
   </div>
   }
 
   <!-- KAPIDA ÖDEME SEKMESİ -->
   @if(activeTab === 'COD') {
   <div class="payment-card tab-content">
-    <h2 class="section-title">🚪 Kapıda Ödeme</h2>
-    <p class="provider-desc">Siparişinizi teslim alırken nakit veya kart ile ödeme yapın.</p>
+    <h2 class="section-title">{{ 'PAYMENT.COD_TITLE' | translate }}</h2>
+    <p class="provider-desc">{{ 'PAYMENT.COD_DESC' | translate }}</p>
 
     <!-- Limit Uyarısı -->
     @if(isCodOverLimit) {
     <div class="cod-warning">
       <span class="warning-icon">⚠️</span>
-      <span>Kapıda ödeme {{ codMaxAmount | number:'1.2-2' }} {{ currency }} üzerindeki siparişler için geçerli değildir.
-        Sipariş tutarınız: {{ orderAmount | number:'1.2-2' }} {{ currency }}</span>
+      <span>{{ 'PAYMENT.COD_OVER_LIMIT' | translate: {limit: (codMaxAmount | number:'1.2-2'), amount: (orderAmount | number:'1.2-2'), currency: currency} }}</span>
     </div>
     }
 
     <!-- Teslimat Notu -->
     <div class="form-group">
-      <label class="form-label">Teslimat Notu (Opsiyonel)</label>
+      <label class="form-label">{{ 'PAYMENT.DELIVERY_NOTE' | translate }}</label>
       <textarea class="form-textarea" [(ngModel)]="deliveryNotes"
-                placeholder="Kapı kodu, kat bilgisi, teslimat saati tercihi..."
+                [placeholder]="'PAYMENT.DELIVERY_NOTE_PLACEHOLDER' | translate"
                 rows="3"></textarea>
     </div>
 
@@ -194,14 +192,14 @@
             [disabled]="isProcessing || isCodOverLimit"
             (click)="payWithCod()">
       @if(isProcessing) {
-        <span class="btn-spinner"></span> İşleniyor...
+        <span class="btn-spinner"></span> {{ 'PAYMENT.PROCESSING' | translate }}
       } @else {
-        🚪 Kapıda Ödemeyi Onayla — {{ orderAmount | number:'1.2-2' }} {{ currency }}
+        {{ 'PAYMENT.COD_CONFIRM_BTN' | translate }} {{ orderAmount | number:'1.2-2' }} {{ currency }}
       }
     </button>
 
     @if(!isCodOverLimit) {
-    <p class="cod-info">✅ Teslimat sırasında ödeme yapılacaktır. Sipariş onaylandıktan sonra iptal edilemez.</p>
+    <p class="cod-info">{{ 'PAYMENT.COD_INFO' | translate }}</p>
     }
   </div>
   }
@@ -209,25 +207,25 @@
   <!-- ÖDEME GEÇMİŞİ -->
   <div class="payment-card history-section">
     <button class="history-toggle" (click)="toggleHistory()">
-      <span>📋 Ödeme Geçmişi</span>
+      <span>{{ 'PAYMENT.HISTORY_TITLE' | translate }}</span>
       <span class="toggle-arrow" [class.open]="showHistory">▼</span>
     </button>
 
     @if(showHistory) {
     <div class="history-content">
       @if(paymentHistory.length === 0) {
-      <p class="empty-history">Henüz ödeme kaydı bulunmuyor.</p>
+      <p class="empty-history">{{ 'PAYMENT.NO_HISTORY' | translate }}</p>
       } @else {
       <div class="history-table-wrap">
         <table class="history-table">
           <thead>
             <tr>
               <th>ID</th>
-              <th>Tarih</th>
-              <th>Tutar</th>
-              <th>Yöntem</th>
-              <th>Durum</th>
-              <th>İşlem No</th>
+              <th>{{ 'PAYMENT.HISTORY_DATE' | translate }}</th>
+              <th>{{ 'PAYMENT.HISTORY_AMOUNT' | translate }}</th>
+              <th>{{ 'PAYMENT.HISTORY_METHOD' | translate }}</th>
+              <th>{{ 'PAYMENT.HISTORY_STATUS' | translate }}</th>
+              <th>{{ 'PAYMENT.HISTORY_TXN' | translate }}</th>
             </tr>
           </thead>
           <tbody>
@@ -259,7 +257,7 @@
 
   <!-- Geri Butonu -->
   <div class="payment-actions">
-    <a routerLink="/checkout" class="back-link">← Checkout'a Dön</a>
+    <a routerLink="/checkout" class="back-link">{{ 'PAYMENT.BACK_TO_CHECKOUT' | translate }}</a>
   </div>
   }
 </div>

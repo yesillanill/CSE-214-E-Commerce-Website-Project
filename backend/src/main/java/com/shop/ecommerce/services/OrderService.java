@@ -124,9 +124,6 @@ public class OrderService {
 
         order = orderRepository.save(order);
 
-        // Clear the cart
-        cartItemRepository.deleteByCartId(cart.getCartId());
-
         return toDTO(order);
     }
 

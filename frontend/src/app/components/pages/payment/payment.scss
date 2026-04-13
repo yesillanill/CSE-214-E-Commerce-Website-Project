@@ -383,8 +383,25 @@
 }
 
 /* PayPal */
+.paypal-unavailable-notice {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: rgba(239, 68, 68, 0.08);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  border-radius: 10px;
+  padding: 14px 18px;
+  margin: 16px 0;
+  font-size: 0.9rem;
+  color: #dc2626;
+
+  .warning-icon {
+    font-size: 1.1rem;
+    flex-shrink: 0;
+  }
+}
+
 .paypal-section {
-  min-height: 60px;
   margin: 20px 0;
 }
 
