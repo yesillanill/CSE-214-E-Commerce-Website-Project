@@ -145,13 +145,16 @@ export class Settings implements OnInit, OnDestroy, CanComponentDeactivate {
   addCard() {
     const user = this.auth.getUser();
     if (!user) return;
+    // GÜVENLİK: CVV ve tam kart numarası artık kaydedilmez (PCI DSS)
+    // Gerçek entegrasyonda burada Stripe Elements kullanılmalıdır
     const card: PaymentCardCreate = {
       userId: user.id,
       cardHolderName: this.newCard.cardHolderName || '',
-      cardNumber: this.newCard.cardNumber || '',
+      cardToken: this.newCard.cardToken || 'pm_test_placeholder',
+      lastFour: this.newCard.lastFour || '0000',
       expiryMonth: this.newCard.expiryMonth || 1,
       expiryYear: this.newCard.expiryYear || 2026,
-      cvv: this.newCard.cvv || ''
+      paymentProvider: 'STRIPE'
     };
     this.cardService.addCard(card);
     this.showAddCardForm = false;

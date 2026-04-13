@@ -105,8 +105,6 @@ export class AuthService {
       password: '' // Güvenlik: şifre saklanmaz
     };
 
-    this.currentUserSubject.next(user);
-
     if (remember) {
       localStorage.setItem('token', response.token);
       localStorage.setItem('user', JSON.stringify(user));
@@ -114,6 +112,8 @@ export class AuthService {
       sessionStorage.setItem('token', response.token);
       sessionStorage.setItem('user', JSON.stringify(user));
     }
+
+    this.currentUserSubject.next(user);
   }
 
   logout() {

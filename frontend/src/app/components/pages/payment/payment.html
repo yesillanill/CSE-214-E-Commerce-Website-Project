@@ -1,0 +1,265 @@
+<!-- Çoklu Ödeme Yöntemi Sayfası -->
+<!-- GÜVENLİK: Kart numarası ve CVV bu template'te hiçbir Angular değişkenine bağlı DEĞİLDİR -->
+<!-- GÜVENLİK: Stripe Elements iframe olarak çalışır, hassas veri Angular'a gelmez -->
+
+<div class="payment-container">
+  <!-- Başlık -->
+  <div class="payment-header">
+    <h1 class="payment-title">💳 Ödeme</h1>
+    @if(orderAmount > 0) {
+    <div class="payment-amount-display">
+      <span class="amount-label">Ödenecek Tutar</span>
+      <span class="amount-value">{{ orderAmount | number:'1.2-2' }} {{ currency }}</span>
+    </div>
+    }
+  </div>
+
+  <!-- Yükleniyor -->
+  @if(isLoading) {
+  <div class="loading-spinner">
+    <div class="spinner"></div>
+    <p>Yükleniyor...</p>
+  </div>
+  }
+
+  <!-- Ödeme Sekmeleri -->
+  @if(!isLoading) {
+  <div class="payment-tabs">
+    <button class="tab-btn" [class.active]="activeTab === 'STRIPE'" (click)="selectTab('STRIPE')">
+      <span class="tab-icon">💳</span>
+      <span class="tab-label">Kredi Kartı</span>
+      <span class="tab-sub">Stripe</span>
+    </button>
+    <button class="tab-btn" [class.active]="activeTab === 'PAYPAL'" (click)="selectTab('PAYPAL')">
+      <span class="tab-icon">🅿️</span>
+      <span class="tab-label">PayPal</span>
+      <span class="tab-sub">Sandbox</span>
+    </button>
+    <button class="tab-btn" [class.active]="activeTab === 'CRYPTO'" (click)="selectTab('CRYPTO')">
+      <span class="tab-icon">₿</span>
+      <span class="tab-label">Kripto</span>
+      <span class="tab-sub">Coinbase</span>
+    </button>
+    <button class="tab-btn" [class.active]="activeTab === 'COD'" (click)="selectTab('COD')">
+      <span class="tab-icon">🚪</span>
+      <span class="tab-label">Kapıda</span>
+      <span class="tab-sub">Nakit/Kart</span>
+    </button>
+  </div>
+
+  <!-- STRIPE SEKMESİ -->
+  @if(activeTab === 'STRIPE') {
+  <div class="payment-card tab-content">
+    <h2 class="section-title">💳 Stripe ile Öde</h2>
+
+    <!-- Kayıtlı Kartlar -->
+    @if(savedCards.length > 0) {
+    <div class="saved-cards-section">
+      <div class="card-option-toggle">
+        <label class="toggle-option" [class.active]="useExistingCard" (click)="useExistingCard = true">
+          <span>📋 Kayıtlı Kart</span>
+        </label>
+        <label class="toggle-option" [class.active]="!useExistingCard" (click)="useExistingCard = false">
+          <span>➕ Yeni Kart</span>
+        </label>
+      </div>
+
+      @if(useExistingCard) {
+      <div class="saved-cards-list">
+        @for(card of savedCards; track card.id) {
+        <label class="saved-card-item" [class.selected]="selectedCardId === card.id">
+          <input type="radio" name="savedCard" [value]="card.id" [(ngModel)]="selectedCardId">
+          <span class="card-brand-badge">{{ card.cardType }}</span>
+          <span class="card-number-display">•••• •••• •••• {{ card.lastFour }}</span>
+          <span class="card-expiry">{{ card.expiryMonth }}/{{ card.expiryYear }}</span>
+          <span class="card-holder-name">{{ card.cardHolderName }}</span>
+        </label>
+        }
+      </div>
+      }
+    </div>
+    }
+
+    <!-- Yeni Kart Formu -->
+    @if(!useExistingCard || savedCards.length === 0) {
+    <div class="new-card-section">
+      <div class="form-group">
+        <label class="form-label">Kart Sahibi</label>
+        <input type="text" class="form-input" [(ngModel)]="cardHolderName" placeholder="AD SOYAD">
+      </div>
+
+      <!-- GÜVENLİK: Bu div içine Stripe Elements iframe'i mount edilir -->
+      <!-- Kart numarası ve CVV ASLA Angular değişkenine atanmaz -->
+      <div class="form-group">
+        <label class="form-label">Kart Bilgileri</label>
+        <div id="stripe-card-element" class="stripe-element-container"></div>
+        <p class="security-note">🔒 Kart bilgileriniz Stripe tarafından güvenle işlenir</p>
+      </div>
+
+      <!-- Kartı Kaydet -->
+      <label class="save-card-check">
+        <input type="checkbox" [(ngModel)]="saveCardChecked">
+        <span>Bu kartı sonraki ödemeler için kaydet</span>
+      </label>
+    </div>
+    }
+
+    <!-- Stripe Ödeme Butonu -->
+    <button class="pay-btn stripe-btn"
+            [disabled]="isProcessing || (!useExistingCard && !cardHolderName)"
+            (click)="payWithStripe()">
+      @if(isProcessing) {
+        <span class="btn-spinner"></span> İşleniyor...
+      } @else {
+        🔒 Stripe ile Öde — {{ orderAmount | number:'1.2-2' }} {{ currency }}
+      }
+    </button>
+  </div>
+  }
+
+  <!-- PAYPAL SEKMESİ -->
+  @if(activeTab === 'PAYPAL') {
+  <div class="payment-card tab-content">
+    <h2 class="section-title">🅿️ PayPal ile Öde</h2>
+    <p class="provider-desc">PayPal hesabınız üzerinden güvenli ödeme yapın.</p>
+
+    <div class="paypal-section">
+      <div id="paypal-button-container" class="paypal-btn-container"></div>
+      @if(!paypalReady && !paypalButtonRendered) {
+      <div class="loading-indicator">
+        <div class="spinner small"></div>
+        <span>PayPal yükleniyor...</span>
+      </div>
+      }
+    </div>
+
+    <p class="security-note">🔒 PayPal güvenli ödeme altyapısı kullanılmaktadır</p>
+  </div>
+  }
+
+  <!-- KRİPTO SEKMESİ -->
+  @if(activeTab === 'CRYPTO') {
+  <div class="payment-card tab-content">
+    <h2 class="section-title">₿ Kripto ile Öde</h2>
+    <p class="provider-desc">Bitcoin, Ethereum ve diğer kripto paralarla ödeme yapın. Coinbase Commerce altyapısı kullanılmaktadır.</p>
+
+    <div class="crypto-info">
+      <div class="crypto-icons">
+        <span class="crypto-icon">₿</span>
+        <span class="crypto-icon">Ξ</span>
+        <span class="crypto-icon">◎</span>
+        <span class="crypto-icon">Ł</span>
+      </div>
+      <p class="crypto-note">Ödeme butonuna tıkladığınızda Coinbase Commerce ödeme sayfasına yönlendirileceksiniz.</p>
+    </div>
+
+    <button class="pay-btn crypto-btn"
+            [disabled]="isProcessing"
+            (click)="payWithCrypto()">
+      @if(isProcessing) {
+        <span class="btn-spinner"></span> Yönlendiriliyor...
+      } @else {
+        ₿ Kripto ile Öde — {{ orderAmount | number:'1.2-2' }} {{ currency }}
+      }
+    </button>
+
+    <p class="security-note">🔒 Coinbase Commerce güvenli kripto ödeme altyapısı</p>
+  </div>
+  }
+
+  <!-- KAPIDA ÖDEME SEKMESİ -->
+  @if(activeTab === 'COD') {
+  <div class="payment-card tab-content">
+    <h2 class="section-title">🚪 Kapıda Ödeme</h2>
+    <p class="provider-desc">Siparişinizi teslim alırken nakit veya kart ile ödeme yapın.</p>
+
+    <!-- Limit Uyarısı -->
+    @if(isCodOverLimit) {
+    <div class="cod-warning">
+      <span class="warning-icon">⚠️</span>
+      <span>Kapıda ödeme {{ codMaxAmount | number:'1.2-2' }} {{ currency }} üzerindeki siparişler için geçerli değildir.
+        Sipariş tutarınız: {{ orderAmount | number:'1.2-2' }} {{ currency }}</span>
+    </div>
+    }
+
+    <!-- Teslimat Notu -->
+    <div class="form-group">
+      <label class="form-label">Teslimat Notu (Opsiyonel)</label>
+      <textarea class="form-textarea" [(ngModel)]="deliveryNotes"
+                placeholder="Kapı kodu, kat bilgisi, teslimat saati tercihi..."
+                rows="3"></textarea>
+    </div>
+
+    <button class="pay-btn cod-btn"
+            [disabled]="isProcessing || isCodOverLimit"
+            (click)="payWithCod()">
+      @if(isProcessing) {
+        <span class="btn-spinner"></span> İşleniyor...
+      } @else {
+        🚪 Kapıda Ödemeyi Onayla — {{ orderAmount | number:'1.2-2' }} {{ currency }}
+      }
+    </button>
+
+    @if(!isCodOverLimit) {
+    <p class="cod-info">✅ Teslimat sırasında ödeme yapılacaktır. Sipariş onaylandıktan sonra iptal edilemez.</p>
+    }
+  </div>
+  }
+
+  <!-- ÖDEME GEÇMİŞİ -->
+  <div class="payment-card history-section">
+    <button class="history-toggle" (click)="toggleHistory()">
+      <span>📋 Ödeme Geçmişi</span>
+      <span class="toggle-arrow" [class.open]="showHistory">▼</span>
+    </button>
+
+    @if(showHistory) {
+    <div class="history-content">
+      @if(paymentHistory.length === 0) {
+      <p class="empty-history">Henüz ödeme kaydı bulunmuyor.</p>
+      } @else {
+      <div class="history-table-wrap">
+        <table class="history-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Tarih</th>
+              <th>Tutar</th>
+              <th>Yöntem</th>
+              <th>Durum</th>
+              <th>İşlem No</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for(payment of paymentHistory; track payment.id) {
+            <tr>
+              <td>#{{ payment.id }}</td>
+              <td>{{ payment.paidAt ? (payment.paidAt | date:'dd.MM.yyyy HH:mm') : '-' }}</td>
+              <td class="amount-cell">{{ payment.amount | number:'1.2-2' }} {{ payment.currency || 'USD' }}</td>
+              <td>
+                <span class="provider-badge">
+                  {{ getProviderIcon(payment.paymentProvider) }} {{ payment.paymentProvider }}
+                </span>
+              </td>
+              <td>
+                <span class="status-badge" [ngClass]="getStatusBadgeClass(payment.paymentStatus)">
+                  {{ payment.paymentStatus }}
+                </span>
+              </td>
+              <td class="txn-id">{{ payment.providerTransactionId || '-' }}</td>
+            </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+      }
+    </div>
+    }
+  </div>
+
+  <!-- Geri Butonu -->
+  <div class="payment-actions">
+    <a routerLink="/checkout" class="back-link">← Checkout'a Dön</a>
+  </div>
+  }
+</div>

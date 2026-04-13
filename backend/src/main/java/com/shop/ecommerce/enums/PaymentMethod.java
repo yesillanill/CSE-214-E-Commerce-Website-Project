@@ -1,3 +1,5 @@
+// Ödeme yöntemi enum'u
+// Mevcut yöntemler korunarak yeni provider tabanlı yöntemler eklendi
 package com.shop.ecommerce.enums;
 
 public enum PaymentMethod {
@@ -5,5 +7,8 @@ public enum PaymentMethod {
     DEBIT_CARD,
     BANK_TRANSFER,
     CASH_ON_DELIVERY,
-    DIGITAL_WALLET
+    DIGITAL_WALLET,
+    STRIPE,
+    PAYPAL,
+    CRYPTO
 }

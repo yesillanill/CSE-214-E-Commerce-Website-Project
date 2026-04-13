@@ -28,11 +28,13 @@ import { Wishlist } from './components/pages/wishlist/wishlist';
 import { Products } from './components/pages/products/products';
 import { Checkout } from './components/pages/checkout/checkout';
 import { MyReviews } from './components/pages/my-reviews/my-reviews';
+import { PaymentPage } from './components/pages/payment/payment';
 
 export const routes: Routes = [
   {path:"", component: Home},
   {path:'cart', component:Cart},
   {path:'checkout', component:Checkout, canActivate: [roleGuard], data: {role:'IndividualUser'}},
+  {path:'payment', component:PaymentPage, canActivate: [roleGuard], data: {role:'IndividualUser'}},
   {path: 'wishlist', component: Wishlist},
   {path:"analytics", component: Analytics},
   {path:"ai-assistant", component: AiAssistant},

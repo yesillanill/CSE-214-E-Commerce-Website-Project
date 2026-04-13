@@ -99,6 +99,13 @@
 		</dependency>
 
 
+		<!-- Stripe Ödeme Entegrasyonu -->
+		<dependency>
+			<groupId>com.stripe</groupId>
+			<artifactId>stripe-java</artifactId>
+			<version>25.1.0</version>
+		</dependency>
+
 	</dependencies>
 
 	<build>

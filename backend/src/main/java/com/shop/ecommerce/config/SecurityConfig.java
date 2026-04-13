@@ -79,6 +79,22 @@ public class SecurityConfig {
                         .requestMatchers("/api/orders/**").hasRole("INDIVIDUAL")
                         .requestMatchers("/api/cards/**").hasRole("INDIVIDUAL")
 
+                        // Ödeme endpoint'leri — INDIVIDUAL kullanıcılar
+                        .requestMatchers("/api/payments/create").hasRole("INDIVIDUAL")
+                        .requestMatchers("/api/payments/cards/**").hasRole("INDIVIDUAL")
+                        .requestMatchers("/api/payments/history/**").hasRole("INDIVIDUAL")
+                        .requestMatchers("/api/payments/order/**").hasRole("INDIVIDUAL")
+                        .requestMatchers("/api/payments/paypal/capture").hasRole("INDIVIDUAL")
+
+                        // Ödeme webhook'ları — public (Stripe/PayPal dışarıdan çağırır)
+                        .requestMatchers("/api/payments/webhook/**").permitAll()
+
+                        // Ödeme konfigürasyon endpoint'leri — authenticated
+                        .requestMatchers("/api/payments/config/**").authenticated()
+
+                        // Kapıda ödeme teslimat onayı — CORPORATE veya ADMIN
+                        .requestMatchers("/api/payments/*/cod-confirm").hasAnyRole("CORPORATE", "ADMIN")
+
                         // CORPORATE rolü — Envanter, Mağaza Siparişleri, Mağaza, Kargo
                         .requestMatchers("/api/inventory/**").hasRole("CORPORATE")
                         .requestMatchers("/api/store-orders/**").hasRole("CORPORATE")

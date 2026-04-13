@@ -35,8 +35,14 @@ export class CartService {
   }
 
   private loadCart(userId: number) {
-    this.http.get<CartItem[]>(`${this.apiUrl}/${userId}`).subscribe(items => {
-      this.cartSignal.set(items);
+    this.http.get<CartItem[]>(`${this.apiUrl}/${userId}`).subscribe({
+      next: (items) => {
+        this.cartSignal.set(items);
+        console.log("Cart loaded for user", userId, items);
+      },
+      error: (err) => {
+        console.error("Cart API failed to load items for user", userId, err);
+      }
     });
   }
 

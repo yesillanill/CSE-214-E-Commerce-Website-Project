@@ -132,14 +132,15 @@
 
     @if(showAddCardForm){
     <div class="add-card-form">
+      <p class="security-note" style="font-size:0.8rem;opacity:0.6;margin-bottom:12px;">🔒 Kart kaydetmek için Ödeme sayfasını kullanmanızı öneriyoruz. Stripe Elements üzerinden güvenli kart kaydı yapılır.</p>
       <div class="row">
         <div class="form-group col-md-6 mb-3">
           <label>{{ 'SETTINGS.CARD_HOLDER' | translate }}</label>
           <input type="text" class="form-control" [(ngModel)]="newCard.cardHolderName" placeholder="AD SOYAD">
         </div>
         <div class="form-group col-md-6 mb-3">
-          <label>{{ 'SETTINGS.CARD_NUMBER' | translate }}</label>
-          <input type="text" class="form-control" [(ngModel)]="newCard.cardNumber" placeholder="1234567890123456" maxlength="16">
+          <label>Son 4 Hane</label>
+          <input type="text" class="form-control" [(ngModel)]="newCard.lastFour" placeholder="4242" maxlength="4">
         </div>
         <div class="form-group col-md-3 mb-3">
           <label>{{ 'SETTINGS.MONTH' | translate }}</label>
@@ -157,11 +158,7 @@
             }
           </select>
         </div>
-        <div class="form-group col-md-3 mb-3">
-          <label>CVV</label>
-          <input type="password" class="form-control" [(ngModel)]="newCard.cvv" placeholder="***" maxlength="3">
-        </div>
-        <div class="form-group col-md-3 mb-3 d-flex align-items-end">
+        <div class="form-group col-md-6 mb-3 d-flex align-items-end">
           <button class="custom-submit-btn w-100" (click)="addCard()">{{ 'SETTINGS.SAVE_CARD' | translate }}</button>
         </div>
       </div>

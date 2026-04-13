@@ -22,8 +22,14 @@ export class WishlistService {
   }
 
   private loadWishlist(userId: number) {
-    this.http.get<WishlistItem[]>(`${this.apiUrl}/${userId}`).subscribe(items => {
-      this.wishlistSignal.set(items);
+    this.http.get<WishlistItem[]>(`${this.apiUrl}/${userId}`).subscribe({
+      next: (items) => {
+        this.wishlistSignal.set(items);
+        console.log("Wishlist loaded for user", userId, items);
+      },
+      error: (err) => {
+        console.error("Wishlist API failed to load items for user", userId, err);
+      }
     });
   }
 

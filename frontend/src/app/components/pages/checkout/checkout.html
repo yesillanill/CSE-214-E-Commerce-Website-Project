@@ -68,112 +68,7 @@
     }
   </div>
 
-  <!-- Payment Method -->
-  <div class="checkout-card">
-    <h2 class="section-title">{{ 'CHECKOUT.PAYMENT_METHOD' | translate }}</h2>
-    <div class="radio-group">
-      <label class="radio-option" [class.selected]="paymentMethod === 'CASH_ON_DELIVERY'">
-        <input type="radio" name="payment" value="CASH_ON_DELIVERY" [(ngModel)]="paymentMethod">
-        <div class="radio-content">
-          <span class="radio-label">{{ 'CHECKOUT.CASH_ON_DELIVERY' | translate }}</span>
-          <span class="radio-desc">{{ 'CHECKOUT.CASH_ON_DELIVERY_DESC' | translate }}</span>
-        </div>
-      </label>
-      <label class="radio-option" [class.selected]="paymentMethod === 'CREDIT_CARD'">
-        <input type="radio" name="payment" value="CREDIT_CARD" [(ngModel)]="paymentMethod">
-        <div class="radio-content">
-          <span class="radio-label">{{ 'CHECKOUT.CREDIT_CARD' | translate }}</span>
-          <span class="radio-desc">{{ 'CHECKOUT.CREDIT_CARD_DESC' | translate }}</span>
-        </div>
-      </label>
-    </div>
-
-    @if(paymentMethod === 'CREDIT_CARD'){
-    <div class="card-payment-section">
-      <!-- Card selection -->
-      <div class="card-option-group">
-        <label class="radio-option compact" [class.selected]="cardOption === 'existing'">
-          <input type="radio" name="cardOption" value="existing" [(ngModel)]="cardOption">
-          <span class="radio-label">{{ 'CHECKOUT.USE_EXISTING_CARD' | translate }}</span>
-        </label>
-        <label class="radio-option compact" [class.selected]="cardOption === 'new'">
-          <input type="radio" name="cardOption" value="new" [(ngModel)]="cardOption">
-          <span class="radio-label">{{ 'CHECKOUT.NEW_CARD' | translate }}</span>
-        </label>
-      </div>
-
-      @if(cardOption === 'existing'){
-      <div class="existing-cards">
-        @for(card of cardService.getCards(); track card.id){
-          <label class="card-select-item" [class.selected]="selectedCardId === card.id">
-            <input type="radio" name="selectedCard" [value]="card.id" [(ngModel)]="selectedCardId">
-            <span class="card-type-badge">{{ card.cardType }}</span>
-            <span class="card-masked">{{ card.maskedCardNumber }}</span>
-            <span class="card-exp">{{ card.expiryMonth }}/{{ card.expiryYear }}</span>
-          </label>
-        } @empty {
-          <p class="no-cards-msg">{{ 'CHECKOUT.NO_CARDS' | translate }} <a routerLink="/settings">{{ 'CHECKOUT.NO_CARDS_LINK' | translate }}</a></p>
-        }
-      </div>
-      }
-
-      @if(cardOption === 'new'){
-      <div class="new-card-form">
-        <div class="form-row">
-          <div class="form-group">
-            <label>{{ 'CHECKOUT.CARD_HOLDER' | translate }}</label>
-            <input type="text" class="form-input" [(ngModel)]="newCard.cardHolderName" placeholder="AD SOYAD">
-          </div>
-          <div class="form-group">
-            <label>{{ 'CHECKOUT.CARD_NUMBER' | translate }}</label>
-            <input type="text" class="form-input" [(ngModel)]="newCard.cardNumber" placeholder="1234 5678 9012 3456" maxlength="16">
-          </div>
-        </div>
-        <div class="form-row">
-          <div class="form-group small">
-            <label>{{ 'CHECKOUT.MONTH' | translate }}</label>
-            <select class="form-input" [(ngModel)]="newCard.expiryMonth">
-              @for(m of [1,2,3,4,5,6,7,8,9,10,11,12]; track m){
-                <option [value]="m">{{ m < 10 ? '0'+m : m }}</option>
-              }
-            </select>
-          </div>
-          <div class="form-group small">
-            <label>{{ 'CHECKOUT.YEAR' | translate }}</label>
-            <select class="form-input" [(ngModel)]="newCard.expiryYear">
-              @for(y of [2026,2027,2028,2029,2030,2031]; track y){
-                <option [value]="y">{{ y }}</option>
-              }
-            </select>
-          </div>
-          <div class="form-group small">
-            <label>CVV</label>
-            <input type="password" class="form-input" [(ngModel)]="newCard.cvv" placeholder="***" maxlength="3">
-          </div>
-        </div>
-      </div>
-      }
-
-      <!-- Installments -->
-      <div class="installments-section">
-        <h3>{{ 'CHECKOUT.INSTALLMENTS' | translate }}</h3>
-        <div class="installment-options">
-          @for(opt of [{v:1,l:'CHECKOUT.SINGLE_PAYMENT'},{v:3,l:'CHECKOUT.INSTALLMENTS_3'},{v:6,l:'CHECKOUT.INSTALLMENTS_6'},{v:9,l:'CHECKOUT.INSTALLMENTS_9'}]; track opt.v){
-            <label class="installment-option" [class.selected]="installments === opt.v">
-              <input type="radio" name="installments" [value]="opt.v" [(ngModel)]="installments">
-              <div class="installment-content">
-                <span class="installment-label">{{ opt.l | translate }}</span>
-                <span class="installment-amount">{{ (cart.getTotal() / opt.v) | number:'1.2-2' }} {{ 'CHECKOUT.PER_MONTH' | translate }}</span>
-              </div>
-            </label>
-          }
-        </div>
-      </div>
-    </div>
-    }
-  </div>
-
-  <!-- Place Order -->
+  <!-- Place Order & Go to Payment -->
   <div class="checkout-actions">
     <a routerLink="/cart" class="back-btn">{{ 'CHECKOUT.BACK_TO_CART' | translate }}</a>
     <button
@@ -181,7 +76,7 @@
       [class.disabled]="!canPlaceOrder() || isProcessing"
       [disabled]="!canPlaceOrder() || isProcessing"
       (click)="placeOrder()">
-      {{ isProcessing ? ('CHECKOUT.PROCESSING' | translate) : ('CHECKOUT.PLACE_ORDER' | translate) }}
+      {{ isProcessing ? ('CHECKOUT.PROCESSING' | translate) : 'Devam Et → Ödeme' }}
     </button>
   </div>
 </div>
