@@ -91,24 +91,49 @@ export class AiAssistant implements AfterViewChecked {
         this.cdr.markForCheck();
         
         if (res.chart) {
-            setTimeout(() => {
-                try {
-                    const chartElementId = 'chart-' + assistantMsgId;
-                    const chartData = JSON.parse(res.chart!);
-                    const layout = chartData.layout || {};
-                    
-                    // Adjust layout to fit container and dark schema naturally
-                    layout.autosize = true;
-                    layout.margin = { l: 20, r: 20, t: 40, b: 20 };
-                    layout.paper_bgcolor = 'transparent';
-                    layout.plot_bgcolor = 'transparent';
-                    layout.font = { color: '#ffffff' };
-                    
-                    Plotly.newPlot(chartElementId, chartData.data, layout, { responsive: true, displayModeBar: false });
-                } catch (e) {
-                    console.error("Plotly rendering error:", e);
+            const chartDataToRender = JSON.parse(res.chart!);
+            const chartElementId = 'chart-' + assistantMsgId;
+            let retryCount = 0;
+            const maxRetries = 10;
+
+            const attemptRender = () => {
+                const el = document.getElementById(chartElementId);
+                if (el) {
+                    try {
+                        const layout = chartDataToRender.layout || {};
+                        layout.autosize = true;
+                        // Increase bottom margin to make room for legend
+                        layout.margin = { l: 20, r: 20, t: 40, b: 80 };
+                        layout.paper_bgcolor = 'transparent';
+                        layout.plot_bgcolor = 'transparent';
+                        layout.font = { color: '#ffffff', size: 11 };
+                        
+                        // Move legend to the bottom horizontally to prevent overlapping
+                        layout.legend = {
+                            orientation: 'h',
+                            yanchor: 'top',
+                            y: -0.1,
+                            xanchor: 'center',
+                            x: 0.5
+                        };
+
+                        Plotly.newPlot(chartElementId, chartDataToRender.data, layout, { responsive: true, displayModeBar: false })
+                          .then(() => {
+                              setTimeout(() => {
+                                  Plotly.Plots.resize(el as any);
+                              }, 50);
+                          });
+                    } catch (e) {
+                         console.error("Plotly rendering error:", e);
+                    }
+                } else if (retryCount < maxRetries) {
+                    retryCount++;
+                    setTimeout(attemptRender, 100);
+                } else {
+                    console.error('Chart element not found in DOM after retries: ', chartElementId);
                 }
-            }, 100);
+            };
+            setTimeout(attemptRender, 50);
         }
       },
       error: (err) => {

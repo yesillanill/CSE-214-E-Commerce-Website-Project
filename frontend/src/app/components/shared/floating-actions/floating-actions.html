@@ -45,10 +45,14 @@
       <div class="chatbot-messages" #chatMessagesContainer>
         @for (msg of chatMessages; track msg.timestamp) {
           <div class="chat-msg" [class.user-msg]="msg.role === 'user'" [class.assistant-msg]="msg.role === 'assistant'">
-            <div class="msg-bubble">
-              <p style="white-space: pre-wrap;">{{ msg.content }}</p>
+            <div class="msg-bubble" (click)="onMessageClick($event)">
+              @if (msg.role === 'assistant') {
+                <div class="message-text" [innerHTML]="renderMarkdown(msg.content)"></div>
+              } @else {
+                <p style="white-space: pre-wrap;" class="message-text">{{ msg.content }}</p>
+              }
               @if (msg.chart) {
-                <div [id]="'chart-' + msg.id" class="chat-chart" style="width: 100%; height: 300px; margin-top: 10px;"></div>
+                <div [id]="'chart-' + msg.id" class="chat-chart" style="width: 100%; min-width: 250px; height: 300px; min-height: 300px; margin-top: 10px; display: block;"></div>
               }
             </div>
             <span class="msg-time">{{ msg.timestamp | date:'HH:mm' }}</span>
