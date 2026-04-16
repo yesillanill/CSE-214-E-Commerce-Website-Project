@@ -24,6 +24,9 @@ public class ChatController {
     private final ChatContextService chatContextService;
     private final ChatSqlService chatSqlService;
     private final JwtService jwtService;
+    private final org.springframework.security.core.userdetails.UserDetailsService userDetailsService;
+    private final com.shop.ecommerce.repository.UserRepository userRepository;
+    private final com.shop.ecommerce.repository.StoreRepository storeRepository;
 
     @PostMapping("/ask")
     public ResponseEntity<Map<String, String>> askQuestion(
@@ -33,35 +36,36 @@ public class ChatController {
         String question = request.getOrDefault("question", "").toString();
         String role = "GUEST";
         Long userId = null;
+        Long corpId = 0L;
 
-        // Extract userId and role from JWT token if present (source of truth)
-        if (authHeader != null && authHeader.startsWith("Bearer ")) {
-            try {
-                String token = authHeader.substring(7);
-                userId = jwtService.extractUserId(token);
-                String tokenRole = jwtService.extractRole(token);
-                if (tokenRole != null) {
-                    role = tokenRole;
-                }
-            } catch (Exception e) {
-                log.warn("Failed to extract user info from JWT token", e);
-            }
-        }
-
-        // Fallback to request body if no valid token
-        if (userId == null) {
+        // Extract user identity deeply from DB mapped SecurityContext
+        org.springframework.security.core.Authentication auth = org.springframework.security.core.context.SecurityContextHolder.getContext().getAuthentication();
+        if (auth != null && auth.getPrincipal() instanceof org.springframework.security.core.userdetails.UserDetails) {
+             String email = ((org.springframework.security.core.userdetails.UserDetails) auth.getPrincipal()).getUsername();
+             com.shop.ecommerce.entities.User user = userRepository.findByEmail(email).orElse(null);
+             if (user != null) {
+                 userId = user.getId();
+                 role = user.getRole().name();
+                 
+                 if ("CORPORATE".equals(role)) {
+                     com.shop.ecommerce.entities.Store store = storeRepository.findByOwner(user).orElse(null);
+                     if (store != null) {
+                         corpId = store.getId();
+                     }
+                 }
+             }
+        } else if (userId == null) {
+            // Fallback for unauthenticated access (Guest)
             Object userIdObj = request.get("userId");
             if (userIdObj != null) {
                 try {
-                    userId = Long.parseLong(userIdObj.toString());
-                    role = request.getOrDefault("role", "GUEST").toString();
-                } catch (NumberFormatException e) {
-                    // userId remains null — treated as guest
-                }
+                     // userId remains null internally to prevent spoofing a user id without token
+                     role = "GUEST";
+                } catch (Exception e) {}
             }
         }
 
-        log.debug("Chat request - role: {}, userId: {}", role, userId);
+        log.debug("Chat request - role: {}, userId: {}, corpId: {}", role, userId, corpId);
 
         // Try Python API First for Analytics
         try {
@@ -70,6 +74,7 @@ public class ChatController {
                     "question", question,
                     "role_type", role,
                     "user_id", userId != null ? userId : 0,
+                    "corp_id", corpId,
                     "jwt_token", authHeader != null ? authHeader.replace("Bearer ", "") : ""
             );
             
@@ -94,10 +99,7 @@ public class ChatController {
 
         log.debug("Python AI OUT_OF_SCOPE or failed. Routing to Java Context Gemini Services.");
 
-        // Build context from database for fallback
         String context = chatContextService.buildContext(question, role, userId);
-
-        // Ask Gemini with context
         String answer = geminiService.ask(question, role, context);
 
         return ResponseEntity.ok(Map.of("answer", answer));
@@ -112,24 +114,31 @@ public class ChatController {
             @RequestBody ChatSqlExecutionDTO request,
             @RequestHeader(value = "Authorization", required = false) String authHeader) {
 
-        // Extract user info from JWT for audit logging
-        if (authHeader != null && authHeader.startsWith("Bearer ")) {
-            try {
-                String token = authHeader.substring(7);
-                Long tokenUserId = jwtService.extractUserId(token);
-                String tokenRole = jwtService.extractRole(token);
-                if (tokenUserId != null) {
-                    request.setUserId(tokenUserId);
-                }
-                if (tokenRole != null) {
-                    request.setRoleType(tokenRole);
-                }
-            } catch (Exception e) {
-                log.warn("Failed to extract user info from JWT for SQL execution", e);
-            }
+        // Validate execution safety dynamically via SecurityContext (DB truth)
+        org.springframework.security.core.Authentication auth = org.springframework.security.core.context.SecurityContextHolder.getContext().getAuthentication();
+        if (auth != null && auth.getPrincipal() instanceof org.springframework.security.core.userdetails.UserDetails) {
+             String email = ((org.springframework.security.core.userdetails.UserDetails) auth.getPrincipal()).getUsername();
+             com.shop.ecommerce.entities.User user = userRepository.findByEmail(email).orElse(null);
+             if (user != null) {
+                 request.setUserId(user.getId());
+                 request.setRoleType(user.getRole().name());
+                 request.setCorpId(0L);
+                 
+                 if ("CORPORATE".equals(user.getRole().name())) {
+                     com.shop.ecommerce.entities.Store store = storeRepository.findByOwner(user).orElse(null);
+                     if (store != null) {
+                         request.setCorpId(store.getId());
+                     }
+                 }
+             }
+        } else {
+             // Unauthenticated execution from Python AI (Guest mode)
+             request.setUserId(0L);
+             request.setRoleType("GUEST");
+             request.setCorpId(0L);
         }
 
-        log.info("SQL execution request from userId={}, roleType={}", request.getUserId(), request.getRoleType());
+        log.info("SQL execution request from userId={}, corpId={}, roleType={}", request.getUserId(), request.getCorpId(), request.getRoleType());
 
         ChatSqlResultDTO result = chatSqlService.executeQuery(request);
 

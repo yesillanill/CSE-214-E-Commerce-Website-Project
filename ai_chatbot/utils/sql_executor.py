@@ -41,6 +41,7 @@ def execute_sql(state: AgentState) -> AgentState:
         payload = {
             "sql": sql,
             "userId": state.get("user_id"),
+            "corpId": state.get("corp_id", 0),
             "roleType": state.get("role_type", ""),
         }
 

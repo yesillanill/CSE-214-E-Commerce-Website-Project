@@ -11,12 +11,14 @@ class ChatRequest(BaseModel):
     role_type: str = "INDIVIDUAL"
     jwt_token: str = ""
     user_id: int = 0
+    corp_id: int = 0
 
 @app.post("/api/chat")
 async def chat_endpoint(request: ChatRequest):
     initial_state = {
         "question": request.question,
         "user_id": request.user_id,
+        "corp_id": request.corp_id,
         "role_type": request.role_type,
         "jwt_token": request.jwt_token,
         "sql_query": None,
@@ -34,23 +36,7 @@ async def chat_endpoint(request: ChatRequest):
         status = "IN_SCOPE" if result.get("is_in_scope") else "OUT_OF_SCOPE"
         answer = result.get("final_answer") or "Bir sonuç üretilemedi."
         
-        chart_json_str = None
-        viz_code = result.get("visualization_code")
-        if viz_code:
-            try:
-                df = result.get("query_result")
-                safe_globals = {
-                    "go": go,
-                    "pd": pd,
-                    "data": df if isinstance(df, pd.DataFrame) else pd.DataFrame(),
-                    "__builtins__": __builtins__,
-                }
-                exec(viz_code, safe_globals)
-                fig = safe_globals.get("fig")
-                if fig:
-                    chart_json_str = fig.to_json()
-            except Exception as e:
-                print(f"Viz rendering failed: {e}")
+        chart_json_str = result.get("visualization_code")
                 
         return {
             "status": status,

@@ -77,4 +77,8 @@ def analysis_agent(state: AgentState) -> AgentState:
 
     logger.info("Analysis Agent produced %d char response.", len(analysis))
 
+    role_type = state.get("role_type", "GUEST").upper()
+    if role_type == "GUEST":
+         analysis += "\n\n💡 *Daha detaylı analizler, sipariş takibi ve kişiselleştirilmiş verileriniz için lütfen giriş yapın veya üye olun!*"
+
     return {**state, "final_answer": analysis}

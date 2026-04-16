@@ -23,55 +23,51 @@ STEP 1: Decide if a chart would add value.
 - YES for: comparisons, trends over time, distributions, rankings, proportions, breakdowns.
 - NO for: single scalar values, simple counts, yes/no answers, text results, or results with only 1 row and 1 column.
 
-STEP 2: If YES, output executable Python code that creates a Plotly chart.
+STEP 2: If YES, output a valid JSON object representing a Plotly chart configuration.
 
 RULES:
 1. First line of your response must be exactly YES or NO.
-2. If YES, the remaining lines must be ONLY Python code — no markdown, no backticks, no explanation.
-3. Use `plotly.graph_objects` (already imported as `go`) and `pandas` (already imported as `pd`).
-4. Create a variable named `fig` using `go.Figure()`.
-5. The `data` variable is already available as a pandas DataFrame.
-6. Do NOT call fig.show() or fig.write_html() or any display/IO function.
-7. Do NOT import anything — `go` and `pd` are already available.
-8. Use a professional dark theme with these colors: #667eea, #764ba2, #f093fb, #4facfe, #00f2fe, #43e97b, #fa709a.
-9. Set layout with: template='plotly_dark', paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)'.
-10. Add proper title, axis labels, and legend.
-11. For bar charts, use marker_color with gradient colors from the palette.
-12. For pie charts, use the color palette and add hole=0.4 for donut style.
+2. If YES, the remaining lines must be ONLY valid JSON — no markdown, no backticks, no python code, no explanations.
+3. The JSON object must have a `data` array containing Plotly traces (e.g. type: 'bar', x: [...], y: [...]).
+4. The JSON object can optionally have a `layout` object with title, axes configurations, etc.
+5. Do NOT include JavaScript function calls or eval() or unquoted executable code in the JSON.
+6. Use professional colors for the traces (#667eea, #764ba2, #f093fb, #4facfe).
+7. Ensure all values in x and y correspond to the provided query results.
 """
 
+import json
 
-def _extract_code(response: str) -> str:
-    """Extract Python code from the Gemini response (after the YES line)."""
+def _extract_json(response: str) -> str:
+    """Extract JSON code from the Gemini response (after the YES line)."""
     lines = response.strip().split("\n")
-    if not lines:
+    if len(lines) <= 1:
         return ""
-    # Skip the YES line and any blank lines
-    code_lines = []
+    
+    # Strip the YES line
+    json_lines = []
     started = False
     for line in lines:
         if not started:
             if line.strip().upper() == "YES":
                 started = True
             continue
-        # Remove any markdown code fencing
+        # Remove markdown if any
         if line.strip().startswith("```"):
             continue
-        code_lines.append(line)
-    return "\n".join(code_lines).strip()
+        json_lines.append(line)
+        
+    extracted = "\n".join(json_lines).strip()
+    return extracted
 
 
 def visualization_agent(state: AgentState) -> AgentState:
-    """Decide on visualization and optionally generate Plotly chart code.
-
-    The generated code is executed in a sandboxed namespace with only
-    `go` (plotly.graph_objects) and `pd` (pandas) available.
+    """Decide on visualization and optionally generate Plotly JSON.
 
     Args:
         state: Current state with query_result (DataFrame) and question.
 
     Returns:
-        Updated state with visualization_code (if chart was generated).
+        Updated state with visualization_code (JSON string) if chart was generated.
     """
     df = state.get("query_result")
     question = state.get("question", "")
@@ -109,32 +105,24 @@ def visualization_agent(state: AgentState) -> AgentState:
         logger.info("Viz Agent decided: NO chart needed.")
         return {**state, "visualization_code": None}
 
-    # Extract and execute the code safely
-    code = _extract_code(response)
-    if not code:
-        logger.warning("Viz Agent said YES but no code was generated.")
+    # Extract JSON safe payload
+    json_str = _extract_json(response)
+    if not json_str:
+        logger.warning("Viz Agent said YES but no JSON was generated.")
         return {**state, "visualization_code": None}
 
-    logger.info("Viz Agent generated %d chars of Plotly code.", len(code))
+    logger.info("Viz Agent generated %d chars of Plotly JSON.", len(json_str))
 
-    # Execute in sandboxed namespace
+    # Validate JSON
     try:
-        safe_globals = {
-            "go": go,
-            "pd": pd,
-            "data": df,
-            "__builtins__": __builtins__,
-        }
-        exec(code, safe_globals)
-        fig = safe_globals.get("fig")
-
-        if fig is None:
-            logger.warning("Viz Agent code executed but no 'fig' variable was created.")
-            return {**state, "visualization_code": None}
-
-        # Store the code and the figure will be re-created in main.py
-        return {**state, "visualization_code": code}
+        json_data = json.loads(json_str)
+        if "data" not in json_data:
+             logger.warning("Viz Agent JSON missing 'data' key.")
+             return {**state, "visualization_code": None}
+             
+        # Secure execution: we just return the JSON string. No exec() and no JS.
+        return {**state, "visualization_code": json_str}
 
     except Exception as e:
-        logger.error("Viz Agent code execution failed: %s", str(e)[:300])
+        logger.error("Viz Agent JSON parsing failed: %s", str(e)[:300])
         return {**state, "visualization_code": None}

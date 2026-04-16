@@ -62,8 +62,8 @@ public class SecurityConfig {
                         // Public — Chat AI assistant (JWT token varsa kullanıcı tanınır, yoksa guest)
                         .requestMatchers("/api/chat/ask").permitAll()
 
-                        // Text2SQL chatbot — SQL execution requires authentication
-                        .requestMatchers("/api/chat/execute").authenticated()
+                        // Text2SQL chatbot — SQL execution
+                        .requestMatchers("/api/chat/execute").permitAll()
 
                         // Support — Individual ve Corporate kullanıcılar destek talebi oluşturabilir
                         .requestMatchers(HttpMethod.POST, "/api/support").authenticated()

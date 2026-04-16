@@ -14,5 +14,6 @@ import lombok.NoArgsConstructor;
 public class ChatSqlExecutionDTO {
     private String sql;
     private Long userId;
+    private Long corpId;
     private String roleType;
 }

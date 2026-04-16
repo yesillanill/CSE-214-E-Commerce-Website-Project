@@ -4,7 +4,7 @@ import com.shop.ecommerce.dto.ChatSqlExecutionDTO;
 import com.shop.ecommerce.dto.ChatSqlResultDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -21,7 +21,7 @@ import java.util.regex.Pattern;
 @Slf4j
 public class ChatSqlService {
 
-    private final JdbcTemplate jdbcTemplate;
+    private final NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
     private static final int MAX_ROWS = 1000;
 
@@ -30,6 +30,30 @@ public class ChatSqlService {
      */
     private static final Pattern DANGEROUS_SQL = Pattern.compile(
             "\\b(INSERT|UPDATE|DELETE|DROP|CREATE|ALTER|TRUNCATE|EXEC|EXECUTE|GRANT|REVOKE|MERGE|CALL)\\b",
+            Pattern.CASE_INSENSITIVE
+    );
+
+    /**
+     * Prohibited syntax (multi-statement or exfiltration)
+     */
+    private static final Pattern PROHIBITED_SYNTAX = Pattern.compile(
+            "(;|--|/\\*|\\*\\/|xp_)",
+            Pattern.CASE_INSENSITIVE
+    );
+
+    /**
+     * Select * detection
+     */
+    private static final Pattern SELECT_STAR = Pattern.compile(
+            "\\bSELECT\\s+\\*\\b",
+            Pattern.CASE_INSENSITIVE
+    );
+
+    /**
+     * Sensitive columns detection
+     */
+    private static final Pattern SENSITIVE_COLUMNS = Pattern.compile(
+            "\\b(password|password_hash|api_key|secret_key|oauth_token|private_key|session_token|credit_card|cvv|ssn)\\b",
             Pattern.CASE_INSENSITIVE
     );
 
@@ -62,10 +86,8 @@ public class ChatSqlService {
 
         sql = sql.trim();
 
-        // Check for valid start (SELECT or WITH)
         if (!VALID_START.matcher(sql).find()) {
-            log.warn("ChatSqlService — rejected non-SELECT query from userId={}: {}",
-                    dto.getUserId(), sql.substring(0, Math.min(sql.length(), 100)));
+            log.warn("ChatSqlService — rejected non-SELECT query from userId={}", dto.getUserId());
             return ChatSqlResultDTO.builder()
                     .error("Only SELECT queries are allowed.")
                     .results(List.of())
@@ -74,12 +96,40 @@ public class ChatSqlService {
                     .build();
         }
 
-        // Check for dangerous statements
         if (DANGEROUS_SQL.matcher(sql).find()) {
-            log.warn("ChatSqlService — rejected dangerous SQL from userId={}: {}",
-                    dto.getUserId(), sql.substring(0, Math.min(sql.length(), 100)));
+            log.warn("ChatSqlService — rejected dangerous SQL from userId={}", dto.getUserId());
             return ChatSqlResultDTO.builder()
                     .error("Query contains disallowed statements.")
+                    .results(List.of())
+                    .columns(List.of())
+                    .rowCount(0)
+                    .build();
+        }
+
+        if (PROHIBITED_SYNTAX.matcher(sql).find()) {
+            log.warn("ChatSqlService — rejected prohibited syntax from userId={}", dto.getUserId());
+            return ChatSqlResultDTO.builder()
+                    .error("Query contains prohibited characters like multi-statement terminators or comments.")
+                    .results(List.of())
+                    .columns(List.of())
+                    .rowCount(0)
+                    .build();
+        }
+
+        if (SELECT_STAR.matcher(sql).find()) {
+            log.warn("ChatSqlService — rejected SELECT * from userId={}", dto.getUserId());
+            return ChatSqlResultDTO.builder()
+                    .error("SELECT * is not allowed. Please specify columns explicitly.")
+                    .results(List.of())
+                    .columns(List.of())
+                    .rowCount(0)
+                    .build();
+        }
+
+        if (SENSITIVE_COLUMNS.matcher(sql).find()) {
+            log.warn("ChatSqlService — rejected sensitive column query from userId={}", dto.getUserId());
+            return ChatSqlResultDTO.builder()
+                    .error("Query requests prohibited sensitive columns.")
                     .results(List.of())
                     .columns(List.of())
                     .rowCount(0)
@@ -94,11 +144,15 @@ public class ChatSqlService {
                 execSql = sql + " LIMIT " + MAX_ROWS;
             }
 
-            log.info("ChatSqlService — executing query for userId={}, roleType={}: {}",
-                    dto.getUserId(), dto.getRoleType(),
-                    execSql.substring(0, Math.min(execSql.length(), 200)));
+            log.info("ChatSqlService — executing parameterized query for userId={}, corpId={}, roleType={}",
+                    dto.getUserId(), dto.getCorpId(), dto.getRoleType());
 
-            List<Map<String, Object>> results = jdbcTemplate.queryForList(execSql);
+            Map<String, Object> params = Map.of(
+                    "userId", dto.getUserId() != null ? dto.getUserId() : 0L,
+                    "corpId", dto.getCorpId() != null ? dto.getCorpId() : 0L
+            );
+
+            List<Map<String, Object>> results = namedParameterJdbcTemplate.queryForList(execSql, params);
 
             // Extract column names from first row (if any)
             List<String> columns = new ArrayList<>();
@@ -115,11 +169,9 @@ public class ChatSqlService {
                     .build();
 
         } catch (Exception e) {
-            // Log the full error server-side, return a safe message to the client
             log.error("ChatSqlService — query execution failed for userId={}: {}",
                     dto.getUserId(), e.getMessage());
 
-            // Return the error message (for the Error Agent to fix), but strip stack traces
             String safeError = e.getMessage();
             if (safeError != null && safeError.length() > 500) {
                 safeError = safeError.substring(0, 500);

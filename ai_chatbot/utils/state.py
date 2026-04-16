@@ -25,6 +25,7 @@ class AgentState(TypedDict):
     """
     question: str
     user_id: int
+    corp_id: int
     role_type: str
     jwt_token: str
     sql_query: Optional[str]

@@ -62,6 +62,7 @@ def auth_callback(username: str, password: str):
             metadata={
                 "token": token,
                 "user_id": user_id,
+                "corp_id": data.get("storeId", 0),  # Example of extracting if available
                 "role": role,
                 "name": name,
                 "surname": surname,
@@ -117,6 +118,7 @@ async def on_message(message: cl.Message):
     initial_state: AgentState = {
         "question": message.content,
         "user_id": user_id,
+        "corp_id": user.metadata.get("corp_id", 0),
         "role_type": role_type,
         "jwt_token": jwt_token,
         "sql_query": None,
@@ -143,20 +145,11 @@ async def on_message(message: cl.Message):
         answer = result.get("final_answer") or "Bir sonuç üretilemedi."
         elements = []
 
-        # If there's visualization code, execute and render it
+        # If there's visualization code (JSON), parse and render it
         viz_code = result.get("visualization_code")
         if viz_code:
             try:
-                df = result.get("query_result")
-                safe_globals = {
-                    "go": go,
-                    "pd": pd,
-                    "data": df if isinstance(df, pd.DataFrame) else pd.DataFrame(),
-                    "__builtins__": __builtins__,
-                }
-                exec(viz_code, safe_globals)
-                fig = safe_globals.get("fig")
-
+                fig = pio.from_json(viz_code)
                 if fig:
                     fig_html = pio.to_html(fig, full_html=False, include_plotlyjs="cdn")
                     elements.append(

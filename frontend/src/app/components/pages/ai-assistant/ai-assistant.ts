@@ -1,4 +1,4 @@
-import { Component, ViewChild, ElementRef, AfterViewChecked, ChangeDetectorRef } from '@angular/core';
+import { Component, ViewChild, ElementRef, AfterViewChecked, ChangeDetectorRef, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
@@ -6,6 +6,8 @@ import { ChatService, ChatMessage } from '../../../core/services/chat.service';
 import { AuthService } from '../../../core/services/auth.service';
 import { Router } from '@angular/router';
 import * as Plotly from 'plotly.js-dist-min';
+import DOMPurify from 'dompurify';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-ai-asistant',
@@ -14,7 +16,7 @@ import * as Plotly from 'plotly.js-dist-min';
   templateUrl: './ai-assistant.html',
   styleUrl: './ai-assistant.scss',
 })
-export class AiAssistant implements AfterViewChecked {
+export class AiAssistant implements OnInit, OnDestroy, AfterViewChecked {
   @ViewChild('chatContainer') chatContainer!: ElementRef;
 
   messages: ChatMessage[] = [];
@@ -22,24 +24,38 @@ export class AiAssistant implements AfterViewChecked {
   isLoading = false;
   private shouldScroll = false;
 
+  private authSub!: Subscription;
+
   constructor(
     private chatService: ChatService,
     public auth: AuthService,
     private router: Router,
     private cdr: ChangeDetectorRef
   ) {
-    const isLoggedIn = this.auth.isLoggedIn();
-    const userName = this.auth.getUser()?.name || '';
+  }
 
-    let greeting = isLoggedIn
+  ngOnInit() {
+    this.authSub = this.auth.currentUser$.subscribe((user) => {
+      this.resetChat(!!user, user?.name);
+    });
+  }
+
+  ngOnDestroy() {
+    this.authSub?.unsubscribe();
+  }
+
+  private resetChat(isLoggedIn: boolean, userName?: string) {
+    this.messages = [];
+    const greeting = isLoggedIn
       ? `Merhaba ${userName}! 👋 Ben yapay zeka asistanınızım. Ürünler, kategoriler, mağazalar veya kişisel bilgileriniz hakkında sorular sorabilirsiniz.`
-      : `Merhaba! 👋 Ben yapay zeka asistanınızım. Ürünler, kategoriler ve mağazalar hakkında sorular sorabilirsiniz. Kişisel bilgileriniz için giriş yapmanız gerekir.`;
+      : `Merhaba! 👋 Ben yapay zeka asistanınızım. Ürünler, kategoriler ve mağazalar hakkında sorular sorabilirsiniz. Siparişlerinizi takip etmek ve detaylı bilgiler için lütfen giriş yapın.`;
 
     this.messages.push({
       role: 'assistant',
       content: greeting,
       timestamp: new Date()
     });
+    this.cdr.markForCheck();
   }
 
   ngAfterViewChecked() {
@@ -105,8 +121,8 @@ export class AiAssistant implements AfterViewChecked {
                         // Increase bottom margin to make room for legend
                         layout.margin = { l: 20, r: 20, t: 40, b: 80 };
                         layout.paper_bgcolor = 'transparent';
-                        layout.plot_bgcolor = 'transparent';
-                        layout.font = { color: '#ffffff', size: 11 };
+                        const isDark = document.body.classList.contains('dark');
+                        layout.font = { color: isDark ? '#ffffff' : '#2d3748', size: 11 };
                         
                         // Move legend to the bottom horizontally to prevent overlapping
                         layout.legend = {
@@ -188,10 +204,13 @@ export class AiAssistant implements AfterViewChecked {
 
     // Clean up <br> inside <ul> and after <ul>
     html = html.replace(/<br><ul>/g, '<ul>');
-    html = html.replace(/<\/ul><br>/g, '</ul>');
     html = html.replace(/<\/li><br><li>/g, '</li><li>');
 
-    return html;
+    // Make sure DOMPurify allows target="_blank" and our custom class/data attributes
+    return DOMPurify.sanitize(html, {
+        ALLOWED_TAGS: ['b', 'i', 'em', 'strong', 'a', 'p', 'br', 'ul', 'li', 'span', 'div'],
+        ALLOWED_ATTR: ['href', 'target', 'rel', 'class', 'data-internal']
+    });
   }
 
   /**

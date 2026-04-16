@@ -10,6 +10,7 @@ import { ChatService, ChatMessage } from '../../../core/services/chat.service';
 import { TranslateModule } from '@ngx-translate/core';
 import * as Plotly from 'plotly.js-dist-min';
 import { ChangeDetectorRef } from '@angular/core';
+import DOMPurify from 'dompurify';
 
 @Component({
   selector: 'app-floating-actions',
@@ -31,6 +32,8 @@ export class FloatingActions implements OnInit, OnDestroy, AfterViewChecked {
   // Route
   isAiAssistantPage = false;
   private routerSub!: Subscription;
+
+  private authUserSub!: Subscription;
 
   constructor(
     public auth: AuthService,
@@ -55,7 +58,9 @@ export class FloatingActions implements OnInit, OnDestroy, AfterViewChecked {
         }
       });
 
-    this.initChat();
+    this.authUserSub = this.auth.currentUser$.subscribe((user) => {
+      this.resetChat(!!user, user?.name);
+    });
   }
 
   ngAfterViewChecked(): void {
@@ -68,19 +73,18 @@ export class FloatingActions implements OnInit, OnDestroy, AfterViewChecked {
 
   ngOnDestroy(): void {
     this.routerSub?.unsubscribe();
+    this.authUserSub?.unsubscribe();
   }
 
   private checkRoute(url: string): void {
     this.isAiAssistantPage = url === '/ai-assistant';
   }
 
-  private initChat(): void {
-    const isLoggedIn = this.auth.isLoggedIn();
-    const userName = this.auth.getUser()?.name || '';
-
+  private resetChat(isLoggedIn: boolean, userName?: string): void {
+    this.chatMessages = [];
     const greeting = isLoggedIn
       ? `Merhaba ${userName}! 🤖 Size nasıl yardımcı olabilirim?`
-      : `Merhaba! 🤖 Size ürünler, kategoriler ve mağazalar hakkında yardımcı olabilirim. Kişisel bilgiler için giriş yapmanız gerekir.`;
+      : `Merhaba! 🤖 Size ürünler, kategoriler ve mağazalar hakkında yardımcı olabilirim. Siparişlerinizi takip etmek için giriş yapmanız gerekir.`;
 
     this.chatMessages.push({
       id: 'msg-' + Date.now().toString(),
@@ -88,6 +92,10 @@ export class FloatingActions implements OnInit, OnDestroy, AfterViewChecked {
       content: greeting,
       timestamp: new Date()
     });
+    // Use detectChanges safely since this is floating actions
+    try {
+      this.cdr.detectChanges();
+    } catch(e) {}
   }
 
   toggleChat(): void {
@@ -141,8 +149,8 @@ export class FloatingActions implements OnInit, OnDestroy, AfterViewChecked {
                         // Increase bottom margin to make room for legend
                         layout.margin = { l: 20, r: 20, t: 40, b: 80 };
                         layout.paper_bgcolor = 'transparent';
-                        layout.plot_bgcolor = 'transparent';
-                        layout.font = { color: '#ffffff', size: 11 };
+                        const isDark = document.body.classList.contains('dark');
+                        layout.font = { color: isDark ? '#ffffff' : '#2d3748', size: 11 };
                         
                         // Move legend to the bottom horizontally to prevent overlapping
                         layout.legend = {
@@ -213,11 +221,13 @@ export class FloatingActions implements OnInit, OnDestroy, AfterViewChecked {
 
     // Newlines
     html = html.replace(/\n/g, '<br>');
-    html = html.replace(/<br><ul>/g, '<ul>');
-    html = html.replace(/<\/ul><br>/g, '</ul>');
     html = html.replace(/<\/li><br><li>/g, '</li><li>');
 
-    return html;
+    // Make sure DOMPurify allows target="_blank" and our custom class/data attributes
+    return DOMPurify.sanitize(html, {
+        ALLOWED_TAGS: ['b', 'i', 'em', 'strong', 'a', 'p', 'br', 'ul', 'li', 'span', 'div'],
+        ALLOWED_ATTR: ['href', 'target', 'rel', 'class', 'data-internal']
+    });
   }
 
   onMessageClick(event: Event) {

@@ -3,15 +3,22 @@ package com.shop.ecommerce.controller;
 import com.shop.ecommerce.dto.order.CheckoutRequest;
 import com.shop.ecommerce.dto.order.OrderDTO;
 import com.shop.ecommerce.services.OrderService;
+import com.shop.ecommerce.repository.UserRepository;
+import com.shop.ecommerce.entities.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/orders")
@@ -19,6 +26,16 @@ import java.time.LocalDate;
 public class OrderController {
 
     private final OrderService orderService;
+    private final UserRepository userRepository;
+
+    private User getAuthenticatedUser() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth != null && auth.getPrincipal() instanceof UserDetails) {
+            String email = ((UserDetails) auth.getPrincipal()).getUsername();
+            return userRepository.findByEmail(email).orElse(null);
+        }
+        return null;
+    }
 
     @GetMapping
     public ResponseEntity<Page<OrderDTO>> getOrders(
@@ -30,6 +47,12 @@ public class OrderController {
             @RequestParam(required = false) LocalDate startDate,
             @RequestParam(required = false) LocalDate endDate
     ) {
+        User authUser = getAuthenticatedUser();
+        // Ensure user can only request their own orders
+        if (authUser == null || (!authUser.getId().equals(userId) && !authUser.getRole().name().equals("ADMIN"))) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
+
         Sort sort = sortDir.equalsIgnoreCase("asc") ? Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
         Pageable pageable = PageRequest.of(page, size, sort);
         return ResponseEntity.ok(orderService.getOrdersByUser(userId, pageable, startDate, endDate));
@@ -38,6 +61,13 @@ public class OrderController {
     @PostMapping("/checkout")
     public ResponseEntity<?> checkout(@RequestBody CheckoutRequest request) {
         try {
+            User authUser = getAuthenticatedUser();
+            // Ensure user can only checkout for themselves
+            if (authUser == null || !authUser.getId().equals(request.getUserId())) {
+                 return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                       .body(java.util.Map.of("message", "Erişim engellendi. / Access Denied."));
+            }
+
             return ResponseEntity.ok(orderService.checkout(request));
         } catch (Exception e) {
             System.err.println("Checkout failed: " + e.getMessage());
