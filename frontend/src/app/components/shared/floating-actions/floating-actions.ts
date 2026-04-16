@@ -10,6 +10,7 @@ import { ChatService, ChatMessage } from '../../../core/services/chat.service';
 import { TranslateModule } from '@ngx-translate/core';
 import * as Plotly from 'plotly.js-dist-min';
 import { ChangeDetectorRef } from '@angular/core';
+import { ThemeService } from '../../../core/services/theme.service';
 import DOMPurify from 'dompurify';
 
 @Component({
@@ -32,14 +33,15 @@ export class FloatingActions implements OnInit, OnDestroy, AfterViewChecked {
   // Route
   isAiAssistantPage = false;
   private routerSub!: Subscription;
-
   private authUserSub!: Subscription;
+  private themeSub!: Subscription;
 
   constructor(
     public auth: AuthService,
     public cartService: CartService,
     public wishlistService: WishlistService,
     private chatService: ChatService,
+    private themeService: ThemeService,
     private router: Router,
     private cdr: ChangeDetectorRef
   ) {}
@@ -61,6 +63,12 @@ export class FloatingActions implements OnInit, OnDestroy, AfterViewChecked {
     this.authUserSub = this.auth.currentUser$.subscribe((user) => {
       this.resetChat(!!user, user?.name);
     });
+
+    this.themeSub = this.themeService.theme$.subscribe((theme: string) => {
+      const isDark = theme === 'dark';
+      const fontColor = isDark ? '#ffffff' : '#2d3748';
+      this.updateAllChartsTheme(fontColor);
+    });
   }
 
   ngAfterViewChecked(): void {
@@ -74,6 +82,23 @@ export class FloatingActions implements OnInit, OnDestroy, AfterViewChecked {
   ngOnDestroy(): void {
     this.routerSub?.unsubscribe();
     this.authUserSub?.unsubscribe();
+    this.themeSub?.unsubscribe();
+  }
+
+  private updateAllChartsTheme(fontColor: string): void {
+    this.chatMessages.forEach(msg => {
+      if (msg.chart && msg.id) {
+        const chartElementId = 'chart-' + msg.id;
+        const el = document.getElementById(chartElementId);
+        if (el && (el as any).data) { // Ensure plot is rendered before relayout
+          try {
+            Plotly.relayout(chartElementId, { 'font.color': fontColor } as any);
+          } catch (e) {
+            console.error("Plotly relayout error:", e);
+          }
+        }
+      }
+    });
   }
 
   private checkRoute(url: string): void {

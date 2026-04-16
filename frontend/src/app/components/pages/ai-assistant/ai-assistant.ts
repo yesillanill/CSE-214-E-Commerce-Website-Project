@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
 import { ChatService, ChatMessage } from '../../../core/services/chat.service';
 import { AuthService } from '../../../core/services/auth.service';
+import { ThemeService, ThemeMode } from '../../../core/services/theme.service';
 import { Router } from '@angular/router';
 import * as Plotly from 'plotly.js-dist-min';
 import DOMPurify from 'dompurify';
@@ -25,10 +26,12 @@ export class AiAssistant implements OnInit, OnDestroy, AfterViewChecked {
   private shouldScroll = false;
 
   private authSub!: Subscription;
+  private themeSub!: Subscription;
 
   constructor(
     private chatService: ChatService,
     public auth: AuthService,
+    private themeService: ThemeService,
     private router: Router,
     private cdr: ChangeDetectorRef
   ) {
@@ -38,10 +41,33 @@ export class AiAssistant implements OnInit, OnDestroy, AfterViewChecked {
     this.authSub = this.auth.currentUser$.subscribe((user) => {
       this.resetChat(!!user, user?.name);
     });
+
+    this.themeSub = this.themeService.theme$.subscribe((theme: string) => {
+      const isDark = theme === 'dark';
+      const fontColor = isDark ? '#ffffff' : '#2d3748';
+      this.updateAllChartsTheme(fontColor);
+    });
   }
 
   ngOnDestroy() {
     this.authSub?.unsubscribe();
+    this.themeSub?.unsubscribe();
+  }
+
+  private updateAllChartsTheme(fontColor: string) {
+    this.messages.forEach(msg => {
+      if (msg.chart && msg.id) {
+        const chartElementId = 'chart-' + msg.id;
+        const el = document.getElementById(chartElementId);
+        if (el && (el as any).data) { // Ensure plot is rendered before relayout
+          try {
+            Plotly.relayout(chartElementId, { 'font.color': fontColor } as any);
+          } catch (e) {
+            console.error("Plotly relayout error:", e);
+          }
+        }
+      }
+    });
   }
 
   private resetChat(isLoggedIn: boolean, userName?: string) {
