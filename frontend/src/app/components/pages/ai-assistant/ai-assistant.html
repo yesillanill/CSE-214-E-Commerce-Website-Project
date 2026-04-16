@@ -21,11 +21,14 @@
           }
         </div>
         <div class="message-content">
-          <div class="message-bubble" (click)="onMessageClick($event)">
+          <div class="message-bubble" (click)="onMessageClick($event)" style="width: 100%; max-width: 800px;">
             @if(msg.role === 'assistant') {
               <div class="message-text" [innerHTML]="renderMarkdown(msg.content)"></div>
             } @else {
               <p class="message-text">{{ msg.content }}</p>
+            }
+            @if (msg.chart) {
+              <div [id]="'chart-' + msg.id" class="chat-chart" style="width: 100%; height: 400px; margin-top: 10px;"></div>
             }
           </div>
           <span class="message-time">{{ msg.timestamp | date:'HH:mm' }}</span>

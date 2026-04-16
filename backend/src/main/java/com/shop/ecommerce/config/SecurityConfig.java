@@ -59,8 +59,11 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/api/reviews").hasRole("INDIVIDUAL")
                         .requestMatchers(HttpMethod.DELETE, "/api/reviews/**").hasRole("INDIVIDUAL")
 
-                        // Public — Chat (JWT token varsa kullanıcı tanınır, yoksa guest)
-                        .requestMatchers("/api/chat/**").permitAll()
+                        // Public — Chat AI assistant (JWT token varsa kullanıcı tanınır, yoksa guest)
+                        .requestMatchers("/api/chat/ask").permitAll()
+
+                        // Text2SQL chatbot — SQL execution requires authentication
+                        .requestMatchers("/api/chat/execute").authenticated()
 
                         // Support — Individual ve Corporate kullanıcılar destek talebi oluşturabilir
                         .requestMatchers(HttpMethod.POST, "/api/support").authenticated()
@@ -144,7 +147,7 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(List.of("http://localhost:4200")); // Angular adresi
+        configuration.setAllowedOrigins(List.of("http://localhost:4200", "http://localhost:8000")); // Angular + Chainlit
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(List.of("Authorization", "Content-Type"));
         configuration.setAllowCredentials(true);

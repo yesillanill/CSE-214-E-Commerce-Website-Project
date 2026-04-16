@@ -5,6 +5,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { ChatService, ChatMessage } from '../../../core/services/chat.service';
 import { AuthService } from '../../../core/services/auth.service';
 import { Router } from '@angular/router';
+import * as Plotly from 'plotly.js-dist-min';
 
 @Component({
   selector: 'app-ai-asistant',
@@ -73,14 +74,42 @@ export class AiAssistant implements AfterViewChecked {
 
     this.chatService.askQuestion(question, mappedRole, userId).subscribe({
       next: (res) => {
-        this.messages.push({
+        const assistantMsgId = 'msg-' + Date.now().toString() + '-a';
+        const msg: ChatMessage = {
+          id: assistantMsgId,
           role: 'assistant',
           content: res.answer,
           timestamp: new Date()
-        });
+        };
+        if (res.chart) {
+            msg.chart = res.chart;
+        }
+        
+        this.messages.push(msg);
         this.isLoading = false;
         this.shouldScroll = true;
         this.cdr.markForCheck();
+        
+        if (res.chart) {
+            setTimeout(() => {
+                try {
+                    const chartElementId = 'chart-' + assistantMsgId;
+                    const chartData = JSON.parse(res.chart!);
+                    const layout = chartData.layout || {};
+                    
+                    // Adjust layout to fit container and dark schema naturally
+                    layout.autosize = true;
+                    layout.margin = { l: 20, r: 20, t: 40, b: 20 };
+                    layout.paper_bgcolor = 'transparent';
+                    layout.plot_bgcolor = 'transparent';
+                    layout.font = { color: '#ffffff' };
+                    
+                    Plotly.newPlot(chartElementId, chartData.data, layout, { responsive: true, displayModeBar: false });
+                } catch (e) {
+                    console.error("Plotly rendering error:", e);
+                }
+            }, 100);
+        }
       },
       error: (err) => {
         this.messages.push({

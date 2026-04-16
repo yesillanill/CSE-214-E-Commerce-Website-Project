@@ -8,6 +8,7 @@ import { CartService } from '../../../core/services/cart.service';
 import { WishlistService } from '../../../core/services/wishlist.service';
 import { ChatService, ChatMessage } from '../../../core/services/chat.service';
 import { TranslateModule } from '@ngx-translate/core';
+import * as Plotly from 'plotly.js-dist-min';
 
 @Component({
   selector: 'app-floating-actions',
@@ -80,6 +81,7 @@ export class FloatingActions implements OnInit, OnDestroy, AfterViewChecked {
       : `Merhaba! 🤖 Size ürünler, kategoriler ve mağazalar hakkında yardımcı olabilirim. Kişisel bilgiler için giriş yapmanız gerekir.`;
 
     this.chatMessages.push({
+      id: 'msg-' + Date.now().toString(),
       role: 'assistant',
       content: greeting,
       timestamp: new Date()
@@ -98,7 +100,8 @@ export class FloatingActions implements OnInit, OnDestroy, AfterViewChecked {
     const question = this.chatInput.trim();
     this.chatInput = '';
 
-    this.chatMessages.push({ role: 'user', content: question, timestamp: new Date() });
+    const userMsgId = 'msg-' + Date.now().toString() + '-u';
+    this.chatMessages.push({ id: userMsgId, role: 'user', content: question, timestamp: new Date() });
     this.isChatLoading = true;
     this.shouldScroll = true;
 
@@ -111,9 +114,35 @@ export class FloatingActions implements OnInit, OnDestroy, AfterViewChecked {
 
     this.chatService.askQuestion(question, mappedRole, userId).subscribe({
       next: (res) => {
-        this.chatMessages.push({ role: 'assistant', content: res.answer, timestamp: new Date() });
+        const assistantMsgId = 'msg-' + Date.now().toString() + '-a';
+        const msg: ChatMessage = { id: assistantMsgId, role: 'assistant', content: res.answer, timestamp: new Date() };
+        if (res.chart) {
+            msg.chart = res.chart;
+        }
+        this.chatMessages.push(msg);
         this.isChatLoading = false;
         this.shouldScroll = true;
+        
+        if (res.chart) {
+            setTimeout(() => {
+                try {
+                    const chartElementId = 'chart-' + assistantMsgId;
+                    const chartData = JSON.parse(res.chart!);
+                    const layout = chartData.layout || {};
+                    
+                    // Adjust layout to fit container and dark schema naturally
+                    layout.autosize = true;
+                    layout.margin = { l: 20, r: 20, t: 40, b: 20 };
+                    layout.paper_bgcolor = 'transparent';
+                    layout.plot_bgcolor = 'transparent';
+                    layout.font = { color: '#ffffff' };
+                    
+                    Plotly.newPlot(chartElementId, chartData.data, layout, { responsive: true, displayModeBar: false });
+                } catch (e) {
+                    console.error("Plotly rendering error:", e);
+                }
+            }, 100);
+        }
       },
       error: () => {
         this.chatMessages.push({ role: 'assistant', content: 'Üzgünüm, bir hata oluştu. Lütfen tekrar deneyin.', timestamp: new Date() });
@@ -130,3 +159,4 @@ export class FloatingActions implements OnInit, OnDestroy, AfterViewChecked {
     }
   }
 }
+

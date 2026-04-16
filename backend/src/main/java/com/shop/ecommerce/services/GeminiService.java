@@ -16,7 +16,7 @@ public class GeminiService {
     @Value("${gemini.api.key:}")
     private String apiKey;
 
-    private static final String GEMINI_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent";
+    private static final String GEMINI_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-lite-latest:generateContent";
 
     private static final String BASE_SYSTEM_PROMPT = """
             You are a helpful e-commerce assistant for an online shopping platform.
