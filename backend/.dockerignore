@@ -1,0 +1,18 @@
+# Build output
+target/
+
+# IDE files
+.idea/
+.vscode/
+*.iml
+
+# Maven wrapper (will use Maven from Docker image)
+.mvn/
+
+# Logs and temp files
+*.txt
+*.log
+
+# OS files
+.DS_Store
+Thumbs.db

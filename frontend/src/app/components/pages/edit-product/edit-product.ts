@@ -7,6 +7,7 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { CanComponentDeactivate } from '../../../core/guards/pending-changes-guard';
 import { ProductService } from '../../../core/services/product.service';
 import Swal from 'sweetalert2';
+import { environment } from '../../../../environments/environment';
 
 @Component({
   selector: 'app-edit-product',
@@ -49,7 +50,7 @@ export class EditProduct implements OnInit, CanComponentDeactivate {
 
   ngOnInit() {
     this.productId = +this.route.snapshot.params['id'];
-    this.http.get<any>(`http://localhost:8080/api/inventory/product/${this.productId}`).subscribe({
+    this.http.get<any>(`${environment.apiUrl}/api/inventory/product/${this.productId}`).subscribe({
       next: (p) => {
         this.product = {
           name: p.name || '',
@@ -100,7 +101,7 @@ export class EditProduct implements OnInit, CanComponentDeactivate {
     if (this.product.stock !== this.originalSnapshot.stock) payload.stock = this.product.stock;
     if (this.product.img !== this.originalSnapshot.img) payload.img = this.product.img;
 
-    this.http.put<any>(`http://localhost:8080/api/inventory/${this.productId}`, payload).subscribe({
+    this.http.put<any>(`${environment.apiUrl}/api/inventory/${this.productId}`, payload).subscribe({
       next: () => {
         this.saved = true;
         this.productService.invalidateCache();

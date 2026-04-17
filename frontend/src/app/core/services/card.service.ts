@@ -6,12 +6,13 @@ import { Injectable, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { AuthService } from './auth.service';
 import { PaymentCard, PaymentCardCreate } from '../models/payment-card.model';
+import { environment } from '../../../environments/environment';
 
 @Injectable({
   providedIn: 'root',
 })
 export class CardService {
-  private apiUrl = 'http://localhost:8080/api/payments/cards';
+  private apiUrl = `${environment.apiUrl}/api/payments/cards`;
   private cardsSignal = signal<PaymentCard[]>([]);
 
   constructor(private http: HttpClient, private authService: AuthService) {
@@ -38,7 +39,7 @@ export class CardService {
   // Token tabanlı kart ekleme
   // GÜVENLİK: Sadece Stripe token (pm_xxx) ve son 4 hane gönderilir
   addCard(card: PaymentCardCreate) {
-    return this.http.post<PaymentCard>(`http://localhost:8080/api/payments/cards/save`, card).subscribe({
+    return this.http.post<PaymentCard>(`${environment.apiUrl}/api/payments/cards/save`, card).subscribe({
       next: (newCard) => {
         this.cardsSignal.update(cards => [...cards, newCard]);
       },

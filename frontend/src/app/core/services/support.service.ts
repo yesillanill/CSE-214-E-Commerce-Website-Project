@@ -2,12 +2,13 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { SupportTicket, TicketCreate, TicketResponse } from '../models/support.model';
+import { environment } from '../../../environments/environment';
 
 @Injectable({
   providedIn: 'root',
 })
 export class SupportService {
-  private api = 'http://localhost:8080/api/support';
+  private api = `${environment.apiUrl}/api/support`;
 
   constructor(private http: HttpClient) {}
 

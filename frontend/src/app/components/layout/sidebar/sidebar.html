@@ -27,11 +27,9 @@
     <p *ngIf="auth.isIndividualUser()">{{'SIDEBAR.MANAGEMENT' | translate}}</p>
     <a *ngIf="auth.isIndividualUser()" routerLink="/orders" class="nav-link" (click)="toggleMobileMenu()">{{'SIDEBAR.ORDERS' | translate}}</a>
     <a *ngIf="auth.isIndividualUser()" routerLink="/my-reviews" class="nav-link" (click)="toggleMobileMenu()">{{'SIDEBAR.REVIEWS' | translate}}</a>
-    <br>
     <p *ngIf="auth.isCorporateUser()">{{'SIDEBAR.MANAGEMENT' | translate}}</p>
     <a *ngIf="auth.isCorporateUser()" routerLink="/inventory" class="nav-link" (click)="toggleMobileMenu()">{{'SIDEBAR.INVENTORY' | translate}}</a>
     <a *ngIf="auth.isCorporateUser()" routerLink="/store-orders" class="nav-link" (click)="toggleMobileMenu()">{{'SIDEBAR.ORDERS' | translate}}</a>
-    <br>
     <p *ngIf="auth.isAdmin()">{{'SIDEBAR.MANAGEMENT' | translate}}</p>
     <a *ngIf="auth.isAdmin()" routerLink="/customers" class="nav-link" (click)="toggleMobileMenu()">{{'SIDEBAR.CUSTOMERS' | translate}}</a>
     <a *ngIf="auth.isAdmin()" routerLink="/stores" class="nav-link" (click)="toggleMobileMenu()">{{'SIDEBAR.STORES' | translate}}</a>

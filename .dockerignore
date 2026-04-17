@@ -1,0 +1,39 @@
+# Version Control
+.git
+.gitignore
+
+# IDE
+.idea/
+.vscode/
+.cursor/
+.claude/
+.gemini/
+.junie/
+.windsurf/
+.kiro/
+.github/
+
+# Node
+node_modules/
+
+# Java Build
+target/
+*.class
+
+# Python
+__pycache__/
+*.pyc
+.chainlit/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+*.txt
+!requirements.txt
+
+# Docker
+docker-compose.yml
+.dockerignore

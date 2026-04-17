@@ -8,6 +8,7 @@ import com.shop.ecommerce.services.GeminiService;
 import com.shop.ecommerce.services.JwtService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,6 +20,9 @@ import java.util.Map;
 @RequiredArgsConstructor
 @Slf4j
 public class ChatController {
+
+    @Value("${ai.chatbot.url:http://127.0.0.1:8000}")
+    private String aiChatbotUrl;
 
     private final GeminiService geminiService;
     private final ChatContextService chatContextService;
@@ -80,7 +84,7 @@ public class ChatController {
             
             @SuppressWarnings("unchecked")
             Map<String, Object> pyRes = restTemplate.postForObject(
-                    "http://127.0.0.1:8000/api/chat", pyReq, java.util.Map.class);
+                    aiChatbotUrl + "/api/chat", pyReq, java.util.Map.class);
             
             if (pyRes != null && "IN_SCOPE".equals(pyRes.get("status"))) {
                 String pyAnswer = (String) pyRes.get("text");

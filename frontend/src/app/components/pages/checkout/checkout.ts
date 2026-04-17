@@ -8,6 +8,7 @@ import { CardService } from '../../../core/services/card.service';
 import { HttpClient } from '@angular/common/http';
 import Swal from 'sweetalert2';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { environment } from '../../../../environments/environment';
 
 @Component({
   selector: 'app-checkout',
@@ -94,7 +95,7 @@ export class Checkout implements OnInit {
       paymentMethod: this.paymentMethod === 'COD' ? 'CASH_ON_DELIVERY' : 'CREDIT_CARD'
     };
 
-    this.http.post<any>('http://localhost:8080/api/orders/checkout', payload).subscribe({
+    this.http.post<any>(`${environment.apiUrl}/api/orders/checkout`, payload).subscribe({
       next: (order) => {
         // Sipariş oluşturuldu, ödeme sayfasına yönlendir
         this.router.navigate(['/payment'], {

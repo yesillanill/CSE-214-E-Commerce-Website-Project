@@ -5,6 +5,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
+import { environment } from '../../../environments/environment';
 import {
   PaymentRequest,
   PaymentResponse,
@@ -17,7 +18,7 @@ import {
   providedIn: 'root',
 })
 export class PaymentService {
-  private apiUrl = 'http://localhost:8080/api/payments';
+  private apiUrl = `${environment.apiUrl}/api/payments`;
 
   constructor(private http: HttpClient) {}
 

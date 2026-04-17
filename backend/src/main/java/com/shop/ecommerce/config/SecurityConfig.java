@@ -44,6 +44,9 @@ public class SecurityConfig {
                         // Public — Auth endpoint'leri
                         .requestMatchers("/api/auth/**").permitAll()
 
+                        // Public — Actuator (health checks for Docker/K8s)
+                        .requestMatchers("/actuator/**").permitAll()
+
                         // Public — Genel istatistikler (auth gerektirmez)
                         .requestMatchers("/api/public/**").permitAll()
 
@@ -147,7 +150,7 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(List.of("http://localhost:4200", "http://localhost:8000")); // Angular + Chainlit
+        configuration.setAllowedOrigins(List.of("http://localhost:4200", "http://localhost:8000", "http://localhost")); // Angular + Chainlit + Docker nginx
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(List.of("Authorization", "Content-Type"));
         configuration.setAllowCredentials(true);

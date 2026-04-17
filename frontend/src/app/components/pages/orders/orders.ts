@@ -5,6 +5,7 @@ import { RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
 import { AuthService } from '../../../core/services/auth.service';
+import { environment } from '../../../../environments/environment';
 
 interface OrderItem {
   id: number;
@@ -78,7 +79,7 @@ export class Orders implements OnInit {
     const user = this.auth.getUser();
     if (!user) return;
 
-    const url = `http://localhost:8080/api/orders?userId=${user.id}&page=${this.currentPage}&size=${this.pageSize}&sortBy=${this.sortBy}&sortDir=${this.sortDir}`
+    const url = `${environment.apiUrl}/api/orders?userId=${user.id}&page=${this.currentPage}&size=${this.pageSize}&sortBy=${this.sortBy}&sortDir=${this.sortDir}`
       + (this.startDate ? `&startDate=${this.startDate}` : '')
       + (this.endDate ? `&endDate=${this.endDate}` : '');
     this.http.get<any>(url).subscribe({

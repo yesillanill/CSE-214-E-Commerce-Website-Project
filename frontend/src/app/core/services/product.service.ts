@@ -3,6 +3,7 @@ import { ProductList } from '../models/product-list.model';
 import { HttpClient } from '@angular/common/http';
 import { Observable, shareReplay } from 'rxjs';
 import { ProductDetail } from '../models/product-detail.model';
+import { environment } from '../../../environments/environment';
 
 interface HomeStats {
   categoryCount: number;
@@ -15,7 +16,7 @@ interface HomeStats {
   providedIn: 'root',
 })
 export class ProductService {
-  private api = "http://localhost:8080/products";
+  private api = `${environment.apiUrl}/products`;
 
   // Cached observables
   private topRatedCache$?: Observable<ProductList[]>;

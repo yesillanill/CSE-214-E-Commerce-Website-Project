@@ -3,12 +3,13 @@ import { CartItem } from '../models/cart-item.model';
 import { ProductList } from '../models/product-list.model';
 import { HttpClient } from '@angular/common/http';
 import { AuthService } from './auth.service';
+import { environment } from '../../../environments/environment';
 
 @Injectable({
   providedIn: 'root',
 })
 export class CartService {
-  private apiUrl = 'http://localhost:8080/cart';
+  private apiUrl = `${environment.apiUrl}/cart`;
   private cartSignal = signal<CartItem[]>([]);
 
   constructor(private http: HttpClient, private authService: AuthService) {

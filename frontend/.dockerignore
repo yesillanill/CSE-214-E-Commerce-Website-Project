@@ -1,0 +1,26 @@
+# Dependencies (will be installed fresh in container)
+node_modules/
+
+# Build output
+dist/
+
+# Angular cache
+.angular/
+
+# IDE files
+.idea/
+.vscode/
+.cursor/
+.claude/
+.gemini/
+.junie/
+.windsurf/
+.github/
+
+# Docs
+AGENTS.md
+*.md
+
+# OS files
+.DS_Store
+Thumbs.db

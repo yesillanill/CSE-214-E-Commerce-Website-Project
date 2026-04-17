@@ -116,3 +116,19 @@ build/
 
 #Kiro
 .kiro/
+
+# Docker
+postgres_data/
+docker-compose.override.yml
+.env.docker
+
+# Python (AI Chatbot)
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+.venv/
+venv/
+env/
+.chainlit/
+chainlit.md

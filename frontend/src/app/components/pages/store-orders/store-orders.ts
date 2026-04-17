@@ -6,6 +6,7 @@ import { RouterLink } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { AuthService } from '../../../core/services/auth.service';
 import Swal from 'sweetalert2';
+import { environment } from '../../../../environments/environment';
 
 interface OrderItem { id: number; productName: string; productId: number; brandName: string; storeName: string; unitPrice: number; quantity: number; lineTotal: number; }
 interface StoreOrder { id: number; createdAt: string; grandTotal: number; paymentStatus: string; paymentMethod: string; shippingAddress: string; shipmentStatus: string; trackingNumber: string; estimatedDelivery: string; deliveryDate: string; shipmentDate: string; shippingMethod: string; orderItems: OrderItem[]; }
@@ -41,7 +42,7 @@ export class StoreOrders implements OnInit {
   ngOnInit() {
     const user = this.auth.getUser();
     if (user) {
-      this.http.get<any>(`http://localhost:8080/api/stores/my-store?userId=${user.id}`).subscribe({
+      this.http.get<any>(`${environment.apiUrl}/api/stores/my-store?userId=${user.id}`).subscribe({
         next: (store: any) => {
           if (store && store.id) {
             this.storeId = store.id;
@@ -56,7 +57,7 @@ export class StoreOrders implements OnInit {
   loadOrders() {
     if (!this.storeId) return;
     this.isLoading = true;
-    let url = `http://localhost:8080/api/store-orders?storeId=${this.storeId}&page=${this.currentPage}&size=${this.pageSize}&sortBy=${this.sortBy}&sortDir=${this.sortDir}`;
+    let url = `${environment.apiUrl}/api/store-orders?storeId=${this.storeId}&page=${this.currentPage}&size=${this.pageSize}&sortBy=${this.sortBy}&sortDir=${this.sortDir}`;
     if (this.startDate) url += `&startDate=${this.startDate}`;
     if (this.endDate) url += `&endDate=${this.endDate}`;
     this.http.get<any>(url).subscribe({
@@ -93,7 +94,7 @@ export class StoreOrders implements OnInit {
   }
 
   private sendStatusUpdate(orderId: number, status: string) {
-    this.http.patch<any>(`http://localhost:8080/api/store-orders/${orderId}/status`, { status }).subscribe({
+    this.http.patch<any>(`${environment.apiUrl}/api/store-orders/${orderId}/status`, { status }).subscribe({
       next: () => {
         const idx = this.orders.findIndex(x => x.id === orderId);
         if (idx !== -1) {
@@ -112,7 +113,7 @@ export class StoreOrders implements OnInit {
   }
 
   exportCsv() {
-    let url = `http://localhost:8080/api/store-orders?storeId=${this.storeId}&page=0&size=${this.totalElements || 10000}&sortBy=${this.sortBy}&sortDir=${this.sortDir}`;
+    let url = `${environment.apiUrl}/api/store-orders?storeId=${this.storeId}&page=0&size=${this.totalElements || 10000}&sortBy=${this.sortBy}&sortDir=${this.sortDir}`;
     if (this.startDate) url += `&startDate=${this.startDate}`;
     if (this.endDate) url += `&endDate=${this.endDate}`;
     this.http.get<any>(url).subscribe({

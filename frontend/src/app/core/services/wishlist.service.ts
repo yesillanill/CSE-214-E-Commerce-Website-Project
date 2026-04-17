@@ -3,12 +3,13 @@ import { ProductList } from '../models/product-list.model';
 import { HttpClient } from '@angular/common/http';
 import { AuthService } from './auth.service';
 import { WishlistItem } from '../models/whislist.model';
+import { environment } from '../../../environments/environment';
 
 @Injectable({
   providedIn: 'root',
 })
 export class WishlistService {
-  private apiUrl = 'http://localhost:8080/wishlist';
+  private apiUrl = `${environment.apiUrl}/wishlist`;
   private wishlistSignal = signal<WishlistItem[]>([]);
 
   constructor(private http: HttpClient, private authService: AuthService) {

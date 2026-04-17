@@ -8,6 +8,7 @@ import { AuthService } from '../../../core/services/auth.service';
 import { ProductService } from '../../../core/services/product.service';
 import { CanComponentDeactivate } from '../../../core/guards/pending-changes-guard';
 import Swal from 'sweetalert2';
+import { environment } from '../../../../environments/environment';
 
 @Component({
   selector: 'app-add-product',
@@ -46,17 +47,17 @@ export class AddProduct implements OnInit, CanComponentDeactivate {
   ngOnInit() {
     const user = this.auth.getUser();
     if (user) {
-      this.http.get<any>(`http://localhost:8080/api/stores/my-store?userId=${user.id}`).subscribe({
+      this.http.get<any>(`${environment.apiUrl}/api/stores/my-store?userId=${user.id}`).subscribe({
         next: (store) => {
           if (store?.id) { this.storeId = store.id; this.cdr.markForCheck(); }
         }
       });
     }
 
-    this.http.get<any[]>('http://localhost:8080/api/inventory/categories').subscribe({
+    this.http.get<any[]>(`${environment.apiUrl}/api/inventory/categories`).subscribe({
       next: (cats) => { this.categories = cats || []; this.cdr.markForCheck(); }
     });
-    this.http.get<any[]>('http://localhost:8080/api/inventory/brands').subscribe({
+    this.http.get<any[]>(`${environment.apiUrl}/api/inventory/brands`).subscribe({
       next: (brands) => { this.brands = brands || []; this.cdr.markForCheck(); }
     });
   }
@@ -65,7 +66,7 @@ export class AddProduct implements OnInit, CanComponentDeactivate {
     if (!this.storeId || this.isSaving) return;
     this.isSaving = true;
 
-    this.http.post<any>(`http://localhost:8080/api/inventory?storeId=${this.storeId}`, this.product).subscribe({
+    this.http.post<any>(`${environment.apiUrl}/api/inventory?storeId=${this.storeId}`, this.product).subscribe({
       next: () => {
         this.saved = true;
         this.productService.invalidateCache();

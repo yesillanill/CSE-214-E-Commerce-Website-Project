@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { TranslateModule } from '@ngx-translate/core';
 import { AuthService } from '../../../core/services/auth.service';
+import { environment } from '../../../../environments/environment';
 
 @Component({
   selector: 'app-shipments',
@@ -31,7 +32,7 @@ export class Shipments implements OnInit {
   ngOnInit() {
     const user = this.auth.getUser();
     if (user) {
-      this.http.get<any>(`http://localhost:8080/api/stores/my-store?userId=${user.id}`).subscribe({
+      this.http.get<any>(`${environment.apiUrl}/api/stores/my-store?userId=${user.id}`).subscribe({
         next: (store: any) => {
           if (store && store.id) { this.storeId = store.id; this.loadShipments(); }
           else { this.isLoading = false; this.cdr.markForCheck(); }
@@ -44,7 +45,7 @@ export class Shipments implements OnInit {
   loadShipments() {
     if (!this.storeId) return;
     this.isLoading = true;
-    let url = `http://localhost:8080/api/shipments?storeId=${this.storeId}&page=${this.currentPage}&size=${this.pageSize}&sortBy=${this.sortBy}&sortDir=${this.sortDir}`;
+    let url = `${environment.apiUrl}/api/shipments?storeId=${this.storeId}&page=${this.currentPage}&size=${this.pageSize}&sortBy=${this.sortBy}&sortDir=${this.sortDir}`;
     if (this.searchTerm) url += `&search=${this.searchTerm}`;
 
     this.http.get<any>(url).subscribe({
@@ -88,7 +89,7 @@ export class Shipments implements OnInit {
   }
 
   exportCsv() {
-    let url = `http://localhost:8080/api/shipments?storeId=${this.storeId}&page=0&size=${this.totalElements || 10000}&sortBy=${this.sortBy}&sortDir=${this.sortDir}`;
+    let url = `${environment.apiUrl}/api/shipments?storeId=${this.storeId}&page=0&size=${this.totalElements || 10000}&sortBy=${this.sortBy}&sortDir=${this.sortDir}`;
     if (this.searchTerm) url += `&search=${this.searchTerm}`;
     this.http.get<any>(url).subscribe({
       next: (res) => {

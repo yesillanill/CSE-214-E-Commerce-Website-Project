@@ -3,6 +3,7 @@ import { CommonModule, DecimalPipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { TranslateModule } from '@ngx-translate/core';
+import { environment } from '../../../../environments/environment';
 
 @Component({
   selector: 'app-stores',
@@ -30,7 +31,7 @@ export class Stores implements OnInit {
 
   loadStores() {
     this.isLoading = true;
-    this.http.get<any>(`http://localhost:8080/api/admin/stores?page=${this.currentPage}&size=${this.pageSize}`).subscribe({
+    this.http.get<any>(`${environment.apiUrl}/api/admin/stores?page=${this.currentPage}&size=${this.pageSize}`).subscribe({
       next: (res) => {
         this.stores = res.content || [];
         this.totalPages = res.totalPages || 0;
@@ -67,7 +68,7 @@ export class Stores implements OnInit {
   }
 
   exportCsv() {
-    this.http.get<any>(`http://localhost:8080/api/admin/stores?page=0&size=${this.totalElements || 10000}`).subscribe({
+    this.http.get<any>(`${environment.apiUrl}/api/admin/stores?page=0&size=${this.totalElements || 10000}`).subscribe({
       next: (res) => {
         const allStores = res.content || [];
         const header = 'ID,Store Name,Company,Tax Number,Revenue\n';

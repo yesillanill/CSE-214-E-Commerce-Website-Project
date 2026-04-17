@@ -3,6 +3,7 @@ import { CommonModule, DatePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { TranslateModule } from '@ngx-translate/core';
+import { environment } from '../../../../environments/environment';
 
 @Component({
   selector: 'app-audit-logs',
@@ -41,7 +42,7 @@ export class AuditLogs implements OnInit {
 
   loadLogs() {
     this.isLoading = true;
-    let url = `http://localhost:8080/api/admin/audit-logs?page=${this.currentPage}&size=${this.pageSize}`;
+    let url = `${environment.apiUrl}/api/admin/audit-logs?page=${this.currentPage}&size=${this.pageSize}`;
     if (this.actionFilter) url += `&action=${this.actionFilter}`;
     if (this.roleFilter) url += `&userRole=${this.roleFilter}`;
     if (this.startDate) url += `&startDate=${this.startDate}`;
@@ -74,7 +75,7 @@ export class AuditLogs implements OnInit {
   }
 
   exportCsv() {
-    let url = `http://localhost:8080/api/admin/audit-logs/export?`;
+    let url = `${environment.apiUrl}/api/admin/audit-logs/export?`;
     if (this.actionFilter) url += `action=${this.actionFilter}&`;
     if (this.roleFilter) url += `userRole=${this.roleFilter}&`;
     if (this.startDate) url += `startDate=${this.startDate}&`;

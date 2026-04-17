@@ -7,6 +7,7 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { AuthService } from '../../../core/services/auth.service';
 import { ProductService } from '../../../core/services/product.service';
 import Swal from 'sweetalert2';
+import { environment } from '../../../../environments/environment';
 
 @Component({
   selector: 'app-inventory',
@@ -34,7 +35,7 @@ export class Inventory implements OnInit {
   ngOnInit() {
     const user = this.auth.getUser();
     if (user) {
-      this.http.get<any>(`http://localhost:8080/api/stores/my-store?userId=${user.id}`).subscribe({
+      this.http.get<any>(`${environment.apiUrl}/api/stores/my-store?userId=${user.id}`).subscribe({
         next: (store: any) => {
           if (store && store.id) {
             this.storeId = store.id;
@@ -49,7 +50,7 @@ export class Inventory implements OnInit {
   loadProducts() {
     if (!this.storeId) return;
     this.isLoading = true;
-    let url = `http://localhost:8080/api/inventory?storeId=${this.storeId}&page=${this.currentPage}&size=${this.pageSize}&sortBy=${this.sortBy}&sortDir=${this.sortDir}`;
+    let url = `${environment.apiUrl}/api/inventory?storeId=${this.storeId}&page=${this.currentPage}&size=${this.pageSize}&sortBy=${this.sortBy}&sortDir=${this.sortDir}`;
     if (this.searchTerm) url += `&search=${this.searchTerm}`;
 
     this.http.get<any>(url).subscribe({
@@ -84,7 +85,7 @@ export class Inventory implements OnInit {
   }
 
   exportCsv() {
-    let url = `http://localhost:8080/api/inventory?storeId=${this.storeId}&page=0&size=${this.totalElements || 10000}&sortBy=${this.sortBy}&sortDir=${this.sortDir}`;
+    let url = `${environment.apiUrl}/api/inventory?storeId=${this.storeId}&page=0&size=${this.totalElements || 10000}&sortBy=${this.sortBy}&sortDir=${this.sortDir}`;
     if (this.searchTerm) url += `&search=${this.searchTerm}`;
     this.http.get<any>(url).subscribe({
       next: (res) => {
@@ -115,7 +116,7 @@ export class Inventory implements OnInit {
       icon: 'warning', showCancelButton: true, confirmButtonText: this.translate.instant('INVENTORY.DELETE'), confirmButtonColor: '#ff4d4d',
     }).then((r) => {
       if (r.isConfirmed) {
-        this.http.delete<any>(`http://localhost:8080/api/inventory/${id}`).subscribe({
+        this.http.delete<any>(`${environment.apiUrl}/api/inventory/${id}`).subscribe({
           next: () => { this.products = this.products.filter(p => p.id !== id); this.productService.invalidateCache(); Swal.fire(this.translate.instant('INVENTORY.DELETED'), this.translate.instant('INVENTORY.DELETED_TEXT'), 'success'); },
           error: () => Swal.fire(this.translate.instant('INVENTORY.ERROR'), this.translate.instant('INVENTORY.ERROR_DELETE'), 'error')
         });

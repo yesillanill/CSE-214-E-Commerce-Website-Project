@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { User } from '../models/user.model';
 import { BehaviorSubject, Observable, tap } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
+import { environment } from '../../../environments/environment';
 
 interface AuthResponse {
   token: string;
@@ -18,7 +19,7 @@ interface AuthResponse {
   providedIn: 'root',
 })
 export class AuthService {
-  private apiUrl = 'http://localhost:8080/api/auth';
+  private apiUrl = `${environment.apiUrl}/api/auth`;
   private currentUserSubject = new BehaviorSubject<User | null>(null);
   public currentUser$ = this.currentUserSubject.asObservable();
 
@@ -82,11 +83,11 @@ export class AuthService {
   }
 
   getProfile(userId: number): Observable<User> {
-    return this.http.get<User>(`http://localhost:8080/api/users/profile/${userId}`);
+    return this.http.get<User>(`${environment.apiUrl}/api/users/profile/${userId}`);
   }
 
   updateProfile(userId: number, payload: Partial<User>): Observable<User> {
-    return this.http.put<User>(`http://localhost:8080/api/users/profile/${userId}`, payload).pipe(
+    return this.http.put<User>(`${environment.apiUrl}/api/users/profile/${userId}`, payload).pipe(
       tap(updatedUser => {
         this.updateUser(updatedUser);
       })

@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import Swal from 'sweetalert2';
+import { environment } from '../../../../environments/environment';
 import { Subject, debounceTime, distinctUntilChanged } from 'rxjs';
 import { ChangeDetectorRef, ChangeDetectionStrategy } from '@angular/core';
 
@@ -40,7 +41,7 @@ export class Customers implements OnInit {
 
   loadCustomers() {
     this.isLoading = true;
-    this.http.get<any>(`http://localhost:8080/api/admin/users?search=${this.searchTerm}&page=${this.currentPage}&size=${this.pageSize}`).subscribe({
+    this.http.get<any>(`${environment.apiUrl}/api/admin/users?search=${this.searchTerm}&page=${this.currentPage}&size=${this.pageSize}`).subscribe({
       next: (res) => {
         this.customers = res.content || [];
         this.totalPages = res.totalPages || 0;
@@ -74,7 +75,7 @@ export class Customers implements OnInit {
   }
 
   exportCsv() {
-    this.http.get<any>(`http://localhost:8080/api/admin/users?search=${this.searchTerm}&page=0&size=${this.totalElements || 10000}`).subscribe({
+    this.http.get<any>(`${environment.apiUrl}/api/admin/users?search=${this.searchTerm}&page=0&size=${this.totalElements || 10000}`).subscribe({
       next: (res) => {
         const allCustomers = res.content || [];
         const header = 'ID,Name,Email,Registered,Orders,Total Spend,Membership\n';
@@ -94,7 +95,7 @@ export class Customers implements OnInit {
     Swal.fire({ title: this.translate.instant('CUSTOMERS.DELETE_TITLE'), text: `${this.translate.instant('CUSTOMERS.DELETE_CONFIRM', {name})}`, icon: 'warning', showCancelButton: true, confirmButtonText: this.translate.instant('CUSTOMERS.DELETE_BTN'), confirmButtonColor: '#ff4d4d' })
       .then((r) => {
         if (r.isConfirmed) {
-          this.http.delete<any>(`http://localhost:8080/api/admin/users/${userId}`).subscribe({
+          this.http.delete<any>(`${environment.apiUrl}/api/admin/users/${userId}`).subscribe({
             next: () => { this.customers = this.customers.filter(c => c.id !== userId); Swal.fire(this.translate.instant('CUSTOMERS.DELETED'), this.translate.instant('CUSTOMERS.DELETED_TEXT'), 'success'); },
             error: () => Swal.fire(this.translate.instant('CUSTOMERS.ERROR'), this.translate.instant('CUSTOMERS.ERROR_DELETE'), 'error')
           });
