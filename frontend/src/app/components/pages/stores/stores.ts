@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule, DecimalPipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
@@ -10,6 +10,7 @@ import { TranslateModule } from '@ngx-translate/core';
   imports: [CommonModule, FormsModule, TranslateModule, DecimalPipe],
   templateUrl: './stores.html',
   styleUrl: './stores.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class Stores implements OnInit {
   stores: any[] = [];

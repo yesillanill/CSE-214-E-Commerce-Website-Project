@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule, DatePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
@@ -14,6 +14,7 @@ import { ProfanityService } from '../../../core/services/profanity.service';
   imports: [CommonModule, FormsModule, RouterLink, TranslateModule, DatePipe, LoadingSpinner],
   templateUrl: './support.html',
   styleUrl: './support.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class Support implements OnInit {
   tickets: SupportTicket[] = [];

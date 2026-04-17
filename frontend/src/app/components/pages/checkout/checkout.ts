@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
@@ -15,6 +15,7 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
   imports: [CommonModule, FormsModule, RouterLink, TranslateModule],
   templateUrl: './checkout.html',
   styleUrl: './checkout.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class Checkout implements OnInit {
   // Adres

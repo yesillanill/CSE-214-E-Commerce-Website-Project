@@ -1,5 +1,5 @@
 import { AppService } from './../../../core/services/app.service';
-import { Component, OnInit, OnDestroy, HostListener, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, OnDestroy, HostListener, ChangeDetectorRef, ChangeDetectionStrategy } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
@@ -17,7 +17,8 @@ import { PaymentCardCreate } from '../../../core/models/payment-card.model';
   standalone: true,
   imports: [ReactiveFormsModule, FormsModule, TranslateModule, CommonModule],
   templateUrl: './settings.html',
-  styleUrls: ['./settings.scss']
+  styleUrls: ['./settings.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class Settings implements OnInit, OnDestroy, CanComponentDeactivate {
   userForm!: FormGroup;

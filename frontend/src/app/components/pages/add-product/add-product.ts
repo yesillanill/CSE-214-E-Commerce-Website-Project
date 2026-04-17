@@ -1,4 +1,4 @@
-import { Component, OnInit, HostListener, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, HostListener, ChangeDetectorRef, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
@@ -15,6 +15,7 @@ import Swal from 'sweetalert2';
   imports: [CommonModule, FormsModule, TranslateModule],
   templateUrl: './add-product.html',
   styleUrl: './add-product.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class AddProduct implements OnInit, CanComponentDeactivate {
   product: any = {

@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, ChangeDetectionStrategy } from '@angular/core';
 import { DecimalPipe } from '@angular/common';
 import { ProductList } from '../../../core/models/product-list.model';
 import { CartService } from '../../../core/services/cart.service';
@@ -12,6 +12,7 @@ import { AuthService } from '../../../core/services/auth.service';
   imports: [RouterLink, TranslateModule, DecimalPipe],
   templateUrl: './product-card.html',
   styleUrl: './product-card.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ProductCard {
   @Input() product!: ProductList;

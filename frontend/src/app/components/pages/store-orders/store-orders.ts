@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule, DecimalPipe, DatePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
@@ -16,6 +16,7 @@ interface StoreOrder { id: number; createdAt: string; grandTotal: number; paymen
   imports: [CommonModule, FormsModule, RouterLink, TranslateModule, DecimalPipe, DatePipe],
   templateUrl: './store-orders.html',
   styleUrl: './store-orders.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class StoreOrders implements OnInit {
   orders: StoreOrder[] = [];

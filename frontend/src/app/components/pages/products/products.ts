@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { ProductService } from '../../../core/services/product.service';
 import { ProductList } from '../../../core/models/product-list.model';
@@ -16,7 +16,8 @@ import { AuthService } from '../../../core/services/auth.service';
   templateUrl: './products.html',
   styleUrl: './products.scss',
   standalone: true,
-  imports: [ProductCard, CommonModule, LoadingSpinner, TranslateModule, RouterLink, DecimalPipe]
+  imports: [ProductCard, CommonModule, LoadingSpinner, TranslateModule],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class Products implements OnInit {
   products$!: Observable<ProductList[]>;
@@ -42,7 +43,7 @@ export class Products implements OnInit {
   // UI States
   isFilterOpen = false;
   isSortOpen = false;
-  title: string = '';
+  title$!: Observable<string>;
   isCategoryPage = false;
   currentCategory = 'all';
 
@@ -57,6 +58,17 @@ export class Products implements OnInit {
 
   ngOnInit() {
     this.categories$ = this.productService.getCategories();
+    this.title$ = this.route.params.pipe(
+      switchMap(params => {
+        const type = this.route.snapshot.data['type'];
+        const name = params['name'];
+        if (type === 'store') return this.translate.stream('PRODUCTS.TITLE_STORE', { name });
+        if (type === 'brand') return this.translate.stream('PRODUCTS.TITLE_BRAND', { name });
+        if (type === 'category') return this.translate.stream('PRODUCTS.TITLE_CATEGORY', { name });
+        return this.translate.stream('PRODUCTS.TITLE_ALL');
+      })
+    );
+
     this.products$ = this.route.params.pipe(
       switchMap(params => {
         const type = this.route.snapshot.data['type'];
@@ -65,19 +77,15 @@ export class Products implements OnInit {
 
         let request: Observable<ProductList[]>;
         if (type === 'store') {
-          this.title = this.translate.instant('PRODUCTS.TITLE_STORE', { name });
           request = this.productService.getProductsByStore(name);
         } else if (type === 'brand') {
-          this.title = this.translate.instant('PRODUCTS.TITLE_BRAND', { name });
           request = this.productService.getProductsByBrand(name);
         } else if (type === 'category') {
-          this.title = this.translate.instant('PRODUCTS.TITLE_CATEGORY', { name });
           this.isCategoryPage = true;
           this.currentCategory = name;
           this.selectedCategory$.next(name);
           request = this.productService.getProductsByCategory(name);
         } else {
-          this.title = this.translate.instant('PRODUCTS.TITLE_ALL');
           this.isCategoryPage = false;
           this.selectedCategory$.next('all');
           request = this.productService.getProducts();

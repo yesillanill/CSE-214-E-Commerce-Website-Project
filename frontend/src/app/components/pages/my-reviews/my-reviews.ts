@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef, ChangeDetectionStrategy } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { DatePipe } from '@angular/common';
 import { TranslateModule } from '@ngx-translate/core';
@@ -12,6 +12,7 @@ import { LoadingSpinner } from '../../layout/loading-spinner/loading-spinner';
   imports: [RouterLink, TranslateModule, DatePipe, LoadingSpinner],
   templateUrl: './my-reviews.html',
   styleUrl: './my-reviews.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class MyReviews implements OnInit {
   reviews: Review[] = [];

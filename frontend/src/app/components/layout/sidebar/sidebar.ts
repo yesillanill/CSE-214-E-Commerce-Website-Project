@@ -1,6 +1,6 @@
 import { appConfig } from './../../../app.config';
 import { routes } from './../../../app.routes';
-import { Component, HostListener} from '@angular/core';
+import { Component, HostListener, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router,RouterModule } from '@angular/router';
 import { UserRole } from '../../../core/models/role.model';
@@ -15,10 +15,11 @@ import { ThemeService } from '../../../core/services/theme.service';
   imports: [CommonModule, RouterModule, TranslateModule],
   templateUrl: './sidebar.html',
   styleUrl: './sidebar.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class Sidebar {
 
-  constructor(public auth: AuthService, private router: Router,public appService: AppService, public themeService: ThemeService){}
+  constructor(public auth: AuthService, private router: Router,public appService: AppService, public themeService: ThemeService, private cdr: ChangeDetectorRef){}
 
   isMobileMenuOpen = false;
 

@@ -1,6 +1,6 @@
 import { ProductDetail } from './../../../core/models/product-detail.model';
 import { ProductService } from './../../../core/services/product.service';
-import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef, ChangeDetectionStrategy } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { CartService } from '../../../core/services/cart.service';
 import { WishlistService } from '../../../core/services/wishlist.service';
@@ -22,6 +22,7 @@ import { Observable, map, switchMap, catchError, of, tap } from 'rxjs';
   imports: [TranslateModule, RouterLink, CommonModule, LoadingSpinner, DecimalPipe, FormsModule],
   templateUrl: './product-detail.html',
   styleUrl: './product-detail.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ProductDetailPage implements OnInit{
   product$!: Observable<ProductDetail | null>;

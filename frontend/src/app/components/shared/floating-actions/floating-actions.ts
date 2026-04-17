@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, ViewChild, ElementRef, AfterViewChecked } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild, ElementRef, AfterViewChecked, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterLink, Router, NavigationEnd } from '@angular/router';
@@ -9,7 +9,6 @@ import { WishlistService } from '../../../core/services/wishlist.service';
 import { ChatService, ChatMessage } from '../../../core/services/chat.service';
 import { TranslateModule } from '@ngx-translate/core';
 import * as Plotly from 'plotly.js-dist-min';
-import { ChangeDetectorRef } from '@angular/core';
 import { ThemeService } from '../../../core/services/theme.service';
 import DOMPurify from 'dompurify';
 
@@ -19,6 +18,7 @@ import DOMPurify from 'dompurify';
   imports: [CommonModule, FormsModule, RouterLink, TranslateModule],
   templateUrl: './floating-actions.html',
   styleUrl: './floating-actions.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class FloatingActions implements OnInit, OnDestroy, AfterViewChecked {
   @ViewChild('chatMessagesContainer') chatMessagesContainer!: ElementRef;

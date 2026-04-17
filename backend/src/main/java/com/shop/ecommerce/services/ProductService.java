@@ -42,7 +42,7 @@ public class ProductService {
     }
 
     public List<ProductListDTO> getProducts(){
-        return productRepository.findAll().stream().map(this::toListDTOWithRating).toList();
+        return productRepository.findAllWithRatings();
     }
 
     public ProductDetailDTO getProductByID(Long id){
@@ -51,15 +51,15 @@ public class ProductService {
     }
 
     public List<ProductListDTO> getProductsByStore(String store){
-        return productRepository.findByStoreName(store).stream().map(this::toListDTOWithRating).toList();
+        return productRepository.findByStoreWithRatings(store);
     }
 
     public List<ProductListDTO> getProductsByBrand(String brand){
-        return productRepository.findByBrandName(brand).stream().map(this::toListDTOWithRating).toList();
+        return productRepository.findByBrandWithRatings(brand);
     }
 
     public List<ProductListDTO> getProductsByCategory(String category){
-        return productRepository.findByCategoryName(category).stream().map(this::toListDTOWithRating).toList();
+        return productRepository.findByCategoryWithRatings(category);
     }
 
     public ProductDetailDTO createProduct(ProductCreateDTO dto){
@@ -83,12 +83,7 @@ public class ProductService {
     }
 
     public List<ProductListDTO> getTopRatedProducts(int limit){
-        List<Product> all = productRepository.findAll();
-        return all.stream()
-                .map(this::toListDTOWithRating)
-                .sorted((a, b) -> Double.compare(b.getRating(), a.getRating()))
-                .limit(limit)
-                .toList();
+        return productRepository.findTopRatedWithRatings(PageRequest.of(0, limit));
     }
 
     public List<ProductListDTO> getBestSellingProducts(int limit){

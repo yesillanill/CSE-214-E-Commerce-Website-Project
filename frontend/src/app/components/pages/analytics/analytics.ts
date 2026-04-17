@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, AfterViewChecked, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, OnDestroy, AfterViewChecked, ChangeDetectorRef, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
@@ -20,6 +20,7 @@ Chart.register(...registerables);
   imports: [CommonModule, RouterLink, TranslateModule],
   templateUrl: './analytics.html',
   styleUrl: './analytics.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class Analytics implements OnInit, OnDestroy, AfterViewChecked {
   // Public Stats

@@ -1,4 +1,4 @@
-import { Component, ViewChild, ElementRef, AfterViewChecked, ChangeDetectorRef, OnInit, OnDestroy } from '@angular/core';
+import { Component, ViewChild, ElementRef, AfterViewChecked, ChangeDetectorRef, OnInit, OnDestroy, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
@@ -16,6 +16,7 @@ import { Subscription } from 'rxjs';
   imports: [CommonModule, FormsModule, TranslateModule],
   templateUrl: './ai-assistant.html',
   styleUrl: './ai-assistant.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class AiAssistant implements OnInit, OnDestroy, AfterViewChecked {
   @ViewChild('chatContainer') chatContainer!: ElementRef;

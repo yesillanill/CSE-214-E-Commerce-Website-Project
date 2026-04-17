@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule, DatePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
@@ -13,6 +13,7 @@ import { LoadingSpinner } from '../../layout/loading-spinner/loading-spinner';
   imports: [CommonModule, FormsModule, RouterLink, TranslateModule, DatePipe, LoadingSpinner],
   templateUrl: './support-requests.html',
   styleUrl: './support-requests.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class SupportRequests implements OnInit {
   tickets: SupportTicket[] = [];

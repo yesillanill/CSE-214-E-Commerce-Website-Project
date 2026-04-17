@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef, ChangeDetectionStrategy } from '@angular/core';
 import { LowerCasePipe } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { ProductService } from '../../../core/services/product.service';
@@ -23,6 +23,7 @@ interface HomeStats {
   imports: [RouterLink, ProductCard, LoadingSpinner, TranslateModule, LowerCasePipe],
   templateUrl: './home.html',
   styleUrl: './home.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class Home implements OnInit {
   topRatedProducts: ProductList[] = [];

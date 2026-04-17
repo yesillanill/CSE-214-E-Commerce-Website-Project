@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule, DecimalPipe, DatePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
@@ -8,9 +8,10 @@ import { AuthService } from '../../../core/services/auth.service';
 @Component({
   selector: 'app-shipments',
   standalone: true,
-  imports: [CommonModule, FormsModule, TranslateModule, DecimalPipe, DatePipe],
+  imports: [CommonModule, FormsModule, TranslateModule, DatePipe],
   templateUrl: './shipments.html',
   styleUrl: './shipments.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class Shipments implements OnInit {
   shipments: any[] = [];

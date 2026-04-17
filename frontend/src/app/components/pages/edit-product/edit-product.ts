@@ -1,4 +1,4 @@
-import { Component, OnInit, HostListener, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, HostListener, ChangeDetectorRef, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
@@ -14,6 +14,7 @@ import Swal from 'sweetalert2';
   imports: [CommonModule, FormsModule, TranslateModule],
   templateUrl: './edit-product.html',
   styleUrl: './edit-product.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class EditProduct implements OnInit, CanComponentDeactivate {
   productId!: number;

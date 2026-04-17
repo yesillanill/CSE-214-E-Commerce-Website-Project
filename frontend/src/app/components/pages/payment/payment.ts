@@ -3,7 +3,7 @@
 // GÜVENLİK: Kart numarası ve CVV Angular component'ine HİÇ gelmez
 // GÜVENLİK: Stripe Elements iframe içinde çalışır, hassas veri Angular'a ulaşmaz
 // GÜVENLİK: Backend'e sadece Stripe token (pm_xxx) gönderilir
-import { Component, OnInit, OnDestroy, ChangeDetectorRef, NgZone } from '@angular/core';
+import { Component, OnInit, OnDestroy, ChangeDetectorRef, NgZone, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink, ActivatedRoute } from '@angular/router';
@@ -25,6 +25,7 @@ declare var Stripe: any;
   imports: [CommonModule, FormsModule, RouterLink, TranslateModule],
   templateUrl: './payment.html',
   styleUrl: './payment.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class PaymentPage implements OnInit, OnDestroy {
 

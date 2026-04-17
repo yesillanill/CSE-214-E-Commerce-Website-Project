@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule, DecimalPipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
@@ -14,6 +14,7 @@ import Swal from 'sweetalert2';
   imports: [CommonModule, FormsModule, TranslateModule, DecimalPipe],
   templateUrl: './inventory.html',
   styleUrl: './inventory.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class Inventory implements OnInit {
   products: any[] = [];

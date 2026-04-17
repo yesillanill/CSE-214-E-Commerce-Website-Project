@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule, DecimalPipe, DatePipe } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { RouterLink } from '@angular/router';
@@ -41,6 +41,7 @@ interface Order {
   imports: [CommonModule, RouterLink, FormsModule, TranslateModule, DecimalPipe, DatePipe],
   templateUrl: './orders.html',
   styleUrl: './orders.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class Orders implements OnInit {
   orders: Order[] = [];

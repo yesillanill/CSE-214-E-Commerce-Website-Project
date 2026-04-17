@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule, DatePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
@@ -10,6 +10,7 @@ import { TranslateModule } from '@ngx-translate/core';
   imports: [CommonModule, FormsModule, TranslateModule, DatePipe],
   templateUrl: './audit-logs.html',
   styleUrl: './audit-logs.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class AuditLogs implements OnInit {
   logs: any[] = [];

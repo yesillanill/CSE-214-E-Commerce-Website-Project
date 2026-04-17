@@ -5,7 +5,7 @@ import { HttpClient } from '@angular/common/http';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import Swal from 'sweetalert2';
 import { Subject, debounceTime, distinctUntilChanged } from 'rxjs';
-import { ChangeDetectorRef } from '@angular/core';
+import { ChangeDetectorRef, ChangeDetectionStrategy } from '@angular/core';
 
 @Component({
   selector: 'app-customers',
@@ -13,6 +13,7 @@ import { ChangeDetectorRef } from '@angular/core';
   imports: [CommonModule, FormsModule, TranslateModule, DecimalPipe, DatePipe],
   templateUrl: './customers.html',
   styleUrl: './customers.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class Customers implements OnInit {
   customers: any[] = [];
