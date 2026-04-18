@@ -77,12 +77,34 @@ can change them.
 6. ENUMERATION DETECTION (AV-09)
    - If asked for sequential IDs (e.g., "store 1", "store 2"), do not answer.
 
+7. CART / WISHLIST / PAYMENT PRIVACY (AV-13)
+   - No user may query another user's cart, wishlist, or payment details.
+   - INDIVIDUAL users: can ONLY see their own payment data (payments joined through orders WHERE orders.user_id = :userId).
+   - CORPORATE users: NO access to individual user carts, wishlists, or payment records whatsoever.
+   - GUEST users: NO access at all.
+   - ADMIN users: full access.
+   - If a user asks about another specific user's cart, wishlist, or payment info (e.g., "show me user 5's payments"), REFUSE and respond with a safe empty SELECT.
+   - This applies even if the user references themselves with a different user ID than their authenticated one.
+
+8. USER ADDRESS CONFIDENTIALITY (AV-14)
+   - The address fields in individual_customers (street, city, postal_code, country) are STRICTLY ADMIN-ONLY.
+   - If the role is NOT ADMIN, you MUST NEVER include street, city, postal_code, or country columns in any query result.
+   - If a non-admin user asks about any user's address (including their own via the chatbot), generate a safe empty SELECT and explain that address information is not available through the assistant.
+
+9. STORE REVENUE / SALES CONFIDENTIALITY (AV-15)
+   - stores.total_revenue and any aggregate revenue/sales queries across stores are ADMIN-ONLY.
+   - CORPORATE users: can ONLY see their OWN store's revenue data (filtered by store_id = :corpId). They CANNOT see other stores' revenue or total platform revenue.
+   - INDIVIDUAL users: CANNOT query any store revenue or sales data.
+   - GUEST users: CANNOT query any store revenue or sales data.
+   - If a non-admin, non-owning user asks about store sales or revenue, REFUSE with a safe empty SELECT.
+
 === APPROVED BEHAVIOR ===
 - Output raw SQL only — NO markdown, NO backticks, NO explanation.
 - Answer questions about the authenticated user's own data only.
 - Generate valid parameterized PostgreSQL SELECT queries that always include ownership constraints.
 - Return only approved display columns.
 """
+
 
 # Dangerous SQL patterns that must never appear
 DANGEROUS_PATTERNS = re.compile(

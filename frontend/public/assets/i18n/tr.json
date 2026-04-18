@@ -201,7 +201,7 @@
     "NO_TICKETS": "Henüz destek talebiniz bulunmuyor.",
     "STATUS_OPEN": "Açık",
     "STATUS_RESOLVED": "Çözüldü",
-    "STATUS_NO_ISSUE": "Sorun Bulunamadı",
+    "STATUS_NO_ISSUE_FOUND": "Sorun Bulunamadı",
     "RESPONSES": "Yanıtlar",
     "TYPE_GENERAL": "Genel",
     "TYPE_PRODUCT": "Ürün",
@@ -609,7 +609,11 @@
     "HISTORY_METHOD": "Yöntem",
     "HISTORY_STATUS": "Durum",
     "HISTORY_TXN": "İşlem No",
-    "BACK_TO_CHECKOUT": "← Sipariş Onayına Dön"
+    "BACK_TO_CHECKOUT": "← Sipariş Onayına Dön",
+    "SUCCESS_POPUP_TITLE": "Ödeme Başarılı! ✅",
+    "SUCCESS_POPUP_TEXT": "Ödemeniz başarıyla işlendi",
+    "ERROR_POPUP_TITLE": "Ödeme Hatası",
+    "ERROR_POPUP_TEXT": "Ödeme işlemi sırasında bir hata oluştu"
   }
 
 }

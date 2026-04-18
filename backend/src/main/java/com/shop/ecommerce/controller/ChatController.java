@@ -13,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import org.springframework.web.client.RestTemplate;
+import com.shop.ecommerce.config.SqlInjectionValidator;
 import java.util.Map;
 
 @RestController
@@ -31,6 +32,7 @@ public class ChatController {
     private final org.springframework.security.core.userdetails.UserDetailsService userDetailsService;
     private final com.shop.ecommerce.repository.UserRepository userRepository;
     private final com.shop.ecommerce.repository.StoreRepository storeRepository;
+    private final SqlInjectionValidator sqlInjectionValidator;
 
     @PostMapping("/ask")
     public ResponseEntity<Map<String, String>> askQuestion(
@@ -38,6 +40,15 @@ public class ChatController {
             @RequestHeader(value = "Authorization", required = false) String authHeader) {
 
         String question = request.getOrDefault("question", "").toString();
+
+        // SQL injection validation on the chat question
+        if (sqlInjectionValidator.containsSqlInjection(question)) {
+            log.warn("SQL injection blocked in chat question");
+            return ResponseEntity.ok(Map.of("answer",
+                    "\uD83D\uDEAB Güvenlik uyarısı: Mesajınızda SQL komutları tespit edildi. " +
+                    "SQL sorguları doğrudan yazılamaz. Lütfen sorunuzu doğal dilde ifade edin."));
+        }
+
         String role = "GUEST";
         Long userId = null;
         Long corpId = 0L;

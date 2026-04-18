@@ -462,8 +462,8 @@ export class PaymentPage implements OnInit, OnDestroy {
 
     Swal.fire({
       icon: 'success',
-      title: 'Ödeme Başarılı! ✅',
-      text: response.message || 'Ödemeniz başarıyla işlendi',
+      title: this.translate.instant('PAYMENT.SUCCESS_POPUP_TITLE'),
+      text: response.message || this.translate.instant('PAYMENT.SUCCESS_POPUP_TEXT'),
       background: getComputedStyle(document.body).getPropertyValue('--card-bg').trim(),
       color: getComputedStyle(document.body).getPropertyValue('--text-color').trim(),
       timer: 3000,
@@ -477,14 +477,14 @@ export class PaymentPage implements OnInit, OnDestroy {
     this.isProcessing = false;
     this.cdr.detectChanges();
 
-    const message = error?.message || 'Ödeme işlemi sırasında bir hata oluştu';
+    const message = error?.message || this.translate.instant('PAYMENT.ERROR_POPUP_TEXT');
     this.showError(message);
   }
 
   private showError(message: string): void {
     Swal.fire({
       icon: 'error',
-      title: 'Ödeme Hatası',
+      title: this.translate.instant('PAYMENT.ERROR_POPUP_TITLE'),
       text: message,
       background: getComputedStyle(document.body).getPropertyValue('--card-bg').trim(),
       color: getComputedStyle(document.body).getPropertyValue('--text-color').trim()

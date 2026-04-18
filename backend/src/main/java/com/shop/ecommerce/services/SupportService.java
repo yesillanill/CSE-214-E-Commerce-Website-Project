@@ -5,6 +5,7 @@ import com.shop.ecommerce.entities.*;
 import com.shop.ecommerce.enums.TicketStatus;
 import com.shop.ecommerce.enums.TicketType;
 import com.shop.ecommerce.repository.*;
+import com.shop.ecommerce.config.SqlInjectionValidator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -19,8 +20,13 @@ public class SupportService {
     private final UserRepository userRepository;
     private final ProductRepository productRepository;
     private final ReviewRepository reviewRepository;
+    private final SqlInjectionValidator sqlInjectionValidator;
 
     public TicketDTO createTicket(Long userId, TicketCreateDTO dto) {
+        // SQL injection validation on user-submitted text
+        sqlInjectionValidator.validate("ticket subject", dto.getSubject());
+        sqlInjectionValidator.validate("ticket message", dto.getMessage());
+
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
@@ -76,6 +82,8 @@ public class SupportService {
         TicketResponse response = new TicketResponse();
         response.setTicket(ticket);
         response.setAdmin(admin);
+        // SQL injection validation on admin response text
+        sqlInjectionValidator.validate("ticket response", dto.getMessage());
         response.setMessage(dto.getMessage());
 
         if (dto.getStatus() != null && !dto.getStatus().isEmpty()) {

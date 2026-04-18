@@ -8,6 +8,7 @@ import com.shop.ecommerce.entities.User;
 import com.shop.ecommerce.repository.ProductRepository;
 import com.shop.ecommerce.repository.ReviewRepository;
 import com.shop.ecommerce.repository.UserRepository;
+import com.shop.ecommerce.config.SqlInjectionValidator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -20,6 +21,7 @@ public class ReviewService {
     private final ReviewRepository reviewRepository;
     private final ProductRepository productRepository;
     private final UserRepository userRepository;
+    private final SqlInjectionValidator sqlInjectionValidator;
 
     public List<ReviewDTO> getReviewsByProduct(Long productId) {
         return reviewRepository.findByProductIdOrderByCreatedAtDesc(productId)
@@ -32,6 +34,9 @@ public class ReviewService {
         if (dto.getRating() < 1 || dto.getRating() > 5) {
             throw new IllegalArgumentException("Rating must be between 1 and 5");
         }
+
+        // SQL injection validation on user-submitted text
+        sqlInjectionValidator.validate("review comment", dto.getComment());
 
         reviewRepository.findByUserIdAndProductId(userId, dto.getProductId())
                 .ifPresent(r -> {

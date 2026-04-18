@@ -1,8 +1,9 @@
 import { appConfig } from './../../../app.config';
 import { routes } from './../../../app.routes';
-import { Component, HostListener, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
+import { Component, HostListener, ChangeDetectionStrategy, ChangeDetectorRef, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router,RouterModule } from '@angular/router';
+import { Subscription } from 'rxjs';
 import { UserRole } from '../../../core/models/role.model';
 import { AuthService } from '../../../core/services/auth.service';
 import { AppService } from '../../../core/services/app.service';
@@ -17,11 +18,23 @@ import { ThemeService } from '../../../core/services/theme.service';
   styleUrl: './sidebar.scss',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class Sidebar {
+export class Sidebar implements OnInit, OnDestroy {
+
+  isMobileMenuOpen = false;
+  private authSub!: Subscription;
 
   constructor(public auth: AuthService, private router: Router,public appService: AppService, public themeService: ThemeService, private cdr: ChangeDetectorRef){}
 
-  isMobileMenuOpen = false;
+  ngOnInit(): void {
+    // Subscribe to auth state changes so sidebar updates immediately after login/logout
+    this.authSub = this.auth.currentUser$.subscribe(() => {
+      this.cdr.markForCheck();
+    });
+  }
+
+  ngOnDestroy(): void {
+    this.authSub?.unsubscribe();
+  }
 
   @HostListener('window:resize',['$event'])
   onResize(event: any){

@@ -11,6 +11,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import * as Plotly from 'plotly.js-dist-min';
 import { ThemeService } from '../../../core/services/theme.service';
 import DOMPurify from 'dompurify';
+import { containsSqlInjection, SQL_BLOCKED_MESSAGE } from '../../../core/utils/sql-guard';
 
 @Component({
   selector: 'app-floating-actions',
@@ -137,8 +138,21 @@ export class FloatingActions implements OnInit, OnDestroy, AfterViewChecked {
 
     const userMsgId = 'msg-' + Date.now().toString() + '-u';
     this.chatMessages.push({ id: userMsgId, role: 'user', content: question, timestamp: new Date() });
-    this.isChatLoading = true;
     this.shouldScroll = true;
+
+    // Client-side SQL injection check
+    if (containsSqlInjection(question)) {
+      this.chatMessages.push({
+        id: 'msg-' + Date.now().toString() + '-blocked',
+        role: 'assistant',
+        content: SQL_BLOCKED_MESSAGE,
+        timestamp: new Date()
+      });
+      this.cdr.detectChanges();
+      return;
+    }
+
+    this.isChatLoading = true;
 
     const role = this.auth.getRole() as string || 'GUEST';
     const mappedRole = role === 'Admin' ? 'ADMIN'

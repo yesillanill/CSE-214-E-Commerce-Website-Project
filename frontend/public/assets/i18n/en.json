@@ -201,7 +201,7 @@
     "NO_TICKETS": "You have no support tickets yet.",
     "STATUS_OPEN": "Open",
     "STATUS_RESOLVED": "Resolved",
-    "STATUS_NO_ISSUE": "No Issue Found",
+    "STATUS_NO_ISSUE_FOUND": "No Issue Found",
     "RESPONSES": "Responses",
     "TYPE_GENERAL": "General",
     "TYPE_PRODUCT": "Product",
@@ -609,7 +609,11 @@
     "HISTORY_METHOD": "Method",
     "HISTORY_STATUS": "Status",
     "HISTORY_TXN": "Transaction ID",
-    "BACK_TO_CHECKOUT": "← Back to Checkout"
+    "BACK_TO_CHECKOUT": "← Back to Checkout",
+    "SUCCESS_POPUP_TITLE": "Payment Successful! ✅",
+    "SUCCESS_POPUP_TEXT": "Your payment has been processed successfully",
+    "ERROR_POPUP_TITLE": "Payment Error",
+    "ERROR_POPUP_TEXT": "An error occurred during the payment process"
   }
 
 }

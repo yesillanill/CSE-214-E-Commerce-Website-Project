@@ -88,7 +88,7 @@ export class StoreOrders implements OnInit {
 
   updateStatus(orderId: number, status: string) {
     if (status === 'REJECTED') {
-      Swal.fire({ title: this.translate.instant('STORE_ORDERS.REJECT_TITLE'), text: this.translate.instant('STORE_ORDERS.REJECT_TEXT'), icon: 'warning', showCancelButton: true, confirmButtonText: this.translate.instant('STORE_ORDERS.REJECT'), confirmButtonColor: '#ff4d4d' })
+      Swal.fire({ title: this.translate.instant('STORE_ORDERS.REJECT_TITLE'), text: this.translate.instant('STORE_ORDERS.REJECT_TEXT'), icon: 'warning', showCancelButton: true, confirmButtonText: this.translate.instant('STORE_ORDERS.REJECT'), confirmButtonColor: '#ff4d4d', background: getComputedStyle(document.body).getPropertyValue('--card-bg').trim(), color: getComputedStyle(document.body).getPropertyValue('--text-color').trim() })
         .then((r) => { if (r.isConfirmed) this.sendStatusUpdate(orderId, status); });
     } else { this.sendStatusUpdate(orderId, status); }
   }
@@ -106,9 +106,9 @@ export class StoreOrders implements OnInit {
           this.orders = [...this.orders];
         }
         this.cdr.detectChanges();
-        Swal.fire(this.translate.instant('STORE_ORDERS.UPDATED'), `${this.translate.instant('STORE_ORDERS.STATUS')} → ${status}`, 'success');
+        Swal.fire({ title: this.translate.instant('STORE_ORDERS.UPDATED'), text: `${this.translate.instant('STORE_ORDERS.STATUS')} → ${status}`, icon: 'success', background: getComputedStyle(document.body).getPropertyValue('--card-bg').trim(), color: getComputedStyle(document.body).getPropertyValue('--text-color').trim() });
       },
-      error: () => Swal.fire(this.translate.instant('STORE_ORDERS.ERROR'), this.translate.instant('STORE_ORDERS.ERROR_UPDATE'), 'error')
+      error: () => Swal.fire({ title: this.translate.instant('STORE_ORDERS.ERROR'), text: this.translate.instant('STORE_ORDERS.ERROR_UPDATE'), icon: 'error', background: getComputedStyle(document.body).getPropertyValue('--card-bg').trim(), color: getComputedStyle(document.body).getPropertyValue('--text-color').trim() })
     });
   }
 

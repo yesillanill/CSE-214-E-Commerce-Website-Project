@@ -58,6 +58,62 @@ public class ChatSqlService {
     );
 
     /**
+     * UNION-based injection detection
+     */
+    private static final Pattern UNION_INJECTION = Pattern.compile(
+            "\\bUNION\\s+(ALL\\s+)?SELECT\\b",
+            Pattern.CASE_INSENSITIVE
+    );
+
+    /**
+     * Time-based blind injection (SLEEP, BENCHMARK, PG_SLEEP, WAITFOR)
+     */
+    private static final Pattern TIME_BASED_INJECTION = Pattern.compile(
+            "\\b(PG_SLEEP|SLEEP|BENCHMARK|WAITFOR\\s+DELAY)\\s*\\(",
+            Pattern.CASE_INSENSITIVE
+    );
+
+    /**
+     * Schema/catalog probing
+     */
+    private static final Pattern SCHEMA_PROBING = Pattern.compile(
+            "\\b(INFORMATION_SCHEMA|PG_CATALOG|PG_TABLES|SYS\\.OBJECTS|SYSOBJECTS|PG_CLASS|PG_NAMESPACE)\\b",
+            Pattern.CASE_INSENSITIVE
+    );
+
+    /**
+     * Hex-encoded string literals (evasion technique)
+     */
+    private static final Pattern HEX_ENCODING = Pattern.compile(
+            "0x[0-9a-fA-F]{6,}",
+            Pattern.CASE_INSENSITIVE
+    );
+
+    /**
+     * Stacked queries (semicolons followed by another statement)
+     */
+    private static final Pattern STACKED_QUERIES = Pattern.compile(
+            ";\\s*(SELECT|INSERT|UPDATE|DELETE|DROP|ALTER|CREATE|TRUNCATE|EXEC)\\b",
+            Pattern.CASE_INSENSITIVE
+    );
+
+    /**
+     * Function-based obfuscation (CHAR, CONCAT, CHR, ASCII used for payload hiding)
+     */
+    private static final Pattern FUNCTION_OBFUSCATION = Pattern.compile(
+            "\\b(CHAR|CHR|ASCII|CONV|UNHEX)\\s*\\(",
+            Pattern.CASE_INSENSITIVE
+    );
+
+    /**
+     * File operation attacks
+     */
+    private static final Pattern FILE_OPERATIONS = Pattern.compile(
+            "\\b(LOAD_FILE|INTO\\s+OUTFILE|INTO\\s+DUMPFILE|UTL_FILE|COPY\\s+FROM|COPY\\s+TO)\\b",
+            Pattern.CASE_INSENSITIVE
+    );
+
+    /**
      * Must start with SELECT or WITH (for CTEs).
      */
     private static final Pattern VALID_START = Pattern.compile(
@@ -130,6 +186,76 @@ public class ChatSqlService {
             log.warn("ChatSqlService — rejected sensitive column query from userId={}", dto.getUserId());
             return ChatSqlResultDTO.builder()
                     .error("Query requests prohibited sensitive columns.")
+                    .results(List.of())
+                    .columns(List.of())
+                    .rowCount(0)
+                    .build();
+        }
+
+        if (UNION_INJECTION.matcher(sql).find()) {
+            log.warn("ChatSqlService — rejected UNION injection from userId={}", dto.getUserId());
+            return ChatSqlResultDTO.builder()
+                    .error("UNION-based queries are not allowed.")
+                    .results(List.of())
+                    .columns(List.of())
+                    .rowCount(0)
+                    .build();
+        }
+
+        if (TIME_BASED_INJECTION.matcher(sql).find()) {
+            log.warn("ChatSqlService — rejected time-based injection from userId={}", dto.getUserId());
+            return ChatSqlResultDTO.builder()
+                    .error("Time-based SQL functions are not allowed.")
+                    .results(List.of())
+                    .columns(List.of())
+                    .rowCount(0)
+                    .build();
+        }
+
+        if (SCHEMA_PROBING.matcher(sql).find()) {
+            log.warn("ChatSqlService — rejected schema probing from userId={}", dto.getUserId());
+            return ChatSqlResultDTO.builder()
+                    .error("Access to system catalogs and schema information is denied.")
+                    .results(List.of())
+                    .columns(List.of())
+                    .rowCount(0)
+                    .build();
+        }
+
+        if (HEX_ENCODING.matcher(sql).find()) {
+            log.warn("ChatSqlService — rejected hex-encoded payload from userId={}", dto.getUserId());
+            return ChatSqlResultDTO.builder()
+                    .error("Hex-encoded values are not allowed in queries.")
+                    .results(List.of())
+                    .columns(List.of())
+                    .rowCount(0)
+                    .build();
+        }
+
+        if (STACKED_QUERIES.matcher(sql).find()) {
+            log.warn("ChatSqlService — rejected stacked queries from userId={}", dto.getUserId());
+            return ChatSqlResultDTO.builder()
+                    .error("Multiple statements (stacked queries) are not allowed.")
+                    .results(List.of())
+                    .columns(List.of())
+                    .rowCount(0)
+                    .build();
+        }
+
+        if (FUNCTION_OBFUSCATION.matcher(sql).find()) {
+            log.warn("ChatSqlService — rejected function obfuscation from userId={}", dto.getUserId());
+            return ChatSqlResultDTO.builder()
+                    .error("Character encoding functions are not allowed in queries.")
+                    .results(List.of())
+                    .columns(List.of())
+                    .rowCount(0)
+                    .build();
+        }
+
+        if (FILE_OPERATIONS.matcher(sql).find()) {
+            log.warn("ChatSqlService — rejected file operation from userId={}", dto.getUserId());
+            return ChatSqlResultDTO.builder()
+                    .error("File operations are not allowed in queries.")
                     .results(List.of())
                     .columns(List.of())
                     .rowCount(0)

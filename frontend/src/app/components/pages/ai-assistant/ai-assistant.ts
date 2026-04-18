@@ -9,6 +9,7 @@ import { Router } from '@angular/router';
 import * as Plotly from 'plotly.js-dist-min';
 import DOMPurify from 'dompurify';
 import { Subscription } from 'rxjs';
+import { containsSqlInjection, SQL_BLOCKED_MESSAGE } from '../../../core/utils/sql-guard';
 
 @Component({
   selector: 'app-ai-asistant',
@@ -104,8 +105,20 @@ export class AiAssistant implements OnInit, OnDestroy, AfterViewChecked {
       timestamp: new Date()
     });
 
-    this.isLoading = true;
     this.shouldScroll = true;
+
+    // Client-side SQL injection check
+    if (containsSqlInjection(question)) {
+      this.messages.push({
+        role: 'assistant',
+        content: SQL_BLOCKED_MESSAGE,
+        timestamp: new Date()
+      });
+      this.cdr.markForCheck();
+      return;
+    }
+
+    this.isLoading = true;
 
     const role = this.auth.getRole() as string || 'GUEST';
     const mappedRole = role === 'Admin' ? 'ADMIN'
