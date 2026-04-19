@@ -55,4 +55,7 @@ public class Product {
 
     @OneToOne(mappedBy = "product")
     private Inventory inventory;
+
+    @org.hibernate.annotations.Formula("(SELECT COALESCE(AVG(r.rating), 0.0) FROM reviews r WHERE r.product_id = product_id)")
+    private Double rating;
 }
