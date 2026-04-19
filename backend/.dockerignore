@@ -16,3 +16,8 @@ target/
 # OS files
 .DS_Store
 Thumbs.db
+
+# Temp files
+*.sql
+payload.json
+test_*.py

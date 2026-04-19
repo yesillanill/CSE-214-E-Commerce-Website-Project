@@ -132,3 +132,14 @@ venv/
 env/
 .chainlit/
 chainlit.md
+
+# Logs and outputs
+*.log
+*.txt
+!requirements.txt
+!CMakeLists.txt
+
+# Temp files
+*.sql
+payload.json
+test_*.py

@@ -24,3 +24,11 @@ AGENTS.md
 # OS files
 .DS_Store
 Thumbs.db
+
+# Logs and outputs
+*.log
+*.txt
+
+# Temp files
+*.sql
+test_*.py
