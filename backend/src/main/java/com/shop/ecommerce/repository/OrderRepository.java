@@ -26,6 +26,12 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
     @Query("SELECT DISTINCT o FROM Order o LEFT JOIN FETCH o.payment LEFT JOIN FETCH o.shipment JOIN o.orderItems oi WHERE oi.product.store.id = :storeId AND o.createdAt >= :startDate AND o.createdAt < :endDate")
     Page<Order> findByStoreIdAndDateRange(@Param("storeId") Long storeId, @Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate, Pageable pageable);
 
+    @Query("SELECT DISTINCT o FROM Order o LEFT JOIN FETCH o.payment LEFT JOIN FETCH o.shipment JOIN o.orderItems oi WHERE oi.product.store.id = :storeId AND " +
+           "(CAST(o.id AS string) LIKE CONCAT('%', :search, '%') OR " +
+           "LOWER(o.user.email) LIKE LOWER(CONCAT('%', :search, '%')) OR " +
+           "LOWER(oi.product.name) LIKE LOWER(CONCAT('%', :search, '%')))")
+    Page<Order> searchByStoreId(@Param("storeId") Long storeId, @Param("search") String search, Pageable pageable);
+
     @Query("SELECT COUNT(o) FROM Order o WHERE o.user.id = :userId")
     Long countByUserId(@Param("userId") Long userId);
 

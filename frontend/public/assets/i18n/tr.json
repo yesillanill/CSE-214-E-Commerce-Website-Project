@@ -440,6 +440,7 @@
     "INDIVIDUAL": "Bireysel",
     "CORPORATE": "Kurumsal",
     "ADMIN": "Admin",
+    "SEARCH_EMAIL": "E-posta ile ara...",
     "APPLY": "Uygula",
     "CLEAR": "Temizle",
     "ENTRIES_COUNT": "{{count}} kayıt",
@@ -454,7 +455,22 @@
     "DETAILS": "Detaylar",
     "NO_LOGS": "Denetim kaydı bulunamadı",
     "EMPTY_DESC": "Denetim kayıtları işlemler gerçekleştirildikçe burada görünecektir.",
-    "PAGE_INFO": "Sayfa {{current}} / {{total}}"
+    "PAGE_INFO": "Sayfa {{current}} / {{total}}",
+    "ACTION_USER_LOGIN": "Kullanıcı Girişi",
+    "ACTION_USER_LOGOUT": "Kullanıcı Çıkışı",
+    "ACTION_USER_REGISTER": "Kullanıcı Kaydı",
+    "ACTION_USER_SUSPENDED": "Kullanıcı Askıya Alındı",
+    "ACTION_USER_ACTIVATED": "Kullanıcı Etkinleştirildi",
+    "ACTION_USER_DELETED": "Kullanıcı Silindi",
+    "ACTION_PRODUCT_CREATED": "Ürün Oluşturuldu",
+    "ACTION_PRODUCT_UPDATED": "Ürün Güncellendi",
+    "ACTION_PRODUCT_DELETED": "Ürün Silindi",
+    "ACTION_ORDER_CREATED": "Sipariş Oluşturuldu",
+    "ACTION_ORDER_STATUS_UPDATED": "Sipariş Durumu Güncellendi",
+    "ACTION_STORE_OPENED": "Mağaza Açıldı",
+    "ACTION_STORE_CLOSED": "Mağaza Kapatıldı",
+    "ACTION_PAYMENT_PROCESSED": "Ödeme İşlendi",
+    "ACTION_SHIPMENT_UPDATED": "Kargo Güncellendi"
   },
 
   "SHIPMENTS":{

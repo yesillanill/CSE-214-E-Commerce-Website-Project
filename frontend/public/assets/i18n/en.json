@@ -440,6 +440,7 @@
     "INDIVIDUAL": "Individual",
     "CORPORATE": "Corporate",
     "ADMIN": "Admin",
+    "SEARCH_EMAIL": "Search by email...",
     "APPLY": "Apply",
     "CLEAR": "Clear",
     "ENTRIES_COUNT": "{{count}} entries",
@@ -454,7 +455,22 @@
     "DETAILS": "Details",
     "NO_LOGS": "No audit logs found",
     "EMPTY_DESC": "Audit log entries will appear here as actions are performed.",
-    "PAGE_INFO": "Page {{current}} of {{total}}"
+    "PAGE_INFO": "Page {{current}} of {{total}}",
+    "ACTION_USER_LOGIN": "User Login",
+    "ACTION_USER_LOGOUT": "User Logout",
+    "ACTION_USER_REGISTER": "User Registration",
+    "ACTION_USER_SUSPENDED": "User Suspended",
+    "ACTION_USER_ACTIVATED": "User Activated",
+    "ACTION_USER_DELETED": "User Deleted",
+    "ACTION_PRODUCT_CREATED": "Product Created",
+    "ACTION_PRODUCT_UPDATED": "Product Updated",
+    "ACTION_PRODUCT_DELETED": "Product Deleted",
+    "ACTION_ORDER_CREATED": "Order Created",
+    "ACTION_ORDER_STATUS_UPDATED": "Order Status Updated",
+    "ACTION_STORE_OPENED": "Store Opened",
+    "ACTION_STORE_CLOSED": "Store Closed",
+    "ACTION_PAYMENT_PROCESSED": "Payment Processed",
+    "ACTION_SHIPMENT_UPDATED": "Shipment Updated"
   },
 
   "SHIPMENTS":{

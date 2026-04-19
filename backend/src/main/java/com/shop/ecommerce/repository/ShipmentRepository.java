@@ -16,4 +16,9 @@ public interface ShipmentRepository extends JpaRepository<Shipment, Long> {
 
     @Query("SELECT DISTINCT s FROM Shipment s JOIN s.order o JOIN o.orderItems oi WHERE oi.product.store.id = :storeId")
     Page<Shipment> findByStoreId(@Param("storeId") Long storeId, Pageable pageable);
+
+    @Query("SELECT DISTINCT s FROM Shipment s JOIN s.order o JOIN o.orderItems oi WHERE oi.product.store.id = :storeId AND " +
+           "(LOWER(s.trackingNumber) LIKE LOWER(CONCAT('%', :search, '%')) OR " +
+           "LOWER(s.shippingMethod) LIKE LOWER(CONCAT('%', :search, '%')))")
+    Page<Shipment> searchByStoreId(@Param("storeId") Long storeId, @Param("search") String search, Pageable pageable);
 }

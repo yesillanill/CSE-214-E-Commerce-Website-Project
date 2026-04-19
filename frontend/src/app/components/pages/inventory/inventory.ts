@@ -8,6 +8,7 @@ import { AuthService } from '../../../core/services/auth.service';
 import { ProductService } from '../../../core/services/product.service';
 import Swal from 'sweetalert2';
 import { environment } from '../../../../environments/environment';
+import { Subject, debounceTime, distinctUntilChanged } from 'rxjs';
 
 @Component({
   selector: 'app-inventory',
@@ -27,10 +28,20 @@ export class Inventory implements OnInit {
   pageSizeOptions = [10, 25, 50];
   storeId: number | null = null;
   searchTerm = '';
+  private searchSubject = new Subject<string>();
   sortBy = 'name';
   sortDir = 'asc';
 
-  constructor(private http: HttpClient, private auth: AuthService, private router: Router, private translate: TranslateService, private cdr: ChangeDetectorRef, private productService: ProductService) {}
+  constructor(private http: HttpClient, private auth: AuthService, private router: Router, private translate: TranslateService, private cdr: ChangeDetectorRef, private productService: ProductService) {
+    this.searchSubject.pipe(
+      debounceTime(300),
+      distinctUntilChanged()
+    ).subscribe(term => {
+      this.searchTerm = term;
+      this.currentPage = 0;
+      this.loadProducts();
+    });
+  }
 
   ngOnInit() {
     const user = this.auth.getUser();
@@ -66,9 +77,8 @@ export class Inventory implements OnInit {
   }
 
   onSearch(event: Event) {
-    this.searchTerm = (event.target as HTMLInputElement).value;
-    this.currentPage = 0;
-    this.loadProducts();
+    const term = (event.target as HTMLInputElement).value;
+    this.searchSubject.next(term);
   }
 
   sort(column: string) {

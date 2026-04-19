@@ -80,4 +80,6 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
            "GROUP BY p.id, p.name, p.price, p.img, p.category.name, p.brand.name, p.inventory.stock " +
            "ORDER BY COALESCE(AVG(r.rating), 0.0) DESC")
     List<ProductListDTO> findTopRatedWithRatings(Pageable pageable);
+
+    Page<Product> findByStoreIdAndNameContainingIgnoreCase(Long storeId, String name, Pageable pageable);
 }

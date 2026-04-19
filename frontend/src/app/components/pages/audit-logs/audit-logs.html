@@ -8,18 +8,20 @@
   </div>
 
   <div class="filters-bar">
-    <select [(ngModel)]="actionFilter" class="filter-select">
+    <select [(ngModel)]="actionFilter" (change)="applyFilters()" class="filter-select">
       <option value="">{{ 'AUDIT_LOGS.ALL_ACTIONS' | translate }}</option>
-      @for(a of actions; track a) { <option [value]="a">{{ a }}</option> }
+      @for(a of actions; track a) { 
+        <option [value]="a">{{ ('AUDIT_LOGS.ACTION_' + a) | translate }}</option>
+      }
     </select>
-    <select [(ngModel)]="roleFilter" class="filter-select">
+    <select [(ngModel)]="roleFilter" (change)="applyFilters()" class="filter-select">
       <option value="">{{ 'AUDIT_LOGS.ALL_ROLES' | translate }}</option>
       <option value="INDIVIDUAL">{{ 'AUDIT_LOGS.INDIVIDUAL' | translate }}</option>
       <option value="CORPORATE">{{ 'AUDIT_LOGS.CORPORATE' | translate }}</option>
       <option value="ADMIN">{{ 'AUDIT_LOGS.ADMIN' | translate }}</option>
     </select>
-    <input type="date" [(ngModel)]="startDate" class="filter-input">
-    <input type="date" [(ngModel)]="endDate" class="filter-input">
+    <input type="date" [(ngModel)]="startDate" (change)="applyFilters()" class="filter-input">
+    <input type="date" [(ngModel)]="endDate" (change)="applyFilters()" class="filter-input">
     <button class="apply-btn" (click)="applyFilters()">{{ 'AUDIT_LOGS.APPLY' | translate }}</button>
     <button class="clear-btn" (click)="clearFilters()">{{ 'AUDIT_LOGS.CLEAR' | translate }}</button>
   </div>
@@ -68,7 +70,7 @@
               <td>{{ log.createdAt | date:'dd/MM/yyyy HH:mm' }}</td>
               <td>{{ log.userEmail || '-' }}</td>
               <td><span class="role-badge">{{ log.userRole || '-' }}</span></td>
-              <td><span class="action-badge">{{ log.action }}</span></td>
+               <td><span class="action-badge">{{ ('AUDIT_LOGS.ACTION_' + log.action) | translate }}</span></td>
               <td>{{ log.targetEntity || '-' }}</td>
               <td class="mono">{{ log.ipAddress || '-' }}</td>
               <td class="details-cell" [title]="log.details">{{ log.details || '-' }}</td>

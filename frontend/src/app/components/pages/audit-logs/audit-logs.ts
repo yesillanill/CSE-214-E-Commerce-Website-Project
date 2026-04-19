@@ -2,7 +2,7 @@ import { Component, OnInit, ChangeDetectorRef, ChangeDetectionStrategy } from '@
 import { CommonModule, DatePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { environment } from '../../../../environments/environment';
 
 @Component({
@@ -36,7 +36,7 @@ export class AuditLogs implements OnInit {
     'PAYMENT_PROCESSED','SHIPMENT_UPDATED'
   ];
 
-  constructor(private http: HttpClient, private cdr: ChangeDetectorRef) {}
+  constructor(private http: HttpClient, private cdr: ChangeDetectorRef, private translate: TranslateService) {}
 
   ngOnInit() { this.loadLogs(); }
 
@@ -59,6 +59,7 @@ export class AuditLogs implements OnInit {
       error: () => { this.logs = []; this.isLoading = false; this.cdr.markForCheck(); }
     });
   }
+
 
   applyFilters() {
     this.currentPage = 0;

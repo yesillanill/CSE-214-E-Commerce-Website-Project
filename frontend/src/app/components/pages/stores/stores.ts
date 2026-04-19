@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { TranslateModule } from '@ngx-translate/core';
 import { environment } from '../../../../environments/environment';
+import { Subject, debounceTime, distinctUntilChanged } from 'rxjs';
 
 @Component({
   selector: 'app-stores',
@@ -22,16 +23,28 @@ export class Stores implements OnInit {
   totalElements = 0;
   pageSizeOptions = [10, 25, 50];
   searchTerm = '';
+  private searchSubject = new Subject<string>();
   sortBy = 'storeName';
   sortDir = 'asc';
 
-  constructor(private http: HttpClient, private cdr: ChangeDetectorRef) {}
+  constructor(private http: HttpClient, private cdr: ChangeDetectorRef) {
+    this.searchSubject.pipe(
+      debounceTime(300),
+      distinctUntilChanged()
+    ).subscribe(term => {
+      this.searchTerm = term;
+      this.currentPage = 0;
+      this.loadStores();
+    });
+  }
 
   ngOnInit() { this.loadStores(); }
 
   loadStores() {
     this.isLoading = true;
-    this.http.get<any>(`${environment.apiUrl}/api/admin/stores?page=${this.currentPage}&size=${this.pageSize}`).subscribe({
+    let url = `${environment.apiUrl}/api/admin/stores?page=${this.currentPage}&size=${this.pageSize}&sortBy=${this.sortBy}&sortDir=${this.sortDir}`;
+    if (this.searchTerm) url += `&search=${this.searchTerm}`;
+    this.http.get<any>(url).subscribe({
       next: (res) => {
         this.stores = res.content || [];
         this.totalPages = res.totalPages || 0;
@@ -44,22 +57,15 @@ export class Stores implements OnInit {
   }
 
   onSearch(event: Event) {
-    this.searchTerm = (event.target as HTMLInputElement).value.toLowerCase();
-    this.currentPage = 0;
-    this.loadStores();
+    const term = (event.target as HTMLInputElement).value;
+    this.searchSubject.next(term);
   }
 
   sort(column: string) {
     if (this.sortBy === column) { this.sortDir = this.sortDir === 'asc' ? 'desc' : 'asc'; }
     else { this.sortBy = column; this.sortDir = 'asc'; }
-    this.stores.sort((a: any, b: any) => {
-      let va = a[column], vb = b[column];
-      if (va == null) va = ''; if (vb == null) vb = '';
-      if (typeof va === 'string') { va = va.toLowerCase(); vb = (vb || '').toLowerCase(); }
-      if (va < vb) return this.sortDir === 'asc' ? -1 : 1;
-      if (va > vb) return this.sortDir === 'asc' ? 1 : -1;
-      return 0;
-    });
+    this.currentPage = 0;
+    this.loadStores();
   }
 
   getSortIcon(col: string): string {
@@ -68,7 +74,9 @@ export class Stores implements OnInit {
   }
 
   exportCsv() {
-    this.http.get<any>(`${environment.apiUrl}/api/admin/stores?page=0&size=${this.totalElements || 10000}`).subscribe({
+    let url = `${environment.apiUrl}/api/admin/stores?page=0&size=${this.totalElements || 10000}&sortBy=${this.sortBy}&sortDir=${this.sortDir}`;
+    if (this.searchTerm) url += `&search=${this.searchTerm}`;
+    this.http.get<any>(url).subscribe({
       next: (res) => {
         const allStores = res.content || [];
         const header = 'ID,Store Name,Company,Tax Number,Revenue\n';
