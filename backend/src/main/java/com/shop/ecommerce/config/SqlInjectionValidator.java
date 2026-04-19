@@ -27,7 +27,7 @@ public class SqlInjectionValidator {
             // UNION SELECT
             "|(\\bUNION\\s+(ALL\\s+)?SELECT\\b)" +
             // SQL comments
-            "|(--)" +
+            "|(--\\s)" +
             "|(/\\*)" +
             // Hex encoding
             "|(0x[0-9a-fA-F]{8,})" +

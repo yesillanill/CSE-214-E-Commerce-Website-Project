@@ -34,6 +34,9 @@ async def chat_endpoint(request: ChatRequest):
         result = langgraph_app.invoke(initial_state)
         
         status = "IN_SCOPE" if result.get("is_in_scope") else "OUT_OF_SCOPE"
+        if result.get("is_error"):
+            status = "ERROR"
+            
         answer = result.get("final_answer") or "Bir sonuç üretilemedi."
         
         chart_json_str = result.get("visualization_code")

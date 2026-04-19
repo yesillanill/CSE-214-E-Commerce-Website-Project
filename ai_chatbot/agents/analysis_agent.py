@@ -46,8 +46,15 @@ def analysis_agent(state: AgentState) -> AgentState:
         return {
             **state,
             "final_answer": (
-                "📭 Sorgunuz için sonuç bulunamadı. "
-                "Lütfen sorunuzu farklı şekilde ifade etmeyi deneyin."
+                "📭 Sorgunuz için sonuç bulunamadı.\n\n"
+                "Bu durum aşağıdaki nedenlerden kaynaklanabilir:\n"
+                "• Aradığınız ürün veya veri veritabanında mevcut olmayabilir\n"
+                "• Ürün adı farklı bir şekilde kayıtlı olabilir\n"
+                "• Arama kriterleri çok spesifik olabilir\n\n"
+                "💡 **Öneriler:**\n"
+                "• Daha genel terimlerle aramayı deneyin\n"
+                "• Ürün adının yazımını kontrol edin\n"
+                "• Tüm ürünleri listelemek için \"tüm ürünleri göster\" deneyin"
             ),
         }
 

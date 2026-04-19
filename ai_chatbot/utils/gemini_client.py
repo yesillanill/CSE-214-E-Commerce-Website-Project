@@ -1,17 +1,16 @@
 """
-Gemini API client wrapper.
-Mirrors the retry/backoff pattern from the existing Java GeminiService.java,
-but uses the google-generativeai Python SDK.
+Gemini API client wrapper using the new google-genai SDK.
+Implements exponential backoff with rate limiting for gemini-2.5-flash free tier.
 """
 
-import os
 import time
+import threading
 import logging
 from datetime import datetime
 from typing import Optional
 
-import google.generativeai as genai
-from google.generativeai.types import HarmCategory, HarmBlockThreshold
+from google import genai
+from google.genai import types
 
 from config import (
     GEMINI_API_KEY,
@@ -23,21 +22,34 @@ from config import (
 logger = logging.getLogger(__name__)
 
 # ── Configure Gemini SDK ──────────────────────────────────────────────────────
-genai.configure(api_key=GEMINI_API_KEY)
+_client = genai.Client(api_key=GEMINI_API_KEY)
 
-# Safety settings — BLOCK_ONLY_HIGH avoids false positives on business data
-# (same philosophy as the Java GeminiService)
-_SAFETY_SETTINGS = {
-    HarmCategory.HARM_CATEGORY_HATE_SPEECH: HarmBlockThreshold.BLOCK_ONLY_HIGH,
-    HarmCategory.HARM_CATEGORY_HARASSMENT: HarmBlockThreshold.BLOCK_ONLY_HIGH,
-    HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT: HarmBlockThreshold.BLOCK_ONLY_HIGH,
-    HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT: HarmBlockThreshold.BLOCK_ONLY_HIGH,
-}
+# ── Rate Limiter (gemini-2.5-flash free tier: ~10 RPM) ───────────────────────
+_rate_lock = threading.Lock()
+_request_timestamps: list[float] = []
+_MAX_RPM = 8  # Stay slightly under limit to avoid 429s
 
-_model = genai.GenerativeModel(
-    model_name=GEMINI_MODEL,
-    safety_settings=_SAFETY_SETTINGS,
-)
+
+def _wait_for_rate_limit():
+    """Simple sliding-window rate limiter. Blocks if we're at capacity."""
+    with _rate_lock:
+        now = time.time()
+        # Remove timestamps older than 60 seconds
+        while _request_timestamps and _request_timestamps[0] < now - 60:
+            _request_timestamps.pop(0)
+
+        if len(_request_timestamps) >= _MAX_RPM:
+            # Need to wait until the oldest request expires
+            wait_time = 60 - (now - _request_timestamps[0]) + 0.5
+            if wait_time > 0:
+                logger.info("[rate_limiter] Throttling for %.1fs to stay under %d RPM", wait_time, _MAX_RPM)
+                time.sleep(wait_time)
+                # Clean again after waiting
+                now = time.time()
+                while _request_timestamps and _request_timestamps[0] < now - 60:
+                    _request_timestamps.pop(0)
+
+        _request_timestamps.append(time.time())
 
 
 def call_gemini(
@@ -47,7 +59,7 @@ def call_gemini(
     temperature: float = 0.1,
     max_output_tokens: int = 1024,
 ) -> str:
-    """Call Gemini with exponential backoff (mirrors Java GeminiService pattern).
+    """Call Gemini with exponential backoff and rate limiting.
 
     Args:
         system_prompt:    System-level instruction for the model.
@@ -57,32 +69,34 @@ def call_gemini(
         max_output_tokens: Maximum response length.
 
     Returns:
-        The model's text response, or "BLOCKED" / error messages.
+        The model's text response, or error messages.
     """
-    full_prompt = f"{system_prompt}\n\nUser: {user_message}"
-    input_len = len(full_prompt)
+    input_len = len(system_prompt) + len(user_message)
 
     for attempt in range(GEMINI_MAX_RETRIES + 1):
+        # Apply rate limiting before each request
+        _wait_for_rate_limit()
+
         start_ts = datetime.now()
         try:
-            response = _model.generate_content(
-                full_prompt,
-                generation_config=genai.GenerationConfig(
+            response = _client.models.generate_content(
+                model=GEMINI_MODEL,
+                contents=user_message,
+                config=types.GenerateContentConfig(
+                    system_instruction=system_prompt,
                     temperature=temperature,
                     max_output_tokens=max_output_tokens,
                 ),
             )
 
             latency_ms = (datetime.now() - start_ts).total_seconds() * 1000
-            output_text = ""
 
             # Check for blocked response
-            if response.prompt_feedback and response.prompt_feedback.block_reason:
+            if response.candidates and response.candidates[0].finish_reason and \
+               response.candidates[0].finish_reason.name == "SAFETY":
                 logger.warning(
-                    "[%s] Gemini blocked response | reason=%s | latency=%.0fms",
-                    agent_name,
-                    response.prompt_feedback.block_reason,
-                    latency_ms,
+                    "[%s] Gemini blocked response | reason=SAFETY | latency=%.0fms",
+                    agent_name, latency_ms,
                 )
                 return "BLOCKED"
 
@@ -91,10 +105,7 @@ def call_gemini(
 
             logger.info(
                 "[%s] Gemini call OK | input=%d chars | output=%d chars | latency=%.0fms",
-                agent_name,
-                input_len,
-                output_len,
-                latency_ms,
+                agent_name, input_len, output_len, latency_ms,
             )
             return output_text
 
@@ -104,27 +115,20 @@ def call_gemini(
 
             # Retry on quota / server errors (503, 429, etc.)
             is_retryable = any(
-                code in error_str for code in ["503", "429", "RESOURCE_EXHAUSTED", "UNAVAILABLE"]
+                code in error_str for code in ["503", "429", "RESOURCE_EXHAUSTED", "UNAVAILABLE", "quota"]
             )
 
             if is_retryable and attempt < GEMINI_MAX_RETRIES:
                 backoff = GEMINI_INITIAL_BACKOFF_S * (2 ** attempt)
                 logger.warning(
                     "[%s] Gemini error (attempt %d/%d). Retrying in %ds... | error=%s",
-                    agent_name,
-                    attempt + 1,
-                    GEMINI_MAX_RETRIES,
-                    backoff,
-                    error_str[:200],
+                    agent_name, attempt + 1, GEMINI_MAX_RETRIES, backoff, error_str[:200],
                 )
                 time.sleep(backoff)
             else:
                 logger.error(
                     "[%s] Gemini call FAILED | attempt=%d | latency=%.0fms | error=%s",
-                    agent_name,
-                    attempt + 1,
-                    latency_ms,
-                    error_str[:300],
+                    agent_name, attempt + 1, latency_ms, error_str[:300],
                 )
                 return "I couldn't generate a response. Please try again."
 

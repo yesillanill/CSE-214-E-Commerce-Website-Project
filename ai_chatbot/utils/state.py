@@ -34,4 +34,5 @@ class AgentState(TypedDict):
     final_answer: Optional[str]
     visualization_code: Optional[str]
     is_in_scope: bool
+    is_error: Optional[bool]
     iteration_count: int

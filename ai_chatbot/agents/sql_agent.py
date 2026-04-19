@@ -103,6 +103,17 @@ can change them.
 - Answer questions about the authenticated user's own data only.
 - Generate valid parameterized PostgreSQL SELECT queries that always include ownership constraints.
 - Return only approved display columns.
+
+=== PRODUCT SEARCH RULES ===
+- When searching products by name, ALWAYS use ILIKE with wildcards for fuzzy matching.
+  Example: WHERE LOWER(p.name) LIKE LOWER('%pastel%pink%')
+- If the user asks about a specific product (e.g., "pastel pink album", "photo album"), 
+  split the search terms and use AND conditions with ILIKE:
+  WHERE LOWER(p.name) LIKE LOWER('%pastel%') AND LOWER(p.name) LIKE LOWER('%pink%')
+- NEVER use exact match (=) for product name searches. Always use ILIKE or LIKE with wildcards.
+- For price queries about specific products, return the product name and price columns.
+- If no results are found, the query should still succeed (return empty result set) — 
+  do NOT generate an error. The analysis agent will handle "not found" messages.
 """
 
 
@@ -169,6 +180,19 @@ def sql_agent(state: AgentState) -> AgentState:
         agent_name="sql_agent",
         max_output_tokens=2048,
     )
+
+    # Detect Gemini API failure responses (not actual SQL)
+    if any(err in raw_sql.upper() for err in [
+        "COULDN'T GENERATE", "UNAVAILABLE", "TRY AGAIN", "QUOTA", "RATE LIMIT",
+    ]):
+        logger.warning("SQL Agent: Gemini API is unavailable. Returning OUT_OF_SCOPE for Java fallback.")
+        return {
+            **state,
+            "sql_query": None,
+            "is_in_scope": False,  # Signal OUT_OF_SCOPE so Java fallback handles it
+            "final_answer": None,  # No answer — let Java provide one
+            "error": None,
+        }
 
     sql = _clean_sql(raw_sql)
     logger.info("SQL Agent raw output: %s", sql[:500])

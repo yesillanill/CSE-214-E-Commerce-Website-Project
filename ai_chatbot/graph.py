@@ -30,6 +30,16 @@ def _route_after_guardrails(state: AgentState) -> str:
     return END
 
 
+def _route_after_sql_generator(state: AgentState) -> str:
+    """Route based on SQL generation result."""
+    # If SQL agent couldn't generate SQL (API error), end the pipeline
+    if not state.get("is_in_scope") or state.get("final_answer") is not None:
+        return END
+    if not state.get("sql_query"):
+        return "error_handler"
+    return "sql_executor"
+
+
 def _route_after_executor(state: AgentState) -> str:
     """Route based on SQL execution result."""
     if state.get("error"):
@@ -67,7 +77,7 @@ def build_graph() -> StateGraph:
 
     # ── Edges ─────────────────────────────────────────────────────────────
     workflow.add_conditional_edges("guardrails", _route_after_guardrails)
-    workflow.add_edge("sql_generator", "sql_executor")
+    workflow.add_conditional_edges("sql_generator", _route_after_sql_generator)
     workflow.add_conditional_edges("sql_executor", _route_after_executor)
     workflow.add_conditional_edges("error_handler", _route_after_error_handler)
     workflow.add_edge("analyzer", "visualizer")

@@ -1,6 +1,7 @@
-import { Component, OnInit, ChangeDetectorRef, ChangeDetectionStrategy } from '@angular/core';
+import { Component, OnInit, OnDestroy, ChangeDetectorRef, ChangeDetectionStrategy } from '@angular/core';
 import { LowerCasePipe } from '@angular/common';
 import { RouterLink } from '@angular/router';
+import { Subscription } from 'rxjs';
 import { ProductService } from '../../../core/services/product.service';
 import { AuthService } from '../../../core/services/auth.service';
 import { CartService } from '../../../core/services/cart.service';
@@ -25,7 +26,7 @@ interface HomeStats {
   styleUrl: './home.scss',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class Home implements OnInit {
+export class Home implements OnInit, OnDestroy {
   topRatedProducts: ProductList[] = [];
   bestSellingProducts: ProductList[] = [];
   stats: HomeStats | null = null;
@@ -33,6 +34,8 @@ export class Home implements OnInit {
   isLoggedIn: boolean = false;
   isLoadingTopRated: boolean = true;
   isLoadingBestSelling: boolean = true;
+
+  private authSub!: Subscription;
 
   constructor(
     private productService: ProductService,
@@ -43,11 +46,12 @@ export class Home implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.isLoggedIn = this.auth.isLoggedIn();
-    const user = this.auth.getUser();
-    if (user) {
-      this.userName = user.name;
-    }
+    // Subscribe to auth state changes so hero section updates on login/logout
+    this.authSub = this.auth.currentUser$.subscribe(user => {
+      this.isLoggedIn = user !== null && this.auth.getToken() !== null;
+      this.userName = user?.name ?? '';
+      this.cdr.markForCheck();
+    });
 
     this.productService.getHomeStats().subscribe({
       next: stats => { this.stats = stats; this.cdr.markForCheck(); }
@@ -72,6 +76,10 @@ export class Home implements OnInit {
     });
   }
 
+  ngOnDestroy() {
+    this.authSub?.unsubscribe();
+  }
+
   scrollLeft(container: HTMLElement) {
     container.scrollBy({ left: -300, behavior: 'smooth' });
   }
@@ -80,3 +88,4 @@ export class Home implements OnInit {
     container.scrollBy({ left: 300, behavior: 'smooth' });
   }
 }
+

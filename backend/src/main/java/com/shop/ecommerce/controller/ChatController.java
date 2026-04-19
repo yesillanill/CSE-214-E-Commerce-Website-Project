@@ -74,17 +74,24 @@ public class ChatController {
             Object userIdObj = request.get("userId");
             if (userIdObj != null) {
                 try {
-                     // userId remains null internally to prevent spoofing a user id without token
                      role = "GUEST";
                 } catch (Exception e) {}
             }
         }
 
+        log.info("Chat API Request | authHeader present: {} | principal class: {} | role: {} | userId: {}",
+                (authHeader != null && !authHeader.isBlank()),
+                (auth != null ? auth.getPrincipal().getClass().getSimpleName() : "NULL"),
+                role, userId);
+
         log.debug("Chat request - role: {}, userId: {}, corpId: {}", role, userId, corpId);
 
         // Try Python API First for Analytics
         try {
-            RestTemplate restTemplate = new RestTemplate();
+            var factory = new org.springframework.http.client.SimpleClientHttpRequestFactory();
+            factory.setConnectTimeout(5000);   // 5s connect timeout
+            factory.setReadTimeout(15000);     // 15s read timeout
+            RestTemplate restTemplate = new RestTemplate(factory);
             java.util.Map<String, Object> pyReq = java.util.Map.of(
                     "question", question,
                     "role_type", role,
@@ -97,16 +104,22 @@ public class ChatController {
             Map<String, Object> pyRes = restTemplate.postForObject(
                     aiChatbotUrl + "/api/chat", pyReq, java.util.Map.class);
             
-            if (pyRes != null && "IN_SCOPE".equals(pyRes.get("status"))) {
-                String pyAnswer = (String) pyRes.get("text");
-                String chartJson = (String) pyRes.get("chart_json");
-                
-                Map<String, String> responseModel = new java.util.HashMap<>();
-                responseModel.put("answer", pyAnswer);
-                if (chartJson != null) {
-                    responseModel.put("chart", chartJson);
+            if (pyRes != null) {
+                String status = (String) pyRes.get("status");
+                if ("IN_SCOPE".equals(status)) {
+                    String pyAnswer = (String) pyRes.get("text");
+                    String chartJson = (String) pyRes.get("chart_json");
+                    
+                    Map<String, String> responseModel = new java.util.HashMap<>();
+                    responseModel.put("answer", pyAnswer);
+                    if (chartJson != null) {
+                        responseModel.put("chart", chartJson);
+                    }
+                    return ResponseEntity.ok(responseModel);
+                } else if ("ERROR".equals(status)) {
+                    log.warn("Python AI returned ERROR. Falling back to Java...");
+                    // Python is rate-limited or error'd. We fall back to Java so basic questions work!
                 }
-                return ResponseEntity.ok(responseModel);
             }
         } catch (Exception e) {
             log.warn("Python AI Service failed or returned error: {}", e.getMessage());
@@ -117,7 +130,49 @@ public class ChatController {
         String context = chatContextService.buildContext(question, role, userId);
         String answer = geminiService.ask(question, role, context);
 
+        // If Gemini API also failed (quota exhausted, 503, etc.), provide a context-based offline response
+        if (answer != null && (answer.contains("currently experiencing high demand")
+                || answer.contains("currently unavailable")
+                || answer.contains("error occurred")
+                || answer.contains("API key is not configured"))) {
+            log.warn("Java GeminiService also failed. Using offline context-based response.");
+            answer = buildOfflineResponse(context, question);
+        }
+
         return ResponseEntity.ok(Map.of("answer", answer));
+    }
+
+    /**
+     * Build a basic formatted response from the ChatContextService data
+     * when ALL AI APIs are unavailable (quota exhausted).
+     */
+    private String buildOfflineResponse(String context, String question) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("📊 **İşte veritabanımızdan elde edilen bilgiler:**\n\n");
+
+        // Parse context sections and format them nicely
+        String[] sections = context.split("\n\n");
+        for (String section : sections) {
+            if (section.trim().isEmpty() || section.contains("[NOT LOGGED IN]")
+                    || section.contains("=== END")) continue;
+
+            // Clean up section headers
+            String cleaned = section
+                    .replace("=== ", "**")
+                    .replace(" ===", "**")
+                    .replace("---", "")
+                    .trim();
+
+            if (!cleaned.isEmpty()) {
+                sb.append(cleaned).append("\n\n");
+            }
+        }
+
+        sb.append("\n💡 *Şu anda AI servisi yoğun olduğu için detaylı analiz yapılamamaktadır. ");
+        sb.append("Yukarıdaki bilgiler doğrudan veritabanından alınmıştır. ");
+        sb.append("Birkaç dakika sonra tekrar denediğinizde daha detaylı yanıtlar alabilirsiniz.*");
+
+        return sb.toString();
     }
 
     /**

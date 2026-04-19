@@ -16,8 +16,8 @@ LOG_LEVEL = os.getenv("LOG_LEVEL", "INFO")
 
 # ── Retry / Safety Constants ─────────────────────────────────────────────────
 MAX_ERROR_RETRIES = 3
-GEMINI_MAX_RETRIES = 3
-GEMINI_INITIAL_BACKOFF_S = 2  # 2s → 4s → 8s
+GEMINI_MAX_RETRIES = 1
+GEMINI_INITIAL_BACKOFF_S = 1  # 1s backoff — fast fail to let Java fallback handle
 
 # ── Gemini URL (same pattern as GeminiService.java) ──────────────────────────
 GEMINI_URL = (

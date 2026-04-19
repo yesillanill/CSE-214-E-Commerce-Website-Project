@@ -500,16 +500,20 @@ public class ChatContextService {
     }
 
     private List<String> extractKeywords(String question) {
-        // Remove common Turkish/English stop words and return meaningful keywords
+        // Remove common Turkish/English stop words and query-intent words
         Set<String> stopWords = Set.of(
                 "bir", "bu", "şu", "ve", "ile", "için", "olan", "var", "mı", "mi", "mu", "mü",
                 "ne", "nedir", "neler", "nasıl", "kaç", "the", "a", "an", "is", "are", "what",
                 "which", "how", "do", "does", "can", "could", "about", "hakkında", "göster",
                 "show", "list", "listele", "bana", "benim", "bul", "find", "ara", "search",
-                "hangi", "tell", "söyle", "anlat", "lütfen", "please"
+                "hangi", "tell", "söyle", "anlat", "lütfen", "please",
+                // Query-intent words — fiyat/maliyet sorguları ürün adı aramasını kirletmesin
+                "price", "cost", "fiyat", "fiyatı", "kadar", "much", "değer",
+                "of", "me", "give", "get", "want", "need", "know", "like",
+                "tl", "usd", "eur", "para", "tutar", "ücret", "ücreti"
         );
 
-        String cleaned = question.replaceAll("[?.,!;:'\"]", " ");
+        String cleaned = question.replaceAll("[?.,!;:'\"()]", " ");
         String[] words = cleaned.split("\\s+");
         List<String> keywords = new ArrayList<>();
         for (String word : words) {

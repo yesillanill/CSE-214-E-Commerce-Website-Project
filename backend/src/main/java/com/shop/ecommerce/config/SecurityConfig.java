@@ -50,9 +50,14 @@ public class SecurityConfig {
                         // Public — Genel istatistikler (auth gerektirmez)
                         .requestMatchers("/api/public/**").permitAll()
 
-                        // Public — Ürünler (sadece GET)
+                        // Public — Ürünler (sadece GET — herkes görebilir)
                         .requestMatchers(HttpMethod.GET, "/products/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/products/categories").permitAll()
+
+                        // GÜVENLİK: Ürün oluşturma/güncelleme/silme sadece CORPORATE kullanıcılar
+                        .requestMatchers(HttpMethod.POST, "/products/**").hasRole("CORPORATE")
+                        .requestMatchers(HttpMethod.PUT, "/products/**").hasRole("CORPORATE")
+                        .requestMatchers(HttpMethod.DELETE, "/products/**").hasRole("CORPORATE")
 
                         // Public — Yorumları görüntüleme (GET product reviews)
                         .requestMatchers(HttpMethod.GET, "/api/reviews/product/**").permitAll()

@@ -9,8 +9,8 @@ dist/
 
 # Node modules and dependency files
 
-# Environment files
-/.env
+# Environment files — tüm alt dizinlerdeki .env dosyaları dahil
+**/.env
 
 # Angular CLI and build artefacts
 /.angular-cli.json

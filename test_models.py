@@ -1,5 +1,5 @@
 import google.generativeai as genai
-genai.configure(api_key='AIzaSyCwEgvgr9WZ487SGERyPNFxoy_2ZIBWY3A')
+genai.configure(api_key='AIzaSyCe--1oxDBHA19jWzEFIn6AXCIc-eVtFw8')
 models=['gemini-2.0-flash-lite', 'gemini-flash-lite-latest', 'gemini-pro-latest', 'gemini-2.0-flash', 'gemini-2.0-flash-001']
 for model_name in models:
     try:

@@ -70,6 +70,26 @@ public class GlobalExceptionHandler {
         return ResponseEntity.badRequest().body(errorBody);
     }
 
+    // IllegalStateException → 409 Conflict (örn: "You have already reviewed this product")
+    @ExceptionHandler(IllegalStateException.class)
+    public ResponseEntity<Map<String, Object>> handleIllegalState(IllegalStateException e) {
+        Map<String, Object> errorBody = new LinkedHashMap<>();
+        errorBody.put("error", "Conflict");
+        errorBody.put("message", e.getMessage());
+        errorBody.put("status", 409);
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(errorBody);
+    }
+
+    // RuntimeException → 500 Internal Server Error (genel catch-all)
+    @ExceptionHandler(RuntimeException.class)
+    public ResponseEntity<Map<String, Object>> handleRuntimeException(RuntimeException e) {
+        Map<String, Object> errorBody = new LinkedHashMap<>();
+        errorBody.put("error", "InternalServerError");
+        errorBody.put("message", e.getMessage() != null ? e.getMessage() : "Beklenmeyen bir hata oluştu");
+        errorBody.put("status", 500);
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorBody);
+    }
+
     private <E> ApiError<E> createApiError(WebRequest request, E message){
         ApiError<E> apiError = new ApiError<>();
         apiError.setStatus(HttpStatus.BAD_REQUEST.value());

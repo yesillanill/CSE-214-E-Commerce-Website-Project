@@ -25,17 +25,18 @@ public class CoinbaseService {
 
     /**
      * Coinbase Commerce charge oluşturur
-     * Kullanıcıya kripto ödeme sayfası URL'i döner
+     * Demo/test ortamında mock ödeme olarak simüle edilir
+     * checkoutUrl döndürülmez — frontend doğrudan başarılı olarak işler
      */
     public PaymentResponse createCharge(PaymentRequest request) {
         // GÜNCELLEME: Eski Coinbase Commerce API'si kapandığı için (Deprecated), 
-        // test/demo ortamında bu adımı sahte (mock) bir URL ile simüle ediyoruz.
-        String mockCheckoutUrl = "https://commerce.coinbase.com/mock-checkout/" + UUID.randomUUID().toString();
+        // test/demo ortamında ödemeyi doğrudan başarılı olarak simüle ediyoruz.
+        String transactionId = "cb_" + System.currentTimeMillis();
         
         return PaymentResponse.builder()
-                .checkoutUrl(mockCheckoutUrl)
-                .message("Coinbase mock charge created successfully")
-                .transactionId("mock_cb_" + System.currentTimeMillis())
+                .message("Kripto ödeme başarıyla tamamlandı (demo)")
+                .transactionId(transactionId)
+                .status("succeeded")
                 .build();
     }
 }

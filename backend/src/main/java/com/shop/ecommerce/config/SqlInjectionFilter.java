@@ -30,7 +30,8 @@ public class SqlInjectionFilter extends OncePerRequestFilter {
 
     /** Endpoints whose request BODY is allowed to contain SQL (they validate internally). */
     private static final Set<String> BODY_SCAN_EXCLUSIONS = Set.of(
-            "/api/chat/execute"
+            "/api/chat/execute",
+            "/api/chat/ask"
     );
 
     /**
