@@ -90,7 +90,7 @@ public class ChatController {
         try {
             var factory = new org.springframework.http.client.SimpleClientHttpRequestFactory();
             factory.setConnectTimeout(5000);   // 5s connect timeout
-            factory.setReadTimeout(15000);     // 15s read timeout
+            factory.setReadTimeout(30000);     // 30s read timeout
             RestTemplate restTemplate = new RestTemplate(factory);
             java.util.Map<String, Object> pyReq = java.util.Map.of(
                     "question", question,

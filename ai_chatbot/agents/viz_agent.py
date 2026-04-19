@@ -99,6 +99,12 @@ def visualization_agent(state: AgentState) -> AgentState:
         max_output_tokens=2048,
     )
 
+    if any(err in response.upper() for err in [
+        "COULDN'T GENERATE", "UNAVAILABLE", "TRY AGAIN", "QUOTA", "RATE LIMIT"
+    ]):
+        logger.warning("Viz Agent: Gemini API is unavailable. Skipping visualization.")
+        return state
+
     first_line = response.strip().split("\n")[0].strip().upper()
 
     if "YES" not in first_line:

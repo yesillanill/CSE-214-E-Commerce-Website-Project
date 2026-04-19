@@ -82,6 +82,30 @@ def analysis_agent(state: AgentState) -> AgentState:
         max_output_tokens=1024,
     )
 
+    # If Gemini is rate-limited, fallback to formatting the raw data into a nice Markdown table
+    if any(err in analysis.upper() for err in [
+        "COULDN'T GENERATE", "UNAVAILABLE", "TRY AGAIN", "QUOTA", "RATE LIMIT"
+    ]):
+        logger.warning("Analysis Agent: Gemini API is unavailable. Using raw data fallback.")
+        
+        # Build a markdown table manually from df
+        raw_table = f"**{question}**\n\n*(Yapay zeka analiz servisi meşgul, veriler tablo olarak sunulmaktadır)*\n\n"
+        
+        if not df.empty:
+            # Create header
+            cols = df.columns.tolist()
+            raw_table += "| " + " | ".join(cols) + " |\n"
+            raw_table += "| " + " | ".join(["---"] * len(cols)) + " |\n"
+            
+            # Add up to 20 rows
+            for _, row in df.head(20).iterrows():
+                row_vals = [str(val) for val in row.values]
+                raw_table += "| " + " | ".join(row_vals) + " |\n"
+        else:
+            raw_table += "Sonuç bulunamadı."
+            
+        analysis = raw_table
+
     logger.info("Analysis Agent produced %d char response.", len(analysis))
 
     role_type = state.get("role_type", "GUEST").upper()
