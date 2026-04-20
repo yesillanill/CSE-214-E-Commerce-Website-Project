@@ -41,14 +41,14 @@ services:
       SPRING_JPA_HIBERNATE_DDL_AUTO: update
       JWT_SECRET: dGhpc0lzQVNlY3VyZVNlY3JldEtleUZvckpXVEF1dGhlbnRpY2F0aW9uMjAyNg==
       JWT_EXPIRATION: "86400000"
-      GEMINI_API_KEY: ${GEMINI_API_KEY}
-      STRIPE_API_KEY: ${STRIPE_API_KEY}
-      STRIPE_WEBHOOK_SECRET: ${STRIPE_WEBHOOK_SECRET}
-      COINBASE_API_KEY: ${COINBASE_API_KEY}
-      PAYPAL_CLIENT_ID: ${PAYPAL_CLIENT_ID}
-      PAYPAL_CLIENT_SECRET: ${PAYPAL_CLIENT_SECRET}
-      PAYPAL_MODE: ${PAYPAL_MODE}
-      COD_MAX_AMOUNT: ${COD_MAX_AMOUNT}
+      GEMINI_API_KEY: ${GEMINI_API_KEY:-AIzaSyCe--1oxDBHA19jWzEFIn6AXCIc-eVtFw8}
+      STRIPE_API_KEY: ${STRIPE_API_KEY:-sk_test_51TLmXwFenUoMJgzKNwUVD2hY4iNlU7vQZY7uqeFZbZ9r3CmiSPUVHrqoqGjNRdA7rFQGmSnbKgA0PqLSNK6jvjqZ00u9xJZIcO}
+      STRIPE_WEBHOOK_SECRET: ${STRIPE_WEBHOOK_SECRET:-whsec_fa67f3ba360f4efcfef1cf638eeb609ad3272ba9cc0d721ff2ed3a23966b7678}
+      COINBASE_API_KEY: ${COINBASE_API_KEY:-c42eba51-e745-465e-9dd8-f53c05916ff2}
+      PAYPAL_CLIENT_ID: ${PAYPAL_CLIENT_ID:-your_paypal_client_id_here}
+      PAYPAL_CLIENT_SECRET: ${PAYPAL_CLIENT_SECRET:-your_paypal_secret_here}
+      PAYPAL_MODE: ${PAYPAL_MODE:-sandbox}
+      COD_MAX_AMOUNT: ${COD_MAX_AMOUNT:-500.00}
       AI_CHATBOT_URL: http://ai_chatbot:8000
     ports:
       - "8080:8080"
@@ -84,10 +84,10 @@ services:
     container_name: ecommerce-ai-chatbot
     restart: unless-stopped
     environment:
-      GEMINI_API_KEY: ${GEMINI_API_KEY}
-      GEMINI_MODEL: ${GEMINI_MODEL}
+      GEMINI_API_KEY: ${GEMINI_API_KEY:-AIzaSyCe--1oxDBHA19jWzEFIn6AXCIc-eVtFw8}
+      GEMINI_MODEL: ${GEMINI_MODEL:-gemini-2.5-flash}
       SPRING_BASE_URL: http://backend:8080
-      LOG_LEVEL: ${LOG_LEVEL}
+      LOG_LEVEL: ${LOG_LEVEL:-INFO}
     ports:
       - "8000:8000"
     depends_on:
